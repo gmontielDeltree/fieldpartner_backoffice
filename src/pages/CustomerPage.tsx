@@ -1,7 +1,10 @@
 import React from 'react';
+import { CustomerForm } from '../components';
 
 export const CustomerPage: React.FC = () => {
     return (
-        <div>CustomerPage</div>
+        <>
+            <CustomerForm key="new-customer" />
+        </>
     )
 }

@@ -20,7 +20,7 @@ export const PublicRoutes: React.FC = () => {
                 sm={4}
                 md={8}
                 sx={{
-                    backgroundImage: 'url(/assets/images/load-bg.jpg)',
+                    backgroundImage: 'url(/assets/load-bg.jpg)',
                     backgroundRepeat: 'no-repeat',
                     backgroundColor: (t) =>
                         t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],

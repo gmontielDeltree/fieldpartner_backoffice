@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import {
   Box,
   Divider,
@@ -24,7 +24,7 @@ export interface SideBarProps {
 }
 export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
 
-  // const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   return (
     <Box
@@ -54,19 +54,27 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
         <Divider />
         <List>
           <ListItem key='customer' disablePadding>
-            <ListItemButton component={RouterLink} to="/customer">
+            <ListItemButton
+              component={RouterLink}
+              to="/customer"
+              selected={pathname.includes("customer")}
+            >
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
-              <ListItemText primary="Customers" />
+              <ListItemText primary="Clientes" />
             </ListItemButton>
           </ListItem>
           <ListItem key='settings' disablePadding>
-            <ListItemButton component={RouterLink} to="/settings">
+            <ListItemButton
+              component={RouterLink}
+              to="/settings"
+              selected={pathname.includes("settings")}
+            >
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText primary="Settings" />
+              <ListItemText primary="Configuracion" />
             </ListItemButton>
           </ListItem>
         </List>

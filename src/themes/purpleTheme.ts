@@ -13,5 +13,8 @@ export const purpleTheme: Theme = createTheme({
         error: {
             main: red.A400,
         },
+        background: {
+            default: '#eeee'
+        }
     },
 });

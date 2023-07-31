@@ -94,7 +94,6 @@ export const LoginPage: React.FC = () => {
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            onMouseDown={() => console.log('onMouseDown')}
                                         >
                                             {showPassword ? <VisibilityOff /> : <Visibility />}
                                         </IconButton>

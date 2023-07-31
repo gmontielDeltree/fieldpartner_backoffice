@@ -30,7 +30,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <SideBar drawerWidth={drawerWidth} />
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3, }}>
+                sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
                 {children}
             </Box>

@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from 'react';
 
 // export function useForm<T>( initialState: T) {}
 // const currentYear = new Date().getFullYear();
-export const useForm = <T extends Object>(initialState: T) => {
+export const useForm = <T extends object>(initialState: T) => {
 
     const [formulario, setFormulario] = useState(initialState);
 

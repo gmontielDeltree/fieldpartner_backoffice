@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '../config';
+import { backofficeApi } from '../config';
 import { clearErrorMessage, finishLoading, onChecking, onLogin, onLogout, startLoading } from '../store';
 import { useAppSelector } from './useRedux';
 // import { UserLogin } from '@types';
@@ -39,6 +39,8 @@ export interface ErrorResponseAuth {
     message: string;
 }
 
+const controller = 'auth';
+
 export const useAuthStore = () => {
 
     const {
@@ -53,7 +55,7 @@ export const useAuthStore = () => {
         // dispatch(onChecking());
         dispatch(startLoading());
         try {
-            const response = await authApi.post<ResponseAuthLogin>('/login', {
+            const response = await backofficeApi.post<ResponseAuthLogin>(`/${controller}/login`, {
                 email, password
             });
             if (response.data) {
@@ -88,7 +90,7 @@ export const useAuthStore = () => {
         // dispatch(onChecking());
         dispatch(startLoading());
         try {
-            const response = await authApi.post('/register', {
+            const response = await backofficeApi.post(`/${controller}/register`, {
                 email, password, name
             });
             if (response.status === HttpStatusCode.Created) {
@@ -121,7 +123,7 @@ export const useAuthStore = () => {
             const email = localStorage.getItem('username_temp');
             if (!email) return dispatch(onLogout(""));
 
-            const response = await authApi.post('/confirm', {
+            const response = await backofficeApi.post(`/${controller}/confirm`, {
                 email, confirmationCode
             });
 
@@ -148,7 +150,7 @@ export const useAuthStore = () => {
         dispatch(onChecking());
         try {
             // const { data } = await authApi.get('auth/renew');
-            const response = await authApi.post<ResponseAuthRenew>('/renew', { refreshToken });
+            const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
 
             if (response.status === HttpStatusCode.Ok) {
                 localStorage.setItem('accessToken', response.data.accessToken);
