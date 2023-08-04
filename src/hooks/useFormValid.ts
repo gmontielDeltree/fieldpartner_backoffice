@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 
 // export function useForm<T>( initialState: T) {}
 // const currentYear = new Date().getFullYear();
-export const useFormValid = <T extends Object, E extends Object>(initialState: T, errors: E) => {
+export const useFormValid = <T extends object, E extends object>(initialState: T, errors: E) => {
 
     const [formValues, setFormValues] = useState(initialState);
     const [formErrors, setFormErrors] = useState(errors);
