@@ -2,6 +2,7 @@ import { AppBar, Grid, IconButton, Toolbar, Typography } from '@mui/material';
 import { LogoutOutlined } from '@mui/icons-material';
 import React from 'react';
 import { useAuthStore } from '../../hooks';
+import { Link as RouterLink } from 'react-router-dom';
 
 export interface NavBarProps {
     drawerWidth: number;
@@ -21,50 +22,25 @@ export const NavBar: React.FC = () => {
             position="fixed"
             sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
-                {/* <Typography variant="h6" noWrap component="div">
-                    Fieldpartner
-                </Typography> */}
                 <Grid
                     container
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center">
-                    <Typography variant='h6' noWrap component="h2">Fieldpartner</Typography>
+                    <Typography
+                        variant='h6'
+                        color="white"
+                        fontSize={25}
+                        sx={{ textDecoration: 'none' }}
+                        to="/home"
+                        noWrap
+                        component={RouterLink}>Fieldpartner</Typography>
+                    <Typography variant='h6' noWrap component="h2">Backoffice</Typography>
                     <IconButton color='inherit' onClick={() => onClickLogout()}>
                         <LogoutOutlined />
                     </IconButton>
                 </Grid>
             </Toolbar>
         </AppBar>
-        // <AppBar
-        //     position='fixed'
-        //     sx={{
-        //         ...(open && {
-        //             width: { sm: `calc(100% - ${drawerWidth}px)` },
-        //             ml: { sm: `${drawerWidth}px` }
-        //         })
-        //     }}
-        // >
-        //     <Toolbar>
-        //         <IconButton
-        //             color='inherit'
-        //             edge="start"
-        //             onClick={handleSideBarOpen}
-        //             sx={{ mr: 2, ...(open && { display: 'none' }) }} >
-        //             <MenuOutlined />
-        //         </IconButton>
-
-        //         <Grid
-        //             container
-        //             direction="row"
-        //             justifyContent="space-between"
-        //             alignItems="center">
-        //             <Typography variant='h6' noWrap component="h2">FieldPartner</Typography>
-        //             <IconButton color='inherit' onClick={() => onClickLogout()}>
-        //                 <LogoutOutlined />
-        //             </IconButton>
-        //         </Grid>
-        //     </Toolbar>
-        // </AppBar>
     )
 }

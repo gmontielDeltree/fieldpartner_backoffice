@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import React, { useMemo, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -10,9 +11,10 @@ import {
     Typography
 } from '@mui/material';
 import { AddressForm, InformationForm, UsersByCustomer } from '.';
-import { useCustomer, useForm } from '../../hooks';
-import { Customer } from '../../types';
+import { useAppDispatch, useAppSelector, useCustomer, useForm } from '../../hooks';
+import { Customer, TipoEntidad, TipoLicencia } from '../../types';
 import { Loading } from '..';
+import { removeCustomerActive } from '../../store/customer';
 
 const steps = ['Informacion Basica', 'Direccion', 'Usuarios'];
 
@@ -22,13 +24,15 @@ const initialForm: Customer = {
     documento: '',
     telefono: '',
     email: '',
-    tipoEntidad: 'fisica',
+    tipoEntidad: TipoEntidad.FISICA.toString(),
     razonSocial: '',
-    tipoLicencia: 'LFPC05',
-    descripcion: '',
-    inicioLicencia: '',
-    finLicencia: '',
-    lenguaje: 'español',
+    account: {
+        tipoLicencia: TipoLicencia.LFPC05.toString(),
+        descripcion: '',
+        inicioLicencia: '',
+        finLicencia: '',
+        lenguaje: 'español',
+    },
     cuit: '',
     contactoPrincipal: '',
     contactoSecundario: '',
@@ -48,7 +52,9 @@ const initialForm: Customer = {
 
 export const CustomerForm: React.FC = () => {
 
-
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { customerActive } = useAppSelector(state => state.customer);
     const [activeStep, setActiveStep] = React.useState(0);
     const {
         formulario,
@@ -74,6 +80,7 @@ export const CustomerForm: React.FC = () => {
                 return <InformationForm
                     key="information-customer"
                     customer={formulario}
+                    setCustomer={setFormulario}
                     handleInputChange={handleInputChange}
                     handleSelectChange={handleSelectChange} />;
             case 1:
@@ -84,7 +91,7 @@ export const CustomerForm: React.FC = () => {
             case 2:
                 return <UsersByCustomer
                     key="users-customer"
-                    customer={formulario}
+                    user={formulario}
                     setCustomer={setFormulario} />;
             default:
                 throw new Error('Unknown step');
@@ -97,7 +104,19 @@ export const CustomerForm: React.FC = () => {
     const addNewCustomer = () => {
         createCustomer(formulario);
         reset();
+        navigate('/list-customer');
     }
+
+    const onClickCancel = () => {
+        dispatch(removeCustomerActive());
+        navigate("/list-customer");
+    }
+
+    useEffect(() => {
+        if (customerActive) setFormulario({ ...customerActive, usuario: { nombre: '', apellido: '', email: '', password: '' } });
+        else setFormulario(initialForm);
+    }, [customerActive, setFormulario])
+
 
     return (
         <>
@@ -132,11 +151,11 @@ export const CustomerForm: React.FC = () => {
                     <>
                         {getStepContent(activeStep)}
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            {activeStep !== 0 && (
-                                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                                    Volver
-                                </Button>
-                            )}
+                            <Button
+                                onClick={(activeStep !== 0) ? handleBack : onClickCancel}
+                                sx={{ mt: 3, ml: 1 }}>
+                                {(activeStep !== 0) ? 'Volver' : 'Cancelar'}
+                            </Button>
                             <Button
                                 variant="contained"
                                 onClick={(activeStep === steps.length - 1) ? addNewCustomer : handleNext}

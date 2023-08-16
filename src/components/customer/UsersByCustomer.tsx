@@ -1,34 +1,25 @@
 import React, { ChangeEvent } from 'react';
 import { Grid, TextField, InputAdornment, Alert, AlertTitle } from '@mui/material';
-import { Customer } from '../../types';
+import { User } from '../../types';
 
 
 export interface UsersByCustomerProps {
-    customer: Customer;
-    setCustomer: React.Dispatch<React.SetStateAction<Customer>>;
+    user: User;
+    setUser: ({ target }: ChangeEvent<HTMLInputElement>) => void;
+    isNewUser?: boolean;
 }
 
 export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
-    customer,
-    setCustomer
+    user,
+    setUser,
+    isNewUser = true
 }) => {
 
     const {
         nombre,
         apellido,
         email,
-        password } = customer.usuario;
-
-    const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = target;
-        setCustomer(prevState => ({
-            ...prevState,
-            usuario: {
-                ...prevState.usuario,
-                [name]: value
-            }
-        }));
-    }
+        password } = user;
 
     return (
         <Grid
@@ -50,7 +41,7 @@ export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
                     type='text'
                     name="nombre"
                     value={nombre}
-                    onChange={handleInputChange}
+                    onChange={setUser}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -63,50 +54,61 @@ export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
                     type='text'
                     name="apellido"
                     value={apellido}
-                    onChange={handleInputChange}
+                    onChange={setUser}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
             </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="Email"
-                    variant="outlined"
-                    // disabled={disabledFields}
-                    type='email'
-                    name="email"
-                    value={email}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        // startAdornment: <InputAdornment position="start" />,
-                        endAdornment: <InputAdornment position="end">@</InputAdornment>
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="Password"
-                    variant="outlined"
-                    // disabled={disabledFields}
-                    type='password'
-                    name="password"
-                    value={password}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} >
-                <Alert severity="warning">
-                    <AlertTitle>La contraseña debe tener al menos:</AlertTitle>
-                    <strong>-Una minúscula.</strong><br />
-                    <strong>-Una mayúscula.</strong><br />
-                    <strong>-Un carácter especial.</strong><br />
-                    <strong>-Un número.</strong>
-                </Alert>
-            </Grid>
+            {
+                isNewUser && (
+                    <>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Email"
+                                variant="outlined"
+                                // disabled={disabledFields}
+                                type='email'
+                                name="email"
+                                value={email}
+                                onChange={setUser}
+                                InputProps={{
+                                    // startAdornment: <InputAdornment position="start" />,
+                                    endAdornment: <InputAdornment position="end">@</InputAdornment>
+                                }}
+                                fullWidth />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Password"
+                                variant="outlined"
+                                // disabled={disabledFields}
+                                type='password'
+                                name="password"
+                                value={password}
+                                onChange={setUser}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start" />,
+                                }}
+                                fullWidth />
+                        </Grid>
+                    </>
+                )
+            }
+
+            {
+                isNewUser && (
+                    <Grid item xs={12} >
+                        <Alert severity="warning">
+                            <AlertTitle>La contraseña debe tener al menos:</AlertTitle>
+                            <strong>-Una minúscula.</strong><br />
+                            <strong>-Una mayúscula.</strong><br />
+                            <strong>-Un carácter especial.</strong><br />
+                            <strong>-Un número.</strong>
+                        </Alert>
+                    </Grid>
+                )
+            }
         </Grid>
     )
 }

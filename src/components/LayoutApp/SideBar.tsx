@@ -13,7 +13,7 @@ import {
 import {
   Settings as SettingsIcon,
   Group as GroupIcon,
-  // List as ListIcon,
+  Person as PersonIcon
 } from '@mui/icons-material';
 
 
@@ -56,13 +56,25 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
           <ListItem key='customer' disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/customer"
-              selected={pathname.includes("customer")}
+              to="/list-customer"
+              selected={pathname.includes("list-customer")}
             >
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
               <ListItemText primary="Clientes" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key='users-backoffice' disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/list-user"
+              selected={pathname.includes("list-user")}
+            >
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary="Usuarios Backoffice" />
             </ListItemButton>
           </ListItem>
           <ListItem key='settings' disablePadding>

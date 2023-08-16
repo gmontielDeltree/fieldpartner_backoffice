@@ -1,23 +1,36 @@
 
-export interface Usuario {
+export interface ColumnProps {
+    text: string;
+    align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
+}
+
+export interface User {
+    id?: string;
     nombre: string;
     apellido: string;
     email: string;
     password: string;
 }
 
+export interface Account {
+    id?: string,
+    descripcion: string,
+    tipoLicencia: string,
+    inicioLicencia: string,
+    finLicencia: string,
+    estado?: string,
+    lenguaje: string
+}
+
 export interface Customer {
+    id?: string;
     nombreCompleto?: string;
     documento?: string;
     telefono: string;
     email: string;
     tipoEntidad: string;
     razonSocial?: string;
-    tipoLicencia: string;
-    descripcion?: string;
-    inicioLicencia: string;
-    finLicencia: string;
-    lenguaje: string;
+    account: Account;
     cuit?: string;
     contactoPrincipal?: string;
     contactoSecundario?: string;
@@ -27,7 +40,7 @@ export interface Customer {
     cp: string;
     provincia: string;
     pais: string;
-    usuario: Usuario;
+    usuario: User;
 }
 
 

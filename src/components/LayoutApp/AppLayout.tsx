@@ -2,8 +2,8 @@
 import { Box, Toolbar } from '@mui/material';
 import { NavBar } from './NavBar';
 import { SideBar } from './SideBar';
-// import { LocalizationProvider } from '@mui/x-date-pickers';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const drawerWidth = 240; //Ancho del sidebar en px;
 
@@ -32,7 +32,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 component="main"
                 sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
-                {children}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    {children}
+                </LocalizationProvider>
             </Box>
         </Box>
     );

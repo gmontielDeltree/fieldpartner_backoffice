@@ -9,12 +9,15 @@ export interface InformationFormProps {
     customer: Customer;
     handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void;
     handleSelectChange: ({ target }: SelectChangeEvent) => void;
+    setCustomer: React.Dispatch<React.SetStateAction<Customer>>;
+
 }
 
 export const InformationForm: React.FC<InformationFormProps> = ({
     customer,
     handleInputChange,
     handleSelectChange,
+    setCustomer
 }) => {
 
     const {
@@ -22,17 +25,43 @@ export const InformationForm: React.FC<InformationFormProps> = ({
         documento,
         email,
         telefono,
-        descripcion,
         cuit,
         contactoPrincipal,
         contactoSecundario,
         tipoEntidad,
         razonSocial,
+        account,
+        sitioWeb } = customer;
+    const {
+        descripcion,
         tipoLicencia,
         inicioLicencia,
         finLicencia,
-        lenguaje,
-        sitioWeb } = customer;
+        lenguaje
+    } = account;
+
+    const handleInputChangeAccount = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = target;
+        setCustomer(prevState => ({
+            ...prevState,
+            account: {
+                ...prevState.account,
+                [name]: value
+            }
+        }));
+    }
+
+    const selectChangeAccount = ({ target }: SelectChangeEvent) => {
+        const { name, value } = target;
+        setCustomer(prevState => ({
+            ...prevState,
+            account: {
+                ...prevState.account,
+                [name]: value
+            }
+        }));
+    }
+
 
     return (
         <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -128,14 +157,14 @@ export const InformationForm: React.FC<InformationFormProps> = ({
                         name='tipoLicencia'
                         value={tipoLicencia}
                         label="Tipo licencia"
-                        onChange={handleSelectChange}
+                        onChange={selectChangeAccount}
                     >
-                        <MenuItem value={TipoLicencia.LFPC05}>Hasta 5 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPC10}>Hasta 10 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPCPLUS}>Hasta 100 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPINT}>Interna</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPDEM}>Demo</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPFREE}>Free</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPC05.toString()}>Hasta 5 campos</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPC10.toString()}>Hasta 10 campos</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPCPLUS.toString()}>Hasta 100 campos</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPINT.toString()}>Interna</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPDEM.toString()}>Demo</MenuItem>
+                        <MenuItem value={TipoLicencia.LFPFREE.toString()}>Free</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>
@@ -146,7 +175,7 @@ export const InformationForm: React.FC<InformationFormProps> = ({
                     type='text'
                     name="descripcion"
                     value={descripcion}
-                    onChange={handleInputChange}
+                    onChange={handleInputChangeAccount}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -154,12 +183,13 @@ export const InformationForm: React.FC<InformationFormProps> = ({
             </Grid>
             <Grid item xs={12} sm={6} >
                 <TextField
+                    key="inicio-licencia"
                     variant="outlined"
                     type='date'
                     label="Inicio de licencia"
                     name="inicioLicencia"
                     value={inicioLicencia}
-                    onChange={handleInputChange}
+                    onChange={handleInputChangeAccount}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -167,12 +197,13 @@ export const InformationForm: React.FC<InformationFormProps> = ({
             </Grid>
             <Grid item xs={12} sm={6} >
                 <TextField
+                    key="fin-licencia"
                     variant="outlined"
                     type='date'
                     label="Fin de licencia"
                     name="finLicencia"
                     value={finLicencia}
-                    onChange={handleInputChange}
+                    onChange={handleInputChangeAccount}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -247,7 +278,7 @@ export const InformationForm: React.FC<InformationFormProps> = ({
                         name='lenguaje'
                         value={lenguaje}
                         label="Lenguaje"
-                        onChange={handleSelectChange}
+                        onChange={selectChangeAccount}
                     >
                         <MenuItem value="español">Español</MenuItem>
                         <MenuItem value="ingles">Ingles</MenuItem>

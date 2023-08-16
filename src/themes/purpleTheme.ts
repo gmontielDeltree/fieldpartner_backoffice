@@ -17,4 +17,9 @@ export const purpleTheme: Theme = createTheme({
             default: '#eeee'
         }
     },
+    typography: {
+        h2: {
+            fontFamily: 'Raleway, Arial',
+        }
+    },
 });
