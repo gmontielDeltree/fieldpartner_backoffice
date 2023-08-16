@@ -19,7 +19,6 @@ import { Grid } from '@mui/material';
 import { ChangeEvent } from 'react';
 
 
-
 const initialForm: Customer = {
     nombreCompleto: '',
     documento: '',
