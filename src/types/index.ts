@@ -10,6 +10,8 @@ export interface User {
     apellido: string;
     email: string;
     password: string;
+    previousPassword?: string;
+    newPassword?: string;
 }
 
 export interface Account {

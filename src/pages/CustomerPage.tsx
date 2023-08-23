@@ -10,10 +10,10 @@ import {
     Button,
     Typography
 } from '@mui/material';
-import { AddressForm, InformationForm, UsersByCustomer } from '../components/customer';
+import { AddressForm, InformationForm } from '../components/customer';
 import { useAppDispatch, useAppSelector, useCustomer, useForm } from '../hooks';
 import { Customer, TipoEntidad, TipoLicencia } from '../types';
-import { Loading } from '../components';
+import { Loading, UserForm } from '../components';
 import { removeCustomerActive } from '../store/customer';
 import { Grid } from '@mui/material';
 import { ChangeEvent } from 'react';
@@ -106,9 +106,10 @@ export const CustomerPage: React.FC = () => {
                     customer={formulario}
                     handleInputChange={handleInputChange} />;
             case 2:
-                return <UsersByCustomer
+                return <UserForm
                     key="users-customer"
-                    user={formulario.usuario}
+                    // user={formulario.usuario}
+                    {...formulario.usuario}
                     setUser={setUserByCustomer} />;
             default:
                 throw new Error('Unknown step');
@@ -144,12 +145,12 @@ export const CustomerPage: React.FC = () => {
     }, [customerActive, setFormulario])
 
     useEffect(() => {
-    
-      return () => {
-        dispatch(removeCustomerActive());
-      }
+
+        return () => {
+            dispatch(removeCustomerActive());
+        }
     }, [dispatch])
-    
+
 
     return (
         <>

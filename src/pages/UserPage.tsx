@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector, useForm, useUser } from '../hooks';
 import { User } from '../types';
-import { Loading, UsersByCustomer } from '../components';
+import { Loading, UserForm } from '../components';
 import { removeUserActive } from '../store/user';
 import { Button, Container, Grid, Paper, Typography, Box } from '@mui/material';
 import { Person as PersonIcon } from '@mui/icons-material';
@@ -12,7 +12,7 @@ const initialForm: User = {
     nombre: '',
     apellido: '',
     email: '',
-    password: ''
+    password: '',
 };
 
 export const UserPage: React.FC = () => {
@@ -51,7 +51,11 @@ export const UserPage: React.FC = () => {
 
     useEffect(() => {
         if (userActive)
-            setFormulario({ ...userActive });
+            setFormulario({
+                ...userActive,
+                previousPassword: '',
+                newPassword: ''
+            });
         else setFormulario(initialForm);
 
     }, [userActive, setFormulario])
@@ -89,9 +93,10 @@ export const UserPage: React.FC = () => {
                     >
                         {(userActive) ? "Editar" : "Nuevo"} usuairo
                     </Typography>
-                    <UsersByCustomer
+                    <UserForm
                         key="users"
-                        user={formulario}
+                        // user={formulario}
+                        {...formulario}
                         isNewUser={!userActive}
                         setUser={handleInputChange} />
                     <Grid

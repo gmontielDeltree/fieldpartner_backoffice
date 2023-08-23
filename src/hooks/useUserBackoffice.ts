@@ -64,6 +64,8 @@ export const useUser = () => {
                 nombre: updateUser.nombre,
                 apellido: updateUser.apellido,
                 email: updateUser.email,
+                previousPassword: updateUser.previousPassword,
+                newPassword: updateUser.newPassword
             });
             setIsLoading(false);
 
