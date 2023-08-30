@@ -2,7 +2,7 @@ import { HttpStatusCode } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react";
-import { User } from "../types";
+import { UserDto } from "../types";
 import { backofficeApi } from "../config";
 
 const controller = "user";
@@ -12,13 +12,13 @@ export const useUser = () => {
     const navigate = useNavigate();
     const [error, setError] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<UserDto[]>([]);
 
     const getUsers = async () => {
         setIsLoading(true);
 
         try {
-            const response = await backofficeApi.get<User[]>(`/${controller}`);
+            const response = await backofficeApi.get<UserDto[]>(`/${controller}`);
 
             setIsLoading(false);
 
@@ -35,7 +35,7 @@ export const useUser = () => {
         }
     }
 
-    const createUser = async (newUser: User) => {
+    const createUser = async (newUser: UserDto) => {
         setIsLoading(true);
         try {
             const response = await backofficeApi.post(`/${controller}`, newUser);
@@ -55,7 +55,7 @@ export const useUser = () => {
         }
     }
 
-    const updateUser = async (idUser: string, updateUser: User) => {
+    const updateUser = async (idUser: string, updateUser: UserDto) => {
         setIsLoading(true);
 
         try {

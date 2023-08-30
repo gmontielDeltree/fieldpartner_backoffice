@@ -4,7 +4,7 @@ export interface ColumnProps {
     align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
 
-export interface User {
+export interface UserDto {
     id?: string;
     nombre: string;
     apellido: string;
@@ -12,6 +12,7 @@ export interface User {
     password: string;
     previousPassword?: string;
     newPassword?: string;
+    isAdmin: boolean;
 }
 
 export interface Account {
@@ -42,7 +43,7 @@ export interface Customer {
     cp: string;
     provincia: string;
     pais: string;
-    usuario: User;
+    usuario: UserDto;
 }
 
 
@@ -58,4 +59,37 @@ export enum TipoLicencia {
     LFPINT = "LFPINT",
     LFPDEM = "LFPDEM",
     LFPFREE = "LFPFREE",
+}
+
+export interface Authenticate {
+    accessToken: string;
+    refreshToken: string;
+    expiration: number;
+}
+
+export interface User {
+    username: string;
+    isAdmin: boolean;
+}
+
+export interface ResponseAuthLogin {
+    username: string;
+    isAdmin: boolean;
+    auth: Authenticate;
+}
+
+export interface ResponseAuthRenew {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export interface UserRegister {
+    email: string;
+    password: string;
+    name: string;
+}
+
+export interface UserLogin {
+    email: string;
+    password: string;
 }

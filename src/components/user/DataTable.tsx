@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { ColumnProps, User } from '../../types';
+import { ColumnProps, UserDto } from '../../types';
 import { Box, Skeleton, Tooltip, IconButton } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { useAppDispatch } from '../../hooks';
@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export interface DataTableProps {
     columns: ColumnProps[];
-    rows: User[];
+    rows: UserDto[];
     isLoading: boolean;
 }
 
@@ -49,7 +49,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const onClickEditUser = (item: User): void => {
+    const onClickEditUser = (item: UserDto): void => {
         dispatch(setUserActive(item));
         navigate(`/user/${item.id}`);
     }

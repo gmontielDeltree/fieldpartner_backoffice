@@ -26,12 +26,6 @@ export const UserForm: React.FC<UserFormProps> = ({
     newPassword
 }) => {
 
-    // const {
-    //     nombre,
-    //     apellido,
-    //     email,
-    //     password } = rest;
-
     return (
         <form>
             <Grid

@@ -1,10 +1,10 @@
 import React, { ChangeEvent } from 'react';
 import { Grid, TextField, InputAdornment, Alert, AlertTitle } from '@mui/material';
-import { User } from '../../types';
+import { UserDto } from '../../types';
 
 
 export interface UsersByCustomerProps {
-    user: User;
+    user: UserDto;
     setUser: ({ target }: ChangeEvent<HTMLInputElement>) => void;
     isNewUser?: boolean;
 }

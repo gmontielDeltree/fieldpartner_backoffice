@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector, useForm, useUser } from '../hooks';
-import { User } from '../types';
+import { UserDto } from '../types';
 import { Loading, UserForm } from '../components';
 import { removeUserActive } from '../store/user';
-import { Button, Container, Grid, Paper, Typography, Box } from '@mui/material';
+import { Button, Container, Grid, Paper, Typography, Box, FormControlLabel, Switch } from '@mui/material';
 import { Person as PersonIcon } from '@mui/icons-material';
 
 
-const initialForm: User = {
+const initialForm: UserDto = {
     nombre: '',
     apellido: '',
     email: '',
     password: '',
+    isAdmin: false
 };
 
 export const UserPage: React.FC = () => {
@@ -26,7 +27,7 @@ export const UserPage: React.FC = () => {
         setFormulario,
         handleInputChange,
         reset
-    } = useForm<User>(initialForm);
+    } = useForm<UserDto>(initialForm);
 
     const {
         isLoading,
@@ -48,6 +49,8 @@ export const UserPage: React.FC = () => {
         dispatch(removeUserActive());
         navigate("/list-user");
     }
+
+    const handleChangeAdmin = () => setFormulario({ ...formulario, isAdmin: !formulario.isAdmin });
 
     useEffect(() => {
         if (userActive)
@@ -93,6 +96,20 @@ export const UserPage: React.FC = () => {
                     >
                         {(userActive) ? "Editar" : "Nuevo"} usuairo
                     </Typography>
+                    {
+                        formulario.isAdmin && (
+                            <FormControlLabel
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    mb: 2
+                                }} control={
+                                    <Switch
+                                        checked={formulario.isAdmin}
+                                        onChange={() => handleChangeAdmin()}
+                                        defaultChecked />} label="Full Admin" />
+                        )
+                    }
                     <UserForm
                         key="users"
                         // user={formulario}
