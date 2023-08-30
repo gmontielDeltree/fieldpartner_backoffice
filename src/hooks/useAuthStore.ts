@@ -8,7 +8,7 @@ import {
     AxiosError,
     HttpStatusCode
 } from 'axios';
-import { ResponseAuthLogin, ResponseAuthRenew, UserLogin, UserRegister } from '../types';
+import { ResponseAuthLogin, ResponseAuthRenew, User, UserLogin, UserRegister } from '../types';
 
 
 export interface ErrorResponseAuth {
@@ -41,6 +41,7 @@ export const useAuthStore = () => {
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('token_init_date', new Date().getTime().toString());
                 const { username, isAdmin } = response.data;
+                localStorage.setItem("user_session", JSON.stringify({ username, isAdmin }));
                 dispatch(onLogin({ username, isAdmin }));
             }
             dispatch(finishLoading());
@@ -111,21 +112,19 @@ export const useAuthStore = () => {
     const checkAuthToken = async () => {
         const token = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
-        if (!token || !refreshToken) return dispatch(onLogout(""));
+        const userSession = localStorage.getItem("user_session");
+        if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
 
         dispatch(onChecking());
         try {
             // const { data } = await authApi.get('auth/renew');
             const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
 
-            if (response.status === HttpStatusCode.Ok) {
+            if (response.status === HttpStatusCode.Created) {
                 localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem('token-init-date', new Date().getTime().toString());
-                if (user)
-                    dispatch(onLogin({ username: user?.username, isAdmin: user?.isAdmin }));
-                else
-                    dispatch(onLogout(""));
-
+                const userLogin = JSON.parse(userSession || '') as User;
+                dispatch(onLogin(userLogin));
             }
 
             //TODO: obtener el usuario.
