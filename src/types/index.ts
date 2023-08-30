@@ -12,7 +12,7 @@ export interface UserDto {
     password: string;
     previousPassword?: string;
     newPassword?: string;
-    isAdmin: boolean;
+    isAdmin?: boolean;
 }
 
 export interface Account {

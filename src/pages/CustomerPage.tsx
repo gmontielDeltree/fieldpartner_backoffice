@@ -45,8 +45,7 @@ const initialForm: Customer = {
     nombre: "",
     apellido: "",
     email: "",
-    password: "",
-    isAdmin: false,
+    password: ""
   },
 };
 
