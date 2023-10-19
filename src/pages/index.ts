@@ -5,3 +5,5 @@ export * from './HomePage';
 export * from './ListUserPage';
 export * from './CustomerPage';
 export * from './UserPage';
+export * from './ListCategory';
+export * from './CategoryPage';

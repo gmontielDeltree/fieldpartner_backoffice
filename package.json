@@ -23,6 +23,9 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "events": "^3.3.0",
+    "pouchdb": "^8.0.1",
+    "pouchdb-find": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.1",
@@ -31,6 +34,7 @@
     "sweetalert2": "^11.7.20"
   },
   "devDependencies": {
+    "@types/pouchdb": "^6.4.1",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

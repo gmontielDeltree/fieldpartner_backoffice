@@ -93,3 +93,14 @@ export interface UserLogin {
     email: string;
     password: string;
 }
+
+
+export interface Document {
+    _id?: string;
+    _rev?: string;
+}
+
+export interface Category extends Document {
+    name: string;
+    description: string;
+}

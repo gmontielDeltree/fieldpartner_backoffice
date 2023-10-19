@@ -1,4 +1,4 @@
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Box,
   Divider,
@@ -8,14 +8,14 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar
-} from '@mui/material';
+  Toolbar,
+} from "@mui/material";
 import {
   Settings as SettingsIcon,
   Group as GroupIcon,
-  Person as PersonIcon
-} from '@mui/icons-material';
-
+  Person as PersonIcon,
+  Category as CategoryIcon,
+} from "@mui/icons-material";
 
 export interface SideBarProps {
   drawerWidth: number;
@@ -23,22 +23,22 @@ export interface SideBarProps {
   // handleSideBarClose: () => void;
 }
 export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
-
   const { pathname } = useLocation();
 
   return (
     <Box
       component="nav"
-      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+    >
       <Drawer
         sx={{
           width: drawerWidth,
-          display: { xs: 'block' },
-          '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box', },
+          display: { xs: "block" },
+          "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
         }}
         variant="permanent"
         anchor="left"
-      // open={open}
+        // open={open}
       >
         <Toolbar />
         {/* <Box
@@ -53,7 +53,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
         </Box> */}
         <Divider />
         <List>
-          <ListItem key='customer' disablePadding>
+          <ListItem key="customer" disablePadding>
             <ListItemButton
               component={RouterLink}
               to="/list-customer"
@@ -65,7 +65,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Clientes" />
             </ListItemButton>
           </ListItem>
-          <ListItem key='users-backoffice' disablePadding>
+          <ListItem key="users-backoffice" disablePadding>
             <ListItemButton
               component={RouterLink}
               to="/list-user"
@@ -77,7 +77,19 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Usuarios Backoffice" />
             </ListItemButton>
           </ListItem>
-          <ListItem key='settings' disablePadding>
+          <ListItem key="categories" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/categories"
+              selected={pathname.includes("categories")}
+            >
+              <ListItemIcon>
+                <CategoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="Categorías" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="settings" disablePadding>
             <ListItemButton
               component={RouterLink}
               to="/settings"
@@ -91,7 +103,6 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
           </ListItem>
         </List>
       </Drawer>
-    </Box >
-
-  )
-}
+    </Box>
+  );
+};
