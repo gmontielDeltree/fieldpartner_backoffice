@@ -26,7 +26,7 @@ const initialForm: Movement = {
   name: "",
   description: "",
   manual: false,
-  stockOperation: "sumar",
+  stockOperation: "suma",
   typeMovement: "manual", 
 };
 
