@@ -10,7 +10,7 @@ const initialState: MovementState = {
 }
 
 
-export const MovementSlice = createSlice({
+export const movementSlice = createSlice({
     name: 'Movimientos',
     initialState,
     reducers: {
@@ -25,4 +25,4 @@ export const MovementSlice = createSlice({
 
 export const {
     setMovementACtive,
-    removeMovementActive } = MovementSlice.actions
+    removeMovementActive } = movementSlice.actions

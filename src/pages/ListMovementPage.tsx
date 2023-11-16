@@ -25,7 +25,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import { setMovementACtive } from "../store/Movement";
+import { setMovementACtive } from "../store/movement";
 
 const columns: ColumnProps[] = [
   { text: "Concepto", align: "left" },

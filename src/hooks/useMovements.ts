@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import { Movement } from "../types";
-import { dbMovement } from "../services/pouchdbService";
+import { dbContext} from "../services/pouchdbService";
 
 export const useMovements = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export const useMovements = () => {
     }
 
     try {
-      const response = await dbMovement.movements.post(newMovement);
+      const response = await dbContext.movements.post(newMovement);
 
       setIsLoading(false);
       if (response.ok)
@@ -41,7 +41,7 @@ export const useMovements = () => {
   const getMovements = async () => {
     setIsLoading(true);
     try {
-      const response = await dbMovement.movements.allDocs({ include_docs: true });
+      const response = await dbContext.movements.allDocs({ include_docs: true });
 
       setIsLoading(false);
 
@@ -70,7 +70,7 @@ export const useMovements = () => {
     }
 
     try {
-      const response = await dbMovement.movements.put(updateMovement);
+      const response = await dbContext.movements.put(updateMovement);
       setIsLoading(false);
 
       if (response.ok)
@@ -88,7 +88,7 @@ export const useMovements = () => {
   const removeMovement = async (movementId: string, revMovement: string) => {
 
     try {
-      const response = await dbMovement.movements.remove(movementId, revMovement);
+      const response = await dbContext.movements.remove(movementId, revMovement);
       setIsLoading(false);
 
       if (response.ok)
@@ -107,7 +107,7 @@ export const useMovements = () => {
     setIsLoading(true);
   
     try {
-      const response = await dbMovement.movements.query('concept-search-view', {
+      const response = await dbContext.movements.query('concept-search-view', {
         startkey: searchTerm,
         endkey: searchTerm + '\uffff',
         include_docs: true,

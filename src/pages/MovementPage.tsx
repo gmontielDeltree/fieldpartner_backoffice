@@ -18,7 +18,7 @@ import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useMovements, useForm } from "../hooks";
 import { Movement } from "../types";
-import { removeMovementActive } from "../store/Movement";
+import { removeMovementActive } from "../store/movement";
 import { Loading } from "../components";
 
 
@@ -34,7 +34,7 @@ const initialForm: Movement = {
 export const MovementPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { movementActive } = useAppSelector((state) => state.Movement);
+  const { movementActive } = useAppSelector((state) => state.movement);
 
   const handleSwitchChange = () =>{setFormulario((prevFormulario)=>({...prevFormulario, manual : !prevFormulario.manual,}))}
 
@@ -77,11 +77,16 @@ export const MovementPage: React.FC = () => {
   useEffect(() => {
     if (movementActive) setFormulario(movementActive);
     else setFormulario(initialForm);
+    
+  }, [movementActive, setFormulario, dispatch]);
 
+  useEffect(() => {
+    
     return () => {
       dispatch(removeMovementActive());
     };
-  }, [movementActive, setFormulario, dispatch]);
+  }, [dispatch])
+  
 
   return (
     <>
