@@ -104,3 +104,10 @@ export interface Category extends Document {
     name: string;
     description: string;
 }
+export interface Movement extends Document {
+    manual: boolean;
+    stockOperation: string;
+    name: string;
+    description: string;
+    typeMovement: string;
+}

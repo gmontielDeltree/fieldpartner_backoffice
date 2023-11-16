@@ -109,6 +109,22 @@ export const useAuthStore = () => {
         }
     }
 
+    //    const checkAuthToken = async () => {
+
+    //     dispatch(onChecking())
+    //     try {
+
+
+    //         localStorage.setItem('accessToken',"" );
+    //         localStorage.setItem('token_expiration',"" );
+
+    //         dispatch(onLogin({isAdmin:true,username:"Rodrigo"}));
+
+    //     } catch (error) {
+    //         localStorage.clear();
+    //         dispatch(onLogout(""));
+    //     }
+    // }
     const checkAuthToken = async () => {
         const token = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');

@@ -51,6 +51,11 @@ export const LoginPage: React.FC = () => {
         startLogin({ email, password });
     };
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        handleLogin();
+    };
+
     useEffect(() => {
         return () => {
             dispatch(clearErrorMessage())
@@ -63,7 +68,7 @@ export const LoginPage: React.FC = () => {
             {
                 isLoading && <Loading key="loading-auth" loading={true} />
             }
-            <form action="">
+             <form onSubmit={handleSubmit}>
                 <Grid container>
                     <Grid item xs={12} sx={{ mt: 2 }}>
                         <TextField
@@ -110,6 +115,7 @@ export const LoginPage: React.FC = () => {
                     <Grid container spacing={2} sx={{ mb: 2, mt: 2 }}>
                         <Grid item xs={12} md={12}>
                             <Button
+                                type="submit"
                                 variant='contained'
                                 fullWidth
                                 color="primary"
