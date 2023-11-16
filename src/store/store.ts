@@ -5,7 +5,7 @@ import { authSlice } from './auth';
 import { customerSlice } from './customer';
 import { userSlice } from './user';
 import { categorySlice } from './category';
-import { movementSlice } from './movement';
+import { movementSlice } from './movements';
 
 export const store = configureStore({
     reducer: {

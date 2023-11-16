@@ -12,13 +12,13 @@ import {
   FormControlLabel,
   Switch,
   Typography,
+  TextField
 } from "@mui/material";
 import { SyncAlt as SyncAltIcon } from "@mui/icons-material";
-import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useMovements, useForm } from "../hooks";
 import { Movement } from "../types";
-import { removeMovementActive } from "../store/movement";
+import { removeMovementActive } from "../store/movements";
 import { Loading } from "../components";
 
 
