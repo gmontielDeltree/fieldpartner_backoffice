@@ -68,13 +68,14 @@ export interface Authenticate {
 }
 
 export interface User {
-    username: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    accountId: string;
     isAdmin: boolean;
 }
-
 export interface ResponseAuthLogin {
-    username: string;
-    isAdmin: boolean;
+    user: User;
     auth: Authenticate;
 }
 
