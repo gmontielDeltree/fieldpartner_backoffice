@@ -20,10 +20,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import 'semantic-ui-css/semantic.min.css';
+import {Icon} from "semantic-ui-react";
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { setMovementACtive } from "../store/movements";
 
@@ -169,9 +170,9 @@ export const ListMovementPage: React.FC = () => {
                     <Tooltip title="Eliminar">
                       <IconButton
                         onClick={() => handleDeleteMovement(row)}
-                        color="error"
+                        style={{ fontSize: '1rem' }}
                       >
-                        <DeleteIcon />
+                        <Icon name="trash alternate" />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>
