@@ -6,3 +6,4 @@ export * from './useCustomer';
 export * from './useUserBackoffice';
 export * from './useCategory';
 export * from './useMovements';
+export * from './useSupplies';
