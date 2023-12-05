@@ -31,9 +31,9 @@ import { setSupplieActive } from "../store/supplie";
 
 const columns: ColumnProps[] = [
   { text: "Tipo", align: "left" },
-  { text: "Insumo", align: "center" },
-  { text: "Unidad de Medida", align: "right" },
   { text: "Descripcion", align: "right" },
+  { text: "Cultivo", align: "center" },
+  { text: "Fitosanitario", align: "right" },
 ];
 
 export const ListSuppliesPage: React.FC = () => {
@@ -149,16 +149,18 @@ export const ListSuppliesPage: React.FC = () => {
             >
               {supplies.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.type}</TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.name}
-                  </TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.unitMeasurement}
-                  </TableCellStyled>
-                  <TableCellStyled align="right">
-                    {row.description}
-                  </TableCellStyled>
+                  <TableCellStyled align="left">
+                      {row.name}
+                    </TableCellStyled>
+                    <TableCellStyled align="right">
+                      {row.description}
+                    </TableCellStyled>
+                    <TableCellStyled align="center">
+                      {row.cultivo ? "Cultivo" : "No Cultivo"}
+                    </TableCellStyled>
+                    <TableCellStyled align="right">
+                      {row.fitosanitario ? "SI" : "NO"}
+                    </TableCellStyled>
                   <TableCellStyled align="right">
                     <Tooltip title="Editar">
                       <IconButton

@@ -101,7 +101,7 @@ export const useSupplies = () => {
       setIsLoading(false);
       if (error) setError(error);
     }
-  }
+  } 
 
   const searchSupplies = async (searchTerm: string) => {
     setIsLoading(true);

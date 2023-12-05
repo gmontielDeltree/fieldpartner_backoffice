@@ -283,26 +283,12 @@ export interface SupplieState {
     supplies: Supplie[];
 }
 
-export interface Supplie extends Document {
-    accountId: string;
-    barCode?: string;
-    type: string;
-    name: string;
-    description?: string;
-    unitMeasurement: string;
-    currentStock: number;
-    reservedStock: number;
-    // stockDisponible: number;
-    stockByLot: boolean;
-    activePrincipal: string;
-    mermaVolatile: string;
-    minimumDose: string;
-    maximumDose: string;
-    recommendedDose: string;
-    replenishmentPoint: string;
-    labors: string[];
-}
-
+export interface Supplie extends Document{ 
+    name: string; 
+    description: string; 
+    fitosanitario: boolean; 
+    cultivo:boolean; 
+    }
 export enum TipoInsumo {
     CULTIVO = "CuLtivo",
 }

@@ -1,186 +1,203 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { DoseForm, LaborsForm, Loading, StockForm } from "../components";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm, useSupplies } from "../hooks";
+import React, { useEffect } from "react";
+import { Loading } from "../components";
 import {
+  Box,
   Button,
   Container,
   Grid,
+  InputAdornment,
   Paper,
-  Step,
-  StepLabel,
-  Stepper,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  TextField,
   Typography,
 } from "@mui/material";
+import { Inventory as InventoryIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSupplies,
+  useForm,
+} from "../hooks";
 import { Supplie } from "../types";
-import { removeSupplieActive } from "../store/supplie/supplieSlice";
+import { removeSupplieActive } from "../store/supplie";
 
 const initialForm: Supplie = {
-  accountId: "",
-  type: "",
-  labors: [],
   name: "",
   description: "",
-  barCode: "",
-  unitMeasurement: "",
-  stockByLot: false,
-  maximumDose: "",
-  minimumDose: "",
-  recommendedDose: "",
-  mermaVolatile: "",
-  activePrincipal: "",
-  replenishmentPoint: "",
-  currentStock: 0,
-  reservedStock: 0,
+  fitosanitario: false,
+  cultivo: false,
 };
-
 
 export const SuppliesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { supplieActive } = useAppSelector((state) => state.supplie);
-  const [activeStep, setActiveStep] = useState(0);
-  const [steps] = useState<string[]>(["Insumos", "Dosis", "Stock"]);
+
   const {
+    name,
+    description,
     formulario,
     setFormulario,
     handleInputChange,
-    handleSelectChange,
-    handleCheckboxChange,
     reset,
-  } = useForm(initialForm);
+  } = useForm<Supplie>(initialForm);
 
-  const { isLoading, createSupplies, updateSupplie } = useSupplies();
-
-  const onClickCancel = () => navigate("/type-supplies");
-
-  const handleUpdateSupplie = () => {
-    if (formulario._id) {
-      updateSupplie(formulario);
-      dispatch(removeSupplieActive());
-      navigate("/type-supplies");
-    }
-  };
+  const { isLoading, createSupplies, updateSupplie, conceptoError } = useSupplies();
 
   const handleAddSupplie = () => {
     createSupplies(formulario);
-    navigate("/type-supplies");
     reset();
   };
 
-  const getStepContent = useMemo(
-    () => (step: number) => {
-      switch (step) {
-        case 0:
-          return (
-            <LaborsForm
-              key="laborsForm"
-              formValues={formulario}
-              setFormValues={setFormulario}
-              handleInputChange={handleInputChange}
-              handleSelectChange={handleSelectChange}
-              handleCheckboxChange={handleCheckboxChange}
-            />
-          );
-        case 1:
-          return (
-            <DoseForm
-              key="doseForm"
-              formValues={formulario}
-              handleInputChange={handleInputChange}
-            />
-          );
-        case 2:
-          return (
-            <StockForm
-              key="stockForm"
-              formValues={formulario}
-              handleSelectChange={handleSelectChange}
-              handleInputChange={handleInputChange}
-            />
-          );
-        default:
-          throw new Error("Unknown step");
-      }
-    },
-    [
-      formulario,
-      handleInputChange,
-      handleSelectChange,
-      handleCheckboxChange,
-      setFormulario,
-    ]
-  );
-
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
+  const handleUpdateSupplie = () => {
+    if (!formulario._id) return;
+    updateSupplie(formulario);
   };
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
+  const onClickCancel = () => {
+    dispatch(removeSupplieActive());
+    navigate("/type-supplies");
   };
 
   useEffect(() => {
     if (supplieActive) setFormulario(supplieActive);
     else setFormulario(initialForm);
-  }, [setFormulario, supplieActive]);
+  }, [supplieActive, setFormulario]);
 
   useEffect(() => {
     return () => {
-      dispatch(removeSupplieActive());
+      dispatch((removeSupplieActive));
     };
   }, [dispatch]);
 
   return (
-    <Container maxWidth="md" className="pepe">
-      <Loading key="loading-supplie" loading={isLoading} />
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 3, md: 3 }, p: { xs: 2, md: 3 } }}
-      >
-        <Typography component="h1" variant="h4" align="center" sx={{ mb: 3 }}>
-          {supplieActive ? "Editar" : "Nuevo"} Insumo
-        </Typography>
-        <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 3, mb: 2 }}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <>
-          {getStepContent(activeStep)}
+    <>
+      <Loading key="loading-new-customer" loading={isLoading} />
+      <Container maxWidth="md" sx={{ mb: 4 }}>
+        <Box
+          component="div"
+          display="flex"
+          alignItems="center"
+          sx={{ ml: { sm: 2 }, pt: 2 }}
+        >
+          <InventoryIcon />
+          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
+            Tipos de Insumos
+          </Typography>
+        </Box>
+
+        <Paper
+          variant="outlined"
+          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+        >
+          <Typography
+            component="h1"
+            variant="h4"
+            align="center"
+            sx={{ my: 3, mb: 5 }}
+          >
+            {supplieActive ? "Editar" : "Nuevo"} Insumo
+          </Typography>
           <Grid
             container
             spacing={1}
             alignItems="center"
             justifyContent="space-around"
-            sx={{ mt: 3 }}
           >
-            <Grid item xs={12} sm={3}>
-              <Button onClick={activeStep !== 0 ? handleBack : onClickCancel}>
-                {activeStep !== 0 ? "Volver" : "Cancelar"}
-              </Button>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Tipo"
+                variant="outlined"
+                type="text"
+                name="name"
+                value={name}
+                onChange={handleInputChange}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
+                fullWidth
+              />
             </Grid>
-            <Grid item xs={12} sm={3} key="grid-next">
-              {!(activeStep === steps.length - 1) && (
-                <Button variant="outlined" color="primary" onClick={handleNext}>
-                  Siguiente
-                </Button>
-              )}
+            <Grid item xs={6}>
+              <TextField
+                label="Descripción"
+                variant="outlined"
+                type="text"
+                name="description"
+                value={description}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <RadioGroup
+                row
+                name="fitosanitario"
+                value={formulario.fitosanitario.toString()}
+                onChange={handleInputChange}
+              >
+                <FormControlLabel
+                  value="true"
+                  control={<Radio />}
+                  label="Fitosanitario"
+                />
+                <FormControlLabel
+                  value="false"
+                  control={<Radio />}
+                  label="No Fitosanitario"
+                />
+              </RadioGroup>
+            </Grid>
+            <Grid item xs={6}>
+              <RadioGroup
+                row
+                name="cultivo"
+                value={formulario.cultivo.toString()}
+                onChange={handleInputChange}
+              >
+                <FormControlLabel
+                  value="true"
+                  control={<Radio />}
+                  label="Cultivo"
+                />
+                <FormControlLabel
+                  value="false"
+                  control={<Radio />}
+                  label="No Cultivo"
+                />
+              </RadioGroup>
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            justifyContent="space-around"
+            sx={{ mt: { sm: 5 } }}
+          >
+            <Grid item xs={12} sm={3} key="grid-back">
+              <Button onClick={() => onClickCancel()}>Cancelar</Button>
             </Grid>
             <Grid item xs={12} sm={3}>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={supplieActive ? handleUpdateSupplie : handleAddSupplie}
+                onClick={
+                  supplieActive ? handleUpdateSupplie : handleAddSupplie
+                }
               >
-                {!supplieActive ? "Agregar" : "Actualizar"}
+                {!supplieActive ? "Guardar" : "Actualizar"}
               </Button>
             </Grid>
           </Grid>
-        </>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </>
   );
 };

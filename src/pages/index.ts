@@ -9,5 +9,5 @@ export * from './ListCategory';
 export * from './CategoryPage';
 export * from './ListMovementPage';
 export * from './MovementPage';
-export * from './ListSupplies';
+export * from './ListSuppliesPage';
 export * from './SuppliesPage';

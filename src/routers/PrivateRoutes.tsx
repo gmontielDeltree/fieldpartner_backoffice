@@ -13,7 +13,7 @@ import {
   ListMovementPage,
   MovementPage,
   ListSuppliesPage,
-  SuppliesPage
+  SuppliesPage,
 } from "../pages";
 
 
