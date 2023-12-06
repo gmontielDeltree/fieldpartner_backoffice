@@ -21,7 +21,7 @@ export const useSupplies = () => {
     }
 
     try {
-      const response = await dbContext.supplies.post(newSupplie);
+      const response = await dbContext.supply_type.post(newSupplie);
 
       setIsLoading(false);
       if (response.ok)
@@ -41,7 +41,7 @@ export const useSupplies = () => {
   const getSupplies = async () => {
     setIsLoading(true);
     try {
-      const response = await dbContext.supplies.allDocs({ include_docs: true });
+      const response = await dbContext.supply_type.allDocs({ include_docs: true });
 
       setIsLoading(false);
 
@@ -70,7 +70,7 @@ export const useSupplies = () => {
     }
 
     try {
-      const response = await dbContext.supplies.put(updateSupplie);
+      const response = await dbContext.supply_type.put(updateSupplie);
       setIsLoading(false);
 
       if (response.ok)
@@ -88,7 +88,7 @@ export const useSupplies = () => {
   const removeSupplie = async (supplieId: string, removeSupplie: string) => {
 
     try {
-      const response = await dbContext.supplies.remove(supplieId, removeSupplie);
+      const response = await dbContext.supply_type.remove(supplieId, removeSupplie);
       setIsLoading(false);
 
       if (response.ok)
@@ -107,7 +107,7 @@ export const useSupplies = () => {
     setIsLoading(true);
   
     try {
-      const response = await dbContext.supplies.query('supplies-search-view', {
+      const response = await dbContext.supply_type.query('supplies-search-view', {
         startkey: searchTerm,
         endkey: searchTerm + '\uffff',
         include_docs: true,
