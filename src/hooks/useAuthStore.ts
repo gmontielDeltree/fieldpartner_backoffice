@@ -36,13 +36,13 @@ export const useAuthStore = () => {
                 email, password
             });
             if (response.data) {
-                const { accessToken, refreshToken } = response.data.auth;
+                const { auth, user } = response.data;
+                const { accessToken, refreshToken } = auth;
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('token_init_date', new Date().getTime().toString());
-                const { username, isAdmin } = response.data;
-                localStorage.setItem("user_session", JSON.stringify({ username, isAdmin }));
-                dispatch(onLogin({ username, isAdmin }));
+                localStorage.setItem("user_session", JSON.stringify(user));
+                dispatch(onLogin(user));
             }
             dispatch(finishLoading());
             dispatch(clearErrorMessage());
