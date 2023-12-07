@@ -108,8 +108,8 @@ export interface Category extends Document {
 }
 
 export interface SupplieState {
-    supplieActive: Supplie | null;
-    supplies: Supplie[];
+    supplieActive: SupplyType | null;
+    supplies: SupplyType[];
 }
 export interface Movement extends Document {
     manual: boolean;
@@ -280,16 +280,17 @@ export interface BusinessState {
 }
 
 export interface SupplieState {
-    supplieActive: Supplie | null;
-    supplies: Supplie[];
+    supplieActive: SupplyType | null;
+    supplies: SupplyType[];
 }
 
-export interface Supplie extends Document{ 
-    name: string; 
-    description: string; 
-    fitosanitario: boolean; 
-    cultivo:boolean; 
-    }
+export interface SupplyType extends Document {
+    name: string;
+    description: string;
+    fitosanitario: boolean;
+    cultivo: boolean;
+}
+
 export enum TipoInsumo {
     CULTIVO = "CuLtivo",
 }
@@ -420,7 +421,7 @@ export interface StockMovement extends Document {
 }
 
 export interface StockMovementItem extends StockMovement {
-    supplie?: Supplie;
+    supplie?: SupplyType;
     deposit?: Deposit;
 }
 
@@ -432,7 +433,7 @@ export interface SupplieByLot {
 
 export interface SupplieByDeposits {
     deposit: Deposit;
-    supplie?: Supplie;
+    supplie?: SupplyType;
     movements?: StockMovement[];
     unitMeasurement: string;
     lot?: Lot;

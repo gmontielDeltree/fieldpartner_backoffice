@@ -21,17 +21,17 @@ import {
   useSupplies,
   useForm,
 } from "../hooks";
-import { Supplie } from "../types";
+import { SupplyType } from "../types";
 import { removeSupplieActive } from "../store/supplie";
 
-const initialForm: Supplie = {
+const initialForm: SupplyType = {
   name: "",
   description: "",
   fitosanitario: false,
   cultivo: false,
 };
 
-export const SuppliesPage: React.FC = () => {
+export const SuppliesTypePage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { supplieActive } = useAppSelector((state) => state.supplie);
@@ -43,7 +43,7 @@ export const SuppliesPage: React.FC = () => {
     setFormulario,
     handleInputChange,
     reset,
-  } = useForm<Supplie>(initialForm);
+  } = useForm<SupplyType>(initialForm);
 
   const { isLoading, createSupplies, updateSupplie, conceptoError } = useSupplies();
 

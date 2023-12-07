@@ -1,17 +1,17 @@
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
-import { Supplie } from "../types";
+import { SupplyType } from "../types";
 import { dbContext} from "../services/pouchdbService";
 
 export const useSupplies = () => {
   const navigate = useNavigate();
   const [error, setError] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [supplies, setSupplies] = useState<Supplie[]>([]);
+  const [supplies, setSupplies] = useState<SupplyType[]>([]);
   const [conceptoError, setConceptoError] = useState(false);
 
-  const createSupplies = async (newSupplie: Supplie) => {
+  const createSupplies = async (newSupplie: SupplyType) => {
     setIsLoading(true);
 
     if (!newSupplie.name.trim()) {
@@ -46,7 +46,7 @@ export const useSupplies = () => {
       setIsLoading(false);
 
       if (response.rows.length) {
-        const documents: Supplie[] = response.rows.map(row => row.doc as Supplie);
+        const documents: SupplyType[] = response.rows.map(row => row.doc as SupplyType);
         setSupplies(documents);
       }
       else
@@ -60,7 +60,7 @@ export const useSupplies = () => {
     }
   }
 
-  const updateSupplie = async (updateSupplie: Supplie) => {
+  const updateSupplie = async (updateSupplie: SupplyType) => {
     setIsLoading(true);
 
     if (!updateSupplie.name.trim()) {
@@ -116,7 +116,7 @@ export const useSupplies = () => {
       setIsLoading(false);
   
       if (response.rows.length) {
-        const searchResults: Supplie[] = response.rows.map(row => row.doc as Supplie);
+        const searchResults: SupplyType[] = response.rows.map(row => row.doc as SupplyType);
         setSupplies(searchResults);
       } else {
         setSupplies([]);

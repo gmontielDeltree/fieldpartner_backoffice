@@ -1,5 +1,5 @@
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { ColumnProps, Supplie } from "../types";
+import { ColumnProps, SupplyType } from "../types";
 import React, { useEffect } from "react";
 import { useAppDispatch, useSupplies, useForm } from "../hooks";
 import { Inventory as InventoryIcon } from "@mui/icons-material";
@@ -20,11 +20,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import 'semantic-ui-css/semantic.min.css';
-import {Icon} from "semantic-ui-react";
+// import 'semantic-ui-css/semantic.min.css';
 import {
   Add as AddIcon,
   Edit as EditIcon,
+  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { setSupplieActive } from "../store/supplie";
 
@@ -45,7 +45,7 @@ export const ListSuppliesPage: React.FC = () => {
     supplies,
     getSupplies,
     removeSupplie,
-    searchSupplies,  
+    searchSupplies,
   } = useSupplies();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
@@ -57,12 +57,12 @@ export const ListSuppliesPage: React.FC = () => {
     searchSupplies(filterText);
   };
 
-  const onClickUpdateSupplie = (item: Supplie) => {
+  const onClickUpdateSupplie = (item: SupplyType) => {
     dispatch(setSupplieActive(item));
     navigate(`/type-supplies/${item._id}`);
   };
 
-  const handleDeleteSupplie = (item: Supplie) => {
+  const handleDeleteSupplie = (item: SupplyType) => {
     if (item._id && item._rev) {
       removeSupplie(item._id, item._rev);
       getSupplies();
@@ -150,17 +150,17 @@ export const ListSuppliesPage: React.FC = () => {
               {supplies.map((row) => (
                 <ItemRow key={row._id} hover>
                   <TableCellStyled align="left">
-                      {row.name}
-                    </TableCellStyled>
-                    <TableCellStyled align="right">
-                      {row.description}
-                    </TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.cultivo ? "Cultivo" : "No Cultivo"}
-                    </TableCellStyled>
-                    <TableCellStyled align="right">
-                      {row.fitosanitario ? "SI" : "NO"}
-                    </TableCellStyled>
+                    {row.name}
+                  </TableCellStyled>
+                  <TableCellStyled align="right">
+                    {row.description}
+                  </TableCellStyled>
+                  <TableCellStyled align="center">
+                    {row.cultivo ? "Cultivo" : "No Cultivo"}
+                  </TableCellStyled>
+                  <TableCellStyled align="right">
+                    {row.fitosanitario ? "SI" : "NO"}
+                  </TableCellStyled>
                   <TableCellStyled align="right">
                     <Tooltip title="Editar">
                       <IconButton
@@ -174,8 +174,9 @@ export const ListSuppliesPage: React.FC = () => {
                       <IconButton
                         onClick={() => handleDeleteSupplie(row)}
                         style={{ fontSize: '1rem' }}
+                        color="default"
                       >
-                        <Icon name="trash alternate" />
+                        <DeleteIcon />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>

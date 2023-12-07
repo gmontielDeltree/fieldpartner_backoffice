@@ -13,7 +13,7 @@ import {
   ListMovementPage,
   MovementPage,
   ListSuppliesPage,
-  SuppliesPage,
+  SuppliesTypePage,
 } from "../pages";
 
 
@@ -36,8 +36,8 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/type-movement/new" element={<MovementPage />} /> 
         <Route path="/type-movement/:id" element={<MovementPage />} /> 
         <Route path="/type-supplies" element={< ListSuppliesPage/>}/>
-        <Route path="/type-supplies/new" element={<SuppliesPage />} /> 
-        <Route path="/type-supplies/:id" element={<SuppliesPage />} /> 
+        <Route path="/type-supplies/new" element={<SuppliesTypePage />} /> 
+        <Route path="/type-supplies/:id" element={<SuppliesTypePage />} /> 
 
 
 

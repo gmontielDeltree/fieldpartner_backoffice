@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find'
 import { getEnvVariables } from '../helpers/getEnvVariables';
-import { Category, Movement, Supplie } from '../types';
+import { Category, Movement, SupplyType } from '../types';
 
 PouchDB.plugin(PouchDBFind);
 
@@ -18,7 +18,7 @@ const dbNames = Object.freeze({
 export const dbContext = Object.freeze({
     categories: new PouchDB<Category>(dbNames.categories),
     movements: new PouchDB<Movement>(dbNames.movements),
-    supply_type: new PouchDB<Supplie>(dbNames.supply_type),
+    supply_type: new PouchDB<SupplyType>(dbNames.supply_type),
 
 });
 

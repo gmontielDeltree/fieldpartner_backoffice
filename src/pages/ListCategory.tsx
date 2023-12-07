@@ -20,12 +20,13 @@ import {
   Typography,
 } from "@mui/material";
 
-import 'semantic-ui-css/semantic.min.css';
-import {Icon} from "semantic-ui-react";
+// import 'semantic-ui-css/semantic.min.css';
+// import {Icon} from "semantic-ui-react";
 
 import {
   Add as AddIcon,
   Edit as EditIcon,
+  Delete as DeleteIcon,
   Category as CategoryIcon,
 } from "@mui/icons-material";
 import { setCategoryACtive } from "../store/category";
@@ -151,8 +152,9 @@ export const ListCategory: React.FC = () => {
                       <IconButton
                         onClick={() => handleDeleteCategory(row)}
                         style={{ fontSize: '1rem' }}
-                        >
-                          <Icon name="trash alternate" />
+                        color="default"
+                      >
+                        <DeleteIcon name="trash alternate" />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>

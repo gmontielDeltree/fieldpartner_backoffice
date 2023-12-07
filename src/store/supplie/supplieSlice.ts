@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Supplie , SupplieState} from '../../types';
+import { SupplyType , SupplieState} from '../../types';
 
 
 const initialState: SupplieState = {
@@ -11,13 +11,13 @@ export const supplieSlice = createSlice({
     name: 'Insumos',
     initialState: initialState,
     reducers: {
-        setSupplieActive: (state, action: PayloadAction<Supplie>) => {
+        setSupplieActive: (state, action: PayloadAction<SupplyType>) => {
             state.supplieActive = action.payload;
         },
         removeSupplieActive: (state) => {
             state.supplieActive = null
         },
-        loadSupplies: (state, action: PayloadAction<Supplie[]>) => {
+        loadSupplies: (state, action: PayloadAction<SupplyType[]>) => {
             state.supplies = action.payload;
         },
         removeSupplies: (state) => {

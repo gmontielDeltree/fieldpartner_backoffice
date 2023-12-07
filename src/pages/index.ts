@@ -10,4 +10,4 @@ export * from './CategoryPage';
 export * from './ListMovementPage';
 export * from './MovementPage';
 export * from './ListSuppliesPage';
-export * from './SuppliesPage';
+export * from './SuppliesTypePage';
