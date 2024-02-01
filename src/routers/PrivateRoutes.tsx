@@ -10,7 +10,10 @@ import {
   SettingsPage,
   ListCategory,
   CategoryPage,
+  // NewMovementPage,
 } from "../pages";
+ import NewMovementPage from "../pages/MovementList.tsx";
+ import  MovementList  from "../pages/MovementsPage.tsx";
 
 export const PrivateRoutes: React.FC = () => {
   return (
@@ -27,6 +30,9 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/categories" element={<ListCategory />} />
         <Route path="/category/new" element={<CategoryPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
+        <Route path="/typemovement" element={<NewMovementPage/>}/>
+        <Route path="/typemovement/new" element={<MovementList />} /> 
+
 
         <Route path="/*" element={<Navigate to="/home" />} />
       </Routes>

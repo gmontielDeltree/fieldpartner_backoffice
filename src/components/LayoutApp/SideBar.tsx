@@ -15,6 +15,7 @@ import {
   Group as GroupIcon,
   Person as PersonIcon,
   Category as CategoryIcon,
+  SyncAlt as SyncAltIcon,
 } from "@mui/icons-material";
 
 export interface SideBarProps {
@@ -87,6 +88,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <CategoryIcon />
               </ListItemIcon>
               <ListItemText primary="Categorías" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="Tipos Movimientos" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/typemovement"
+              selected={pathname.includes("typemovement")}
+            >
+              <ListItemIcon>
+                <SyncAltIcon />
+              </ListItemIcon>
+              <ListItemText primary="Tipos Movimientos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>

@@ -7,3 +7,4 @@ export * from './CustomerPage';
 export * from './UserPage';
 export * from './ListCategory';
 export * from './CategoryPage';
+export * from './MovementList';

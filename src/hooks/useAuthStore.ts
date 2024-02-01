@@ -109,30 +109,46 @@ export const useAuthStore = () => {
         }
     }
 
-    const checkAuthToken = async () => {
-        const token = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        const userSession = localStorage.getItem("user_session");
-        if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
+       const checkAuthToken = async () => {
 
-        dispatch(onChecking());
+        dispatch(onChecking())
         try {
-            // const { data } = await authApi.get('auth/renew');
-            const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
 
-            if (response.status === HttpStatusCode.Created) {
-                localStorage.setItem('accessToken', response.data.accessToken);
-                localStorage.setItem('token-init-date', new Date().getTime().toString());
-                const userLogin = JSON.parse(userSession || '') as User;
-                dispatch(onLogin(userLogin));
-            }
 
-            //TODO: obtener el usuario.
+            localStorage.setItem('accessToken',"" );
+            localStorage.setItem('token_expiration',"" );
+
+            dispatch(onLogin({isAdmin:true,username:"Rodrigo"}));
+
         } catch (error) {
             localStorage.clear();
             dispatch(onLogout(""));
         }
     }
+    // const checkAuthToken = async () => {
+    //     const token = localStorage.getItem('accessToken');
+    //     const refreshToken = localStorage.getItem('refreshToken');
+    //     const userSession = localStorage.getItem("user_session");
+    //     if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
+
+    //     dispatch(onChecking());
+    //     try {
+    //         // const { data } = await authApi.get('auth/renew');
+    //         const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
+
+    //         if (response.status === HttpStatusCode.Created) {
+    //             localStorage.setItem('accessToken', response.data.accessToken);
+    //             localStorage.setItem('token-init-date', new Date().getTime().toString());
+    //             const userLogin = JSON.parse(userSession || '') as User;
+    //             dispatch(onLogin(userLogin));
+    //         }
+
+    //         //TODO: obtener el usuario.
+    //     } catch (error) {
+    //         localStorage.clear();
+    //         dispatch(onLogout(""));
+    //     }
+    // }
 
     const startLogout = () => {
         localStorage.clear();
