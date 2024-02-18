@@ -10,6 +10,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import React from "react";
 import { useAppSelector, useAuthStore } from "../../hooks";
 import { Link as RouterLink } from "react-router-dom";
+import { capitalizeText } from "../../helpers";
 
 export interface NavBarProps {
   drawerWidth: number;
@@ -52,7 +53,7 @@ export const NavBar: React.FC = () => {
 
           <Box display="flex" alignItems="center">
             <Typography variant="body1" noWrap component="h5">
-              {user?.username}
+              {user && capitalizeText(user.firstName)}
             </Typography>
             <IconButton color="inherit" onClick={() => onClickLogout()}>
               <LogoutOutlined />

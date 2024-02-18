@@ -4,7 +4,7 @@ import { backofficeApi } from '../config';
 import { clearErrorMessage, finishLoading, onChecking, onLogin, onLogout, startLoading } from '../store';
 import { useAppSelector } from './useRedux';
 // import { UserLogin } from '@types';
-import {
+import axios, {
     AxiosError,
     HttpStatusCode
 } from 'axios';
@@ -36,13 +36,13 @@ export const useAuthStore = () => {
                 email, password
             });
             if (response.data) {
-                const { accessToken, refreshToken } = response.data.auth;
+                const { auth, user } = response.data;
+                const { accessToken, refreshToken } = auth;
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
                 localStorage.setItem('token_init_date', new Date().getTime().toString());
-                const { username, isAdmin } = response.data;
-                localStorage.setItem("user_session", JSON.stringify({ username, isAdmin }));
-                dispatch(onLogin({ username, isAdmin }));
+                localStorage.setItem("user_session", JSON.stringify(user));
+                dispatch(onLogin(user));
             }
             dispatch(finishLoading());
             dispatch(clearErrorMessage());
@@ -109,46 +109,63 @@ export const useAuthStore = () => {
         }
     }
 
-       const checkAuthToken = async () => {
+    
+    // const checkAuthToken = async () => {
+    //     const token = localStorage.getItem('accessToken');
+    //     const refreshToken = localStorage.getItem('refreshToken');
+    //     const userSession = localStorage.getItem("user_session");
+    
+    //     if (!token || !refreshToken || userSession) {
+    //         return dispatch(onLogout(""));
+    //     }
+    
+    //     dispatch(onChecking());
+    
+    //     try {
+    //         const response = await axios.post('/api/renew-token', { refreshToken });
+    
+    //         if (response.status === HttpStatusCode.Created) {
+    //             // Token renovado con éxito, actualiza el almacenamiento local y despacha la acción onLogin
+    //             localStorage.setItem('accessToken', response.data.accessToken);
+    //             dispatch(onLogin({
+    //                 isAdmin: true,
+    //                 firstName: "Rodrigo",
+    //                 id: '123',
+    //                 lastName: '123',
+    //                 accountId: '123'
+    //             }));
+    //         }
+    //     } catch (error) {
+    //         // Manejar errores durante la renovación del token
+    //         console.error("Error during token renewal:", error);
+    //         localStorage.clear();
+    //         dispatch(onLogout(""));
+    //     }
+    // };
+    const checkAuthToken = async () => {
+        const token = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        const userSession = localStorage.getItem("user_session");
+        if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
 
-        dispatch(onChecking())
+        dispatch(onChecking());
         try {
+            // const { data } = await authApi.get('auth/renew');
+            const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
 
+            if (response.status === HttpStatusCode.Created) {
+                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem('token-init-date', new Date().getTime().toString());
+                const userLogin = JSON.parse(userSession || '') as User;
+                dispatch(onLogin(userLogin));
+            }
 
-            localStorage.setItem('accessToken',"" );
-            localStorage.setItem('token_expiration',"" );
-
-            dispatch(onLogin({isAdmin:true,username:"Rodrigo"}));
-
+            //TODO: obtener el usuario.
         } catch (error) {
             localStorage.clear();
             dispatch(onLogout(""));
         }
     }
-    // const checkAuthToken = async () => {
-    //     const token = localStorage.getItem('accessToken');
-    //     const refreshToken = localStorage.getItem('refreshToken');
-    //     const userSession = localStorage.getItem("user_session");
-    //     if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
-
-    //     dispatch(onChecking());
-    //     try {
-    //         // const { data } = await authApi.get('auth/renew');
-    //         const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
-
-    //         if (response.status === HttpStatusCode.Created) {
-    //             localStorage.setItem('accessToken', response.data.accessToken);
-    //             localStorage.setItem('token-init-date', new Date().getTime().toString());
-    //             const userLogin = JSON.parse(userSession || '') as User;
-    //             dispatch(onLogin(userLogin));
-    //         }
-
-    //         //TODO: obtener el usuario.
-    //     } catch (error) {
-    //         localStorage.clear();
-    //         dispatch(onLogout(""));
-    //     }
-    // }
 
     const startLogout = () => {
         localStorage.clear();

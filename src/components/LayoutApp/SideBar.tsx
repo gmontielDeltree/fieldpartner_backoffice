@@ -16,7 +16,12 @@ import {
   Person as PersonIcon,
   Category as CategoryIcon,
   SyncAlt as SyncAltIcon,
+  Inventory as InventoryIcon,
+  Yard as YardIcon
 } from "@mui/icons-material";
+
+
+
 
 export interface SideBarProps {
   drawerWidth: number;
@@ -93,13 +98,37 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
           <ListItem key="Tipos Movimientos" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/typemovement"
-              selected={pathname.includes("typemovement")}
+              to="/type-movement"
+              selected={pathname.includes("type-movement")}
             >
               <ListItemIcon>
                 <SyncAltIcon />
               </ListItemIcon>
               <ListItemText primary="Tipos Movimientos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="Tipos Insumos" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/type-supplies"
+              selected={pathname.includes("type-supplies")}
+            >
+              <ListItemIcon>
+                <InventoryIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Tipos Insumos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="Cultivos" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/crops"
+              selected={pathname.includes("crops")}
+            >
+              <ListItemIcon>
+                <YardIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Cultivos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>

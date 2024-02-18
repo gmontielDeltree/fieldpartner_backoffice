@@ -10,10 +10,16 @@ import {
   SettingsPage,
   ListCategory,
   CategoryPage,
-  // NewMovementPage,
+  ListMovementPage,
+  MovementPage,
+  ListSuppliesPage,
+  SuppliesTypePage,
+  ListCropsPage,
+  NewCropsPage
 } from "../pages";
- import NewMovementPage from "../pages/MovementList.tsx";
- import  MovementList  from "../pages/MovementsPage.tsx";
+//  import NewMovementPage from "../pages/MovementList.tsx";
+//  import  MovementList  from "../pages/MovementsPage.tsx";
+
 
 export const PrivateRoutes: React.FC = () => {
   return (
@@ -30,8 +36,15 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/categories" element={<ListCategory />} />
         <Route path="/category/new" element={<CategoryPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
-        <Route path="/typemovement" element={<NewMovementPage/>}/>
-        <Route path="/typemovement/new" element={<MovementList />} /> 
+        <Route path="/type-movement" element={<ListMovementPage/>}/>
+        <Route path="/type-movement/new" element={<MovementPage />} /> 
+        <Route path="/type-movement/:id" element={<MovementPage />} /> 
+        <Route path="/type-supplies" element={< ListSuppliesPage/>}/>
+        <Route path="/type-supplies/new" element={<SuppliesTypePage />} /> 
+        <Route path="/type-supplies/:id" element={<SuppliesTypePage />} />
+        <Route path="/crops" element={<ListCropsPage/>}/> 
+        <Route path="/crops/new" element={<NewCropsPage/>}/> 
+
 
 
         <Route path="/*" element={<Navigate to="/home" />} />

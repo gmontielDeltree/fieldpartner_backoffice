@@ -23,7 +23,7 @@ export const AppRouter: React.FC = () => {
     <Routes>
 
       {
-        (status === 'authenticated')
+        (status === 'not-authenticated')
           ? <Route path="/*" element={<PrivateRoutes />} />
           : <Route path="/auth/*" element={<PublicRoutes />} />
       }
@@ -32,6 +32,8 @@ export const AppRouter: React.FC = () => {
           ? (<PublicRoutes />)
           : (<PrivateRoutes />)
       } */}
+
+      
 
       <Route path='/*' element={<Navigate to='/auth/login' />} />
     </Routes>
