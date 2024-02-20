@@ -7,6 +7,7 @@ import { userSlice } from './user';
 import { categorySlice } from './category';
 import { movementSlice } from './movements';
 import { supplieSlice } from './supplie';
+import { cropsSlice } from './crops';
 
 export const store = configureStore({
     reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
         category: categorySlice.reducer,
         movement: movementSlice.reducer,
         supplie: supplieSlice.reducer,
+        crop: cropsSlice.reducer,
     },
 });
 

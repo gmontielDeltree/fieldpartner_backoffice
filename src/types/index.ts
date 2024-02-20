@@ -119,6 +119,20 @@ export interface Movement extends Document {
     typeMovement: string;
 }
 
+export interface Crops extends Document {
+    crop: string
+    descriptionES: string;
+    descriptionPT:string;
+    descriptionEN:string;
+    cropType: string
+    cropVariety: string
+    prepared: boolean;
+    sowing: boolean;
+    application: boolean;
+    germination: boolean;
+    harvest: boolean;
+}
+
 export interface NavBarProps {
     drawerWidth: number;
     open: boolean;

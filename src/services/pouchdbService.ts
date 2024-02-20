@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find'
 import { getEnvVariables } from '../helpers/getEnvVariables';
-import { Category, Movement, SupplyType } from '../types';
+import { Category, Crops, Movement, SupplyType } from '../types';
 
 PouchDB.plugin(PouchDBFind);
 
@@ -12,6 +12,7 @@ const dbNames = Object.freeze({
     categories: "categories",
     movements: "movements",
     supply_type: "supply_type",
+    crops:"crops",
 });
 
 
@@ -19,6 +20,7 @@ export const dbContext = Object.freeze({
     categories: new PouchDB<Category>(dbNames.categories),
     movements: new PouchDB<Movement>(dbNames.movements),
     supply_type: new PouchDB<SupplyType>(dbNames.supply_type),
+    crops: new PouchDB<Crops>(dbNames.crops),
 
 });
 
@@ -27,3 +29,5 @@ dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`, { live: tr
 dbContext.movements.sync(`${remoteCouchDBUrl}${dbNames.movements}`, { live: true, retry: true, });
 
 dbContext.supply_type.sync(`${remoteCouchDBUrl}${dbNames.supply_type}`, { live: true, retry: true, });
+
+dbContext.crops.sync(`${remoteCouchDBUrl}${dbNames.crops}`, { live: true, retry: true, });

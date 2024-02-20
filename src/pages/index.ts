@@ -11,3 +11,5 @@ export * from './ListMovementPage';
 export * from './MovementPage';
 export * from './ListSuppliesPage';
 export * from './SuppliesTypePage';
+export * from './ListCropsPage';
+export * from './NewCropsPage';

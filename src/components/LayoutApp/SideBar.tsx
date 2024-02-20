@@ -16,8 +16,11 @@ import {
   Person as PersonIcon,
   Category as CategoryIcon,
   SyncAlt as SyncAltIcon,
-  Inventory as InventoryIcon
+  Inventory as InventoryIcon,
+  Yard as YardIcon
 } from "@mui/icons-material";
+
+
 
 
 export interface SideBarProps {
@@ -114,6 +117,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <InventoryIcon/>
               </ListItemIcon>
               <ListItemText primary="Tipos Insumos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="Cultivos" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/crops"
+              selected={pathname.includes("crops")}
+            >
+              <ListItemIcon>
+                <YardIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Cultivos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>
