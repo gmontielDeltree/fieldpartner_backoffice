@@ -4,7 +4,7 @@ import { backofficeApi } from '../config';
 import { clearErrorMessage, finishLoading, onChecking, onLogin, onLogout, startLoading } from '../store';
 import { useAppSelector } from './useRedux';
 // import { UserLogin } from '@types';
-import axios, {
+import {
     AxiosError,
     HttpStatusCode
 } from 'axios';
@@ -109,39 +109,22 @@ export const useAuthStore = () => {
         }
     }
 
-    
-    // const checkAuthToken = async () => {
-    //     const token = localStorage.getItem('accessToken');
-    //     const refreshToken = localStorage.getItem('refreshToken');
-    //     const userSession = localStorage.getItem("user_session");
-    
-    //     if (!token || !refreshToken || userSession) {
-    //         return dispatch(onLogout(""));
-    //     }
-    
-    //     dispatch(onChecking());
-    
+    //    const checkAuthToken = async () => {
+
+    //     dispatch(onChecking())
     //     try {
-    //         const response = await axios.post('/api/renew-token', { refreshToken });
-    
-    //         if (response.status === HttpStatusCode.Created) {
-    //             // Token renovado con éxito, actualiza el almacenamiento local y despacha la acción onLogin
-    //             localStorage.setItem('accessToken', response.data.accessToken);
-    //             dispatch(onLogin({
-    //                 isAdmin: true,
-    //                 firstName: "Rodrigo",
-    //                 id: '123',
-    //                 lastName: '123',
-    //                 accountId: '123'
-    //             }));
-    //         }
+
+
+    //         localStorage.setItem('accessToken',"" );
+    //         localStorage.setItem('token_expiration',"" );
+
+    //         dispatch(onLogin({isAdmin:true,username:"Rodrigo"}));
+
     //     } catch (error) {
-    //         // Manejar errores durante la renovación del token
-    //         console.error("Error during token renewal:", error);
     //         localStorage.clear();
     //         dispatch(onLogout(""));
     //     }
-    // };
+    // }
     const checkAuthToken = async () => {
         const token = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
