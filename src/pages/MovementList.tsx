@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Movement } from '../types';
 import {
   Box,
   Button,
   Container,
   Grid,
-  InputAdornment,
   Paper,
   TextField,
   Typography,
@@ -14,7 +14,6 @@ import {
   Radio,
   RadioGroup,
   FormControl,
-  FormLabel,
 } from "@mui/material";
 import {
   SyncAlt as SyncAltIcon,
@@ -24,8 +23,8 @@ import {
 
 
 const NewMovementPage = () => {
-  const [movements, setMovements] = useState([]);
-  const [newMovement, setNewMovement] = useState({
+  const [movements, setMovements] = useState<Movement[]>([]);
+  const [newMovement, setNewMovement] = useState<Movement>({
     concepto: "",
     manual: false,
     sumaStock: false,
@@ -51,19 +50,19 @@ const NewMovementPage = () => {
     });
   };
 
-  const handleAddMovement = () => {
-    if (newMovement.concepto.trim() !== "") {
-      setMovements([...movements, newMovement]);
-      setNewMovement({
-        concepto: "",
-        manual: false,
-        sumaStock: false,
-      });
-      setConceptoError(false);
-    } else {
-      setConceptoError(true);
-    }
-  };
+  // const handleAddMovement = () => {
+  //   if (newMovement.concepto.trim() !== "") {
+  //     setMovements([...movements, newMovement]);
+  //     setNewMovement({
+  //       concepto: "",
+  //       manual: false,
+  //       sumaStock: false,
+  //     });
+  //     setConceptoError(false);
+  //   } else {
+  //     setConceptoError(true);
+  //   }
+  // };
 
   const handleDeleteMovement = (index) => {
     const updatedMovements = movements.filter((_, i) => i !== index);
@@ -74,11 +73,11 @@ const NewMovementPage = () => {
     const filteredMovements = movements.filter(movement => {
       return movement.concepto.toLowerCase().includes(searchTerm.toLowerCase());
     });
-  
+
     if (filteredMovements.length > 0) {
       setMovements(filteredMovements);
     } else {
-      
+
       alert("No hay coincidencias.");
     }
   };
@@ -195,14 +194,14 @@ const NewMovementPage = () => {
                 </div>
               ) : (
                 <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                to="/typemovement/new"
-                startIcon={<AddIcon />}
-              >
-                Agregar Movimiento
-              </Button>
+                  variant="contained"
+                  color="primary"
+                  component={RouterLink}
+                  to="/typemovement/new"
+                  startIcon={<AddIcon />}
+                >
+                  Agregar Movimiento
+                </Button>
               )}
             </Grid>
             <Grid item xs={12} sm={6} style={{ position: "absolute", top: 0, right: 0 }}>
@@ -211,7 +210,7 @@ const NewMovementPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 variant="outlined"
-                size="small" 
+                size="small"
               />
               <Button
                 variant="contained"
