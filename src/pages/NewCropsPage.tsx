@@ -729,7 +729,7 @@ export const NewCropsPage: React.FC = () => {
           <Autocomplete
                   options={cropTypes}
                   value={cropType} 
-                  onChange={(event, newValue) => {
+                  onChange={(_event, newValue) => {
                     if (newValue !== null) {
                       const selectedValue = newValue !== null ? newValue : ''; // Maneja el caso en que newValue sea null
                       setFormulario({ ...formulario, cropType: selectedValue });
