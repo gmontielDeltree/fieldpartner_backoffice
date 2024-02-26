@@ -1,6 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Movement } from '../types';
 import {
   Box,
   Button,
@@ -15,26 +14,25 @@ import {
   RadioGroup,
   FormControl,
 } from "@mui/material";
-import {
-  SyncAlt as SyncAltIcon,
-  Search as SearchIcon,
-  Add as AddIcon,
-} from "@mui/icons-material";
+import { SyncAlt as SyncAltIcon, Add as AddIcon } from "@mui/icons-material";
+import { Movement } from "../types";
 
-
-const NewMovementPage = () => {
+export const NewMovementPage = () => {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [newMovement, setNewMovement] = useState<Movement>({
     concepto: "",
-    manual: false,
-    sumaStock: false,
+  manual: false,
+  sumaStock: "both",
+  name: "", // Propiedad faltante
+  description: "", // Propiedad faltante
+  typeMovement: "", // Propiedad faltante
   });
   const [conceptoError, setConceptoError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingMode, setEditingMode] = useState(false);
-  const [editedIndex, setEditedIndex] = useState(null);
+  const [editedIndex, setEditedIndex] = useState<number | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewMovement({
       ...newMovement,
@@ -42,7 +40,7 @@ const NewMovementPage = () => {
     });
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setNewMovement({
       ...newMovement,
@@ -50,52 +48,31 @@ const NewMovementPage = () => {
     });
   };
 
-  // const handleAddMovement = () => {
-  //   if (newMovement.concepto.trim() !== "") {
-  //     setMovements([...movements, newMovement]);
-  //     setNewMovement({
-  //       concepto: "",
-  //       manual: false,
-  //       sumaStock: false,
-  //     });
-  //     setConceptoError(false);
-  //   } else {
-  //     setConceptoError(true);
-  //   }
-  // };
-
-  const handleDeleteMovement = (index) => {
-    const updatedMovements = movements.filter((_, i) => i !== index);
-    setMovements(updatedMovements);
-  };
-
-  const handleSearch = () => {
-    const filteredMovements = movements.filter(movement => {
-      return movement.concepto.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-
-    if (filteredMovements.length > 0) {
-      setMovements(filteredMovements);
-    } else {
-
-      alert("No hay coincidencias.");
-    }
-  };
-
-  const handleEditMovement = (index) => {
+  const handleEditMovement = (index: number) => {
     const editedMovement = movements[index];
-    setNewMovement(editedMovement);
+    setNewMovement((prevMovement) => ({
+      ...prevMovement,
+      concepto: editedMovement.concepto,
+      manual: editedMovement.manual,
+      sumaStock: editedMovement.sumaStock,
+      name: prevMovement.name, // Agrega las propiedades faltantes
+      description: prevMovement.description, // Agrega las propiedades faltantes
+      typeMovement: prevMovement.typeMovement, // Agrega las propiedades faltantes
+    }));
     setMovements(movements.filter((_, i) => i !== index));
     setEditingMode(true);
     setEditedIndex(index);
   };
 
   const handleCancelEdit = () => {
-    setMovements([...movements.slice(0, editedIndex), newMovement, ...movements.slice(editedIndex)]);
+    setMovements([...movements.slice(0, editedIndex ?? 0), newMovement, ...movements.slice((editedIndex ?? 0) + 1)]);
     setNewMovement({
       concepto: "",
       manual: false,
-      sumaStock: false,
+      sumaStock: "both",
+      name: "", // Agregar propiedad name con un valor vacío o adecuado
+      description: "", // Agregar propiedad description con un valor vacío o adecuado
+      typeMovement: "", // Agregar propiedad typeMovement con un valor vacío o adecuado
     });
     setConceptoError(false);
     setEditingMode(false);
@@ -103,15 +80,22 @@ const NewMovementPage = () => {
   };
 
   const handleSaveEdit = () => {
-    setMovements([...movements.slice(0, editedIndex), newMovement, ...movements.slice(editedIndex)]);
+    setMovements([...movements.slice(0, editedIndex ?? 0), newMovement, ...movements.slice((editedIndex ?? 0) + 1)]);
     setNewMovement({
       concepto: "",
       manual: false,
-      sumaStock: false,
+      sumaStock: "both",
+      name: "", // Agregar propiedad name con un valor vacío o adecuado
+      description: "", // Agregar propiedad description con un valor vacío o adecuado
+      typeMovement: "", // Agregar propiedad typeMovement con un valor vacío o adecuado
     });
     setConceptoError(false);
     setEditingMode(false);
     setEditedIndex(null);
+  };
+  const handleDeleteMovement = (index: number) => {
+    const updatedMovements = movements.filter((_, i) => i !== index);
+    setMovements(updatedMovements);
   };
 
   return (
@@ -210,9 +194,9 @@ const NewMovementPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 variant="outlined"
-                size="small"
+                size="small" 
               />
-              <Button
+              {/* <Button
                 variant="contained"
                 color="primary"
                 startIcon={<SearchIcon />}
@@ -220,7 +204,7 @@ const NewMovementPage = () => {
                 style={{ marginLeft: "0.5rem" }}
               >
                 Buscar
-              </Button>
+              </Button> */}
             </Grid>
           </Grid>
         </Box>
@@ -300,5 +284,3 @@ const NewMovementPage = () => {
     </Container>
   );
 };
-
-export default NewMovementPage;

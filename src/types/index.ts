@@ -113,10 +113,11 @@ export interface SupplieState {
 }
 export interface Movement extends Document {
     manual: boolean;
-    stockOperation: string;
+    sumaStock: "both" | "suma" | "descuenta";
     name: string;
     description: string;
     typeMovement: string;
+    concepto: string;
 }
 
 export interface Crops extends Document {
