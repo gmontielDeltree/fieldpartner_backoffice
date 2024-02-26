@@ -731,7 +731,7 @@ export const NewCropsPage: React.FC = () => {
                 onChange={(event, newValue) => {
                   if (newValue) {
                     handleInputChange(event);
-                    setFormulario({ ...formulario, cropType: newValue });
+                    setFormulario({ ...formulario, cropType: newValue ?? "" });
                     setSelectedCrop(newValue); // Aquí estableces el cultivo seleccionado
                   }
                 }}
