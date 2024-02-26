@@ -26,8 +26,9 @@ const initialForm: Movement = {
   name: "",
   description: "",
   manual: false,
-  stockOperation: "suma",
-  typeMovement: "manual", 
+  sumaStock: "suma",
+  typeMovement: "manual",
+  concepto: ""
 };
 
 
@@ -36,13 +37,13 @@ export const MovementPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { movementActive } = useAppSelector((state) => state.movement);
 
-  const handleSwitchChange = () =>{setFormulario((prevFormulario)=>({...prevFormulario, manual : !prevFormulario.manual,}))}
+  const handleSwitchChange = () => { setFormulario((prevFormulario) => ({ ...prevFormulario, manual: !prevFormulario.manual, })) }
 
   const {
     name,
     description,
     manual,
-    stockOperation,
+    sumaStock,
     formulario,
     setFormulario,
     handleInputChange,
@@ -54,9 +55,9 @@ export const MovementPage: React.FC = () => {
   const handleAddMovement = () => {
     createMovement({
       ...formulario,
-     manual ,
+      manual,
     });
-    
+
 
     reset();
   };
@@ -77,22 +78,22 @@ export const MovementPage: React.FC = () => {
   useEffect(() => {
     if (movementActive) setFormulario(movementActive);
     else setFormulario(initialForm);
-    
+
   }, [movementActive, setFormulario, dispatch]);
 
   useEffect(() => {
-    
+
     return () => {
       dispatch(removeMovementActive());
     };
   }, [dispatch])
-  
+
 
   return (
     <>
       <Loading key="New movement" loading={isLoading} />
       <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box 
+        <Box
           component="div"
           display="flex"
           alignItems="center"
@@ -103,7 +104,7 @@ export const MovementPage: React.FC = () => {
             Tipos Movimientos Insumos
           </Typography>
         </Box>
-  
+
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center" sx={{ my: 3, mb: 5 }}>
             {movementActive ? "Editar" : "Nuevo"} Movimiento
@@ -157,7 +158,7 @@ export const MovementPage: React.FC = () => {
                   row
                   aria-label="stockOperation"
                   name="stockOperation"
-                  value={stockOperation}
+                  value={sumaStock}
                   onChange={handleInputChange}
                 >
                   <FormControlLabel
