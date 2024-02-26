@@ -157,7 +157,7 @@ export const ListMovementPage: React.FC = () => {
                     {row.manual ? "Manual" : "Automático"}
                   </TableCellStyled>
                   <TableCellStyled align="center">
-                    {row.stockOperation}
+                    {row.sumaStock}
                   </TableCellStyled>
                   <TableCellStyled align="right">
                     <Tooltip title="Editar">

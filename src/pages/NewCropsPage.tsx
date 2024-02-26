@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector, useCrops, useForm } from "../hooks";
 import { Crops } from "../types";
 import { removeCropsActive } from "../store/crops";
 
+
 const initialForm: Crops = {
   crop: "",
   descriptionES: "",
@@ -34,7 +35,7 @@ const initialForm: Crops = {
   sowing: false,
   application: false,
   germination: false,
-  harvest: false
+  harvest: false,
 };
 
 export const NewCropsPage: React.FC = () => {
@@ -699,110 +700,110 @@ export const NewCropsPage: React.FC = () => {
             {cropsActive ? "Editar" : "Nuevo"} Cultivo
           </Typography>
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="Cultivos">Cultivos</InputLabel>
-                <Select
-                  labelId="cropVariety"
-                  name="cropVariety"
-                  value={cropVariety}
-                  label="Cultivos"
-                  onChange={(event: SelectChangeEvent<string>) => {
-                    const selectedCrop = event.target.value || "";
-                    setSelectedCrop(selectedCrop); // Aquí estableces el cultivo seleccionado
-                    const cropDescription = obtenerDescripcion(selectedCrop);
-                    const cropDescriptionPT = obtenerDescripcionPT(selectedCrop);
-                    const cropDescriptionEN = obtenerDescripcionEN(selectedCrop);
-                    setFormulario({ ...formulario, cropVariety: selectedCrop, descriptionES: cropDescription, descriptionPT: cropDescriptionPT, descriptionEN: cropDescriptionEN });
+          <Grid item xs={12} sm={6}> 
+            <FormControl fullWidth>
+              <InputLabel id="Cultivos">Cultivos</InputLabel>
+              <Select
+                labelId="cropVariety"
+                name="cropVariety"
+                value={cropVariety}
+                label="Cultivos"
+                onChange={(event: SelectChangeEvent<string>) => {
+                  const selectedCrop = event.target.value || "";
+                  setSelectedCrop(selectedCrop); // Aquí estableces el cultivo seleccionado
+                  const cropDescription = obtenerDescripcion(selectedCrop);
+                  const cropDescriptionPT = obtenerDescripcionPT(selectedCrop);
+                  const cropDescriptionEN = obtenerDescripcionEN(selectedCrop);
+                  setFormulario({ ...formulario, cropVariety: selectedCrop, descriptionES: cropDescription, descriptionPT: cropDescriptionPT, descriptionEN: cropDescriptionEN });
+                }}
+              >
+                {cropVarieties.map((cropType) => (
+                  <MenuItem key={cropType} value={cropType}>
+                    {cropType}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}> 
+          <Autocomplete
+                  options={cropTypes}
+                  value={cropType} 
+                  onChange={(_event, newValue) => {
+                    if (newValue !== null) {
+                      const selectedValue = newValue !== null ? newValue : ''; // Maneja el caso en que newValue sea null
+                      setFormulario({ ...formulario, cropType: selectedValue });
+                      setSelectedCrop(selectedValue); // Aquí estableces el cultivo seleccionado
+                    }
                   }}
-                >
-                  {cropVarieties.map((cropType) => (
-                    <MenuItem key={cropType} value={cropType}>
-                      {cropType}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  getOptionLabel={(option) => option}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Tipo de Cultivo"
+                      variant="outlined"
+                      name="cropType"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: <InputAdornment position="start" />,
+                      }}
+                      fullWidth
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Autocomplete
-                options={cropTypes}
-                value={cropType}
-                onChange={(event, newValue) => {
-                  if (newValue) {
-                    handleInputChange(event);
-                    setFormulario({ ...formulario, cropType: newValue });
-                    setSelectedCrop(newValue); // Aquí estableces el cultivo seleccionado
-                  }
+              <TextField
+                label="Descripción ES"
+                variant="outlined"
+                type="text"
+                name="descriptionES"
+                value={descriptionES}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: 20 }} 
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
                 }}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Tipo de Cultivo"
-                    variant="outlined"
-                    name="cropType"
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth
-                  />
-                )}
+                fullWidth
+                sx={{ mt: 2, width: '50%' }} 
               />
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Descripción ES"
-              variant="outlined"
-              type="text"
-              name="descriptionES"
-              value={descriptionES}
-              onChange={handleInputChange}
-              inputProps={{ maxLength: 20 }}
-              InputProps={{
-                startAdornment: <InputAdornment position="start" />,
-              }}
-              fullWidth
-              sx={{ mt: 2, width: '50%' }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Descripción PT"
-              variant="outlined"
-              type="text"
-              name="descriptionPT"
-              value={descriptionPT}
-              onChange={handleInputChange}
-              inputProps={{ maxLength: 20 }}
-              InputProps={{
-                startAdornment: <InputAdornment position="start" />,
-              }}
-              fullWidth
-              sx={{ mt: 2, width: '50%' }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Descripción EN"
-              variant="outlined"
-              type="text"
-              name="descriptionEN"
-              value={descriptionEN}
-              onChange={handleInputChange}
-              inputProps={{ maxLength: 20 }}
-              InputProps={{
-                startAdornment: <InputAdornment position="start" />,
-              }}
-              fullWidth
-              sx={{ mt: 2, width: '50%' }}
-            />
-          </Grid>
-          <Grid></Grid>
-          <Grid item xs={12} sx={{ height: '20px' }} />
-          <Box>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Descripción PT"
+                variant="outlined"
+                type="text"
+                name="descriptionPT"
+                value={descriptionPT}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: 20 }} 
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+                sx={{ mt: 2, width: '50%' }} 
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Descripción EN"
+                variant="outlined"
+                type="text"
+                name="descriptionEN"
+                value={descriptionEN}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: 20 }} 
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+                sx={{ mt: 2, width: '50%' }} 
+              />
+            </Grid>
+            <Grid></Grid>
+            <Grid item xs={12} sx={{ height: '20px' }} />
+            <Box>
             <Typography component="h4" variant="h4" align="center" sx={{ my: 1, mb: 5 }}>
               Labores que aplica
             </Typography>
