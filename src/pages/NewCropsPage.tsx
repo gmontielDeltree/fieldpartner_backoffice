@@ -726,28 +726,30 @@ const obtenerTipoCultivo = (selectedCrop: string) => {
           </Grid>
           <Grid item xs={12} sm={6}> 
           <Autocomplete
-                  options={cropTypes}
-                  value={cropType} 
-                  onChange={(event, newValue) => {
-                    handleInputChange(event); 
-                    setFormulario({ ...formulario, cropType: newValue });
-                    setSelectedCrop(newValue); // Aquí estableces el cultivo seleccionado
-                  }}
-                  getOptionLabel={(option) => option}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Tipo de Cultivo"
-                      variant="outlined"
-                      name="cropType"
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: <InputAdornment position="start" />,
-                      }}
-                      fullWidth
-                    />
-                  )}
-                />
+                    options={cropTypes}
+                    value={cropType} 
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) {
+                        const selectedValue = newValue !== null ? newValue : ''; 
+                        setFormulario({ ...formulario, cropType: selectedValue });
+                        setSelectedCrop(selectedValue); 
+                      }
+                    }}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Tipo de Cultivo"
+                        variant="outlined"
+                        name="cropType"
+                        InputProps={{
+                          ...params.InputProps,
+                          startAdornment: <InputAdornment position="start" />,
+                        }}
+                        fullWidth
+                      />
+                    )}
+                  />
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6}>
