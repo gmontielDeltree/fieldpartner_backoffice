@@ -25,17 +25,17 @@ import { removeCropsActive  } from "../store/crops";
 
 
 const initialForm: Crops = {
-    crop: "",
-    descriptionES: "",
-    descriptionPT : "",
-    descriptionEN: "",
-    cropType: "",
-    cropVariety: "",
-    prepared: false,
-    sowing: false,
-    application: false,
-    germination: false,
-    harvest: false
+  crop: "",
+  descriptionES: "",
+  descriptionPT: "",
+  descriptionEN: "",
+  cropType: "",
+  cropVariety: "",
+  prepared: false,
+  sowing: false,
+  application: false,
+  germination: false,
+  harvest: false,
 };
 
 export const NewCropsPage: React.FC = () => {
@@ -300,13 +300,13 @@ export const NewCropsPage: React.FC = () => {
               <Button
                 variant="contained"
                 color="primary"
-              onClick={cropsActive ? handleUpdateCrops : handleAddCrops}
+                onClick={cropsActive ? handleUpdateCrops : handleAddCrops}
               // fullWidth
-            >
-              {!cropsActive ? "Guardar" : "Actualizar"}
-            </Button>
+              >
+                {!cropsActive ? "Guardar" : "Actualizar"}
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
         </Paper>
       </Container>
     </>
