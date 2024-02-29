@@ -18,11 +18,11 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  TableContainer,
+  Paper
 } from "@mui/material";
-import { setCropsACtive } from "../store/crops"; 
+import { setCropsACtive } from "../store/crops";
 
-// import 'semantic-ui-css/semantic.min.css';
-// import {Icon} from "semantic-ui-react";
 
 import {
   Add as AddIcon,
@@ -33,8 +33,10 @@ import {
 
 
 const columns: ColumnProps[] = [
-  { text: "Cultivo", align: "left" },
-  { text: "Descripcion", align: "center" },
+  { text: "Nombre", align: "left" },
+  { text: "Descripcion PT", align: "center" },
+  { text: "Descripcion EN", align: "center" },
+  { text: "Tipo", align: "center" },
 ];
 
 export const ListCropsPage: React.FC = () => {
@@ -51,17 +53,10 @@ export const ListCropsPage: React.FC = () => {
       return;
     }
 
-    //TODO: revisar filtro
-    // const filteredDeposits = deposits.filter(({ descripcion, propietario }) => {
-    //   (descripcion &&
-    //     descripcion.toLowerCase().includes(filterText.toLowerCase())) ||
-    //     (propietario &&
-    //       propietario.toLowerCase().includes(filterText.toLowerCase()));
-    // });
-    // setDeposits(filteredDeposits);
   };
 
   const onClickUpdateCrops = (item: Crops) => {
+    console.log("Item ID:", item._id);
     dispatch(setCropsACtive(item));
     navigate(`/crops/${item._id}`);
   };
@@ -88,7 +83,7 @@ export const ListCropsPage: React.FC = () => {
           alignItems="center"
           sx={{ ml: { sm: 2 }, pt: 2 }}
         >
-          <YardIcon/>
+          <YardIcon />
           <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
             Cultivos
           </Typography>
@@ -129,39 +124,54 @@ export const ListCropsPage: React.FC = () => {
             </Grid>
           </Grid>
           <Box component="div" sx={{ p: 1 }}>
-            <DataTable
-              key="datatable-crops"
-              columns={columns}
-              isLoading={isLoading}
-            >
-              {crops.map((row) => (
-                <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.cropVariety}</TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.descriptionES}
-                  </TableCellStyled>
-                  <TableCellStyled align="right">
-                    <Tooltip title="Editar">
-                      <IconButton
-                        aria-label="Editar"
-                        onClick={() => onClickUpdateCrops(row)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Eliminar">
-                      <IconButton
-                        onClick={() => handleDeleteCrops(row)}
-                        style={{ fontSize: '1rem' }}
-                        color="default"
-                      >
-                        <DeleteIcon name="trash alternate" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCellStyled>
-                </ItemRow>
-              ))}
-            </DataTable>
+            <TableContainer
+              key="table-crops"
+              sx={{
+                minHeight: "120px",
+                maxHeight: "540px",
+                overflow: "scroll",
+                mb: 5
+              }}
+              component={Paper}>
+
+              <DataTable
+                key="datatable-crops"
+                columns={columns}
+                isLoading={isLoading}
+              >
+                {crops.map((row) => (
+                  <ItemRow key={row._id} hover>
+                    <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
+                    <TableCellStyled align="center">
+                      {row.descriptionPT}
+                    </TableCellStyled>
+                    <TableCellStyled align="center">
+                      {row.descriptionEN}
+                    </TableCellStyled>
+                    <TableCellStyled align="center">{row.cropType}</TableCellStyled>
+                    <TableCellStyled align="right">
+                      <Tooltip title="Editar">
+                        <IconButton
+                          aria-label="Editar"
+                          onClick={() => onClickUpdateCrops(row)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Eliminar">
+                        <IconButton
+                          onClick={() => handleDeleteCrops(row)}
+                          style={{ fontSize: '1rem' }}
+                          color="default"
+                        >
+                          <DeleteIcon name="trash alternate" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCellStyled>
+                  </ItemRow>
+                ))}
+              </DataTable>
+            </TableContainer>
           </Box>
         </Box>
       </Container>
