@@ -21,8 +21,6 @@ import {
 } from "@mui/material";
 import { setCropsACtive } from "../store/crops"; 
 
-// import 'semantic-ui-css/semantic.min.css';
-// import {Icon} from "semantic-ui-react";
 
 import {
   Add as AddIcon,
@@ -33,8 +31,10 @@ import {
 
 
 const columns: ColumnProps[] = [
-  { text: "Cultivo", align: "left" },
-  { text: "Descripcion", align: "center" },
+  { text: "Nombre", align: "left" },
+  { text: "Descripcion PT", align: "center" },
+  { text: "Descripcion EN", align: "center" },
+  { text: "Tipo", align: "center" },
 ];
 
 export const ListCropsPage: React.FC = () => {
@@ -51,17 +51,10 @@ export const ListCropsPage: React.FC = () => {
       return;
     }
 
-    //TODO: revisar filtro
-    // const filteredDeposits = deposits.filter(({ descripcion, propietario }) => {
-    //   (descripcion &&
-    //     descripcion.toLowerCase().includes(filterText.toLowerCase())) ||
-    //     (propietario &&
-    //       propietario.toLowerCase().includes(filterText.toLowerCase()));
-    // });
-    // setDeposits(filteredDeposits);
   };
 
   const onClickUpdateCrops = (item: Crops) => {
+    console.log("Item ID:", item._id); 
     dispatch(setCropsACtive(item));
     navigate(`/crops/${item._id}`);
   };
@@ -136,10 +129,14 @@ export const ListCropsPage: React.FC = () => {
             >
               {crops.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.cropVariety}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
                   <TableCellStyled align="center">
-                    {row.descriptionES}
+                    {row.descriptionPT}
                   </TableCellStyled>
+                  <TableCellStyled align="center">
+                    {row.descriptionEN}
+                  </TableCellStyled>
+                  <TableCellStyled align="center">{row.cropType}</TableCellStyled>
                   <TableCellStyled align="right">
                     <Tooltip title="Editar">
                       <IconButton
