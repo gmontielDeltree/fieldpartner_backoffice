@@ -10,7 +10,7 @@ const remoteCouchDBUrl = Object.freeze(getEnvVariables().VITE_COUCHDB_URL);
 
 const dbNames = Object.freeze({
     categories: "categories",
-    movements: "movements",
+    movementsType: "movements-type",
     supply_type: "supply_type",
     crops:"crops",
 });
@@ -18,7 +18,7 @@ const dbNames = Object.freeze({
 
 export const dbContext = Object.freeze({
     categories: new PouchDB<Category>(dbNames.categories),
-    movements: new PouchDB<Movement>(dbNames.movements),
+    movementsType: new PouchDB<Movement>(dbNames.movementsType),
     supply_type: new PouchDB<SupplyType>(dbNames.supply_type),
     crops: new PouchDB<Crops>(dbNames.crops),
 
@@ -26,7 +26,7 @@ export const dbContext = Object.freeze({
 
 dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`, { live: true, retry: true, });
 
-dbContext.movements.sync(`${remoteCouchDBUrl}${dbNames.movements}`, { live: true, retry: true, });
+dbContext.movementsType.sync(`${remoteCouchDBUrl}${dbNames.movementsType}`, { live: true, retry: true, });
 
 dbContext.supply_type.sync(`${remoteCouchDBUrl}${dbNames.supply_type}`, { live: true, retry: true, });
 
