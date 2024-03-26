@@ -57,8 +57,6 @@ export const MovementPage: React.FC = () => {
       ...formulario,
       manual,
     });
-
-
     reset();
   };
 
@@ -157,7 +155,7 @@ export const MovementPage: React.FC = () => {
                 <RadioGroup
                   row
                   aria-label="stockOperation"
-                  name="stockOperation"
+                  name="sumaStock"
                   value={sumaStock}
                   onChange={handleInputChange}
                 >
