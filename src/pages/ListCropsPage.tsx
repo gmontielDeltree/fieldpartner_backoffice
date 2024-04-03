@@ -1,36 +1,25 @@
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { ColumnProps, Crops } from "../types";
-import React, { useEffect } from "react";
+import { Box,
+   Button,
+    Container,
+     Grid,
+      IconButton,
+       Tooltip,
+       Typography,
+        TableContainer,
+         Paper,
+         List,
+         ListItem,
+         ListItemText,
+
+           
+              } from "@mui/material";
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Yard as YardIcon , FilterList} from "@mui/icons-material";
 import { useAppDispatch, useCrops, useForm } from "../hooks";
-import {
-  DataTable,
-  ItemRow,
-  Loading,
-  SearchButton,
-  SearchInput,
-  TableCellStyled,
-} from "../components";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-  TableContainer,
-  Paper
-} from "@mui/material";
 import { setCropsACtive } from "../store/crops";
-
-
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Yard as YardIcon,
-} from "@mui/icons-material";
-
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
+import { ColumnProps, Crops } from "../types";
 
 const columns: ColumnProps[] = [
   { text: "Nombre", align: "left" },
@@ -42,17 +31,66 @@ const columns: ColumnProps[] = [
 export const ListCropsPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const { isLoading, crops, getCrops, removeCrops } =
-    useCrops();
+  // const [selectedType, setSelectedType] = useState("");
+  const [showInactive,] = useState(false);
+  const [selectedType, setSelectedType] = React.useState('');
+  const { isLoading, crops, getCrops, removeCrops } = useCrops();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
+  const [showOptions, setShowOptions] = React.useState(false);
 
+  
+
+  const filterCrops = (crops: Crops[], filterText: string) => {
+    const filteredBySearch = crops.filter(crop => matchesFilter(crop, filterText));
+    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
+    
+    const filteredByType = filteredBySearch.filter(crop => {
+      if (selectedType && crop.cropType !== selectedType) return false; // Filtrar por tipo seleccionado
+      if (!showInactive && !crop.descriptionES) return false;
+      return true;
+    });
+    console.log("Cultivos filtrados por tipo:", filteredByType);
+    
+    return filteredByType;
+  };
+  
+  
+
+  const normalizeText = (text: string) => {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  };
+
+  const matchesFilter = (crop: Crops, filter: string) => {
+    const normalizedFilter = normalizeText(filter);
+    const searchableFields = [
+      crop.descriptionES,
+      crop.descriptionPT,
+      crop.descriptionEN,
+      crop.cropType
+    ];
+  
+    return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
+  };
+  const cropTypes = ['Oleaginosa', 'Legumbres', 'Tubérculo', 'Cereal', 'Gramínea', 'Textil', 'Industrial'];
+  
+  // const handleFilter = () => {
+  //   setFilteredType(selectedType);
+  // };
   const onClickSearch = () => {
     if (filterText === "") {
       getCrops();
       return;
     }
+  };
 
+  const handleFilterButtonClick = () => {
+    setShowOptions(!showOptions); // Invertir el estado de showOptions
+  };
+
+  const handleSelectChange = (value: string) => {
+    console.log("Tipo seleccionado:", value);
+    setSelectedType(value);
+    setShowOptions(false); // Ocultar las opciones cuando se seleccione una
   };
 
   const onClickUpdateCrops = (item: Crops) => {
@@ -72,6 +110,8 @@ export const ListCropsPage: React.FC = () => {
     getCrops();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
   return (
     <>
@@ -104,9 +144,31 @@ export const ListCropsPage: React.FC = () => {
                 component={RouterLink}
                 to="/crops/new"
                 startIcon={<AddIcon />}
+                sx={{ mb: 2 }}
               >
                 Nuevo
               </Button>
+              <Box display="flex" alignItems="left" sx={{ ml: 2, mt: 2, position: "relative" }}>
+              <Tooltip title="Filtrar">
+                <IconButton onClick={handleFilterButtonClick}>
+                  <FilterList />
+                </IconButton>
+              </Tooltip>
+              {showOptions && (
+              <Paper elevation={3} sx={{ position: "absolute", top: 40, zIndex: 1, backgroundColor: "white" }}>
+                <List>
+                  <ListItem button onClick={() => handleSelectChange("")}>
+                    <ListItemText primary="Todos" />
+                  </ListItem>
+                  {cropTypes.map((type, index) => (
+                    <ListItem button key={index} onClick={() => handleSelectChange(type)}>
+                      <ListItemText primary={type} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
+            </Box>
             </Grid>
             <Grid item xs={12} sm={10}>
               <Grid container justifyContent="flex-end">
@@ -132,22 +194,18 @@ export const ListCropsPage: React.FC = () => {
                 overflow: "scroll",
                 mb: 5
               }}
-              component={Paper}>
-
+              component={Paper}
+            >
               <DataTable
                 key="datatable-crops"
                 columns={columns}
                 isLoading={isLoading}
               >
-                {crops.map((row) => (
+                {filterCrops(crops, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.descriptionPT}
-                    </TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.descriptionEN}
-                    </TableCellStyled>
+                    <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
+                    <TableCellStyled align="center">{row.descriptionEN}</TableCellStyled>
                     <TableCellStyled align="center">{row.cropType}</TableCellStyled>
                     <TableCellStyled align="right">
                       <Tooltip title="Editar">
@@ -177,4 +235,7 @@ export const ListCropsPage: React.FC = () => {
       </Container>
     </>
   );
+  
+  
+  
 };
