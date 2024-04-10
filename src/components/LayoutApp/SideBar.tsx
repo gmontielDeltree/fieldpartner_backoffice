@@ -17,7 +17,8 @@ import {
   Category as CategoryIcon,
   SyncAlt as SyncAltIcon,
   Inventory as InventoryIcon,
-  Yard as YardIcon
+  Yard as YardIcon,
+  Public as PublicIcon
 } from "@mui/icons-material";
 
 
@@ -129,6 +130,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <YardIcon/>
               </ListItemIcon>
               <ListItemText primary="Cultivos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="country" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/country"
+              selected={pathname.includes("country")}
+            >
+              <ListItemIcon>
+                <PublicIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Paises" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>

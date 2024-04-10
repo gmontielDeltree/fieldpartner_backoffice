@@ -128,6 +128,7 @@ export const useAuthStore = () => {
     //         dispatch(onLogout(""));
     //     }
     // }
+
     const checkAuthToken = async () => {
         const token = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');

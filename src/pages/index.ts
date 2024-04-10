@@ -13,3 +13,5 @@ export * from './ListSuppliesPage';
 export * from './SuppliesTypePage';
 export * from './ListCropsPage';
 export * from './NewCropsPage';
+export * from './LisCountryPage';
+export * from './NewCountryPage';

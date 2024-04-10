@@ -134,6 +134,17 @@ export interface Crops extends Document {
     harvest: boolean;
 }
 
+export interface Country extends Document {
+    code: string
+    descriptionES: string;
+    descriptionPT:string;
+    descriptionEN:string;
+    leguaje: string;
+    currency: string;
+    taxKey: string;
+    taxKeyFormat: string;
+}
+
 export interface NavBarProps {
     drawerWidth: number;
     open: boolean;

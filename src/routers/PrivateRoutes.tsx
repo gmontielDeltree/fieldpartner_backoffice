@@ -15,7 +15,9 @@ import {
   ListSuppliesPage,
   SuppliesTypePage,
   ListCropsPage,
-  NewCropsPage
+  NewCropsPage,
+  ListCountryPage,
+  NewCountryPage
 } from "../pages";
 //  import NewMovementPage from "../pages/MovementList.tsx";
 //  import  MovementList  from "../pages/MovementsPage.tsx";
@@ -46,6 +48,11 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/crops" element={<ListCropsPage/>}/> 
         <Route path="/crops/new" element={<NewCropsPage/>}/> 
         <Route path="/crops/:id" element={<NewCropsPage/>}/> 
+        <Route path="/country" element={<ListCountryPage/>}/> 
+        <Route path="/country/new" element={<NewCountryPage/>}/>
+        <Route path="/country/:id" element={<NewCountryPage/>}/>
+        
+
 
 
 
