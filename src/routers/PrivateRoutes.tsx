@@ -3,8 +3,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "../components";
 import {
   HomePage,
-  CustomerPage,
-  ListCustomerPage,
   UserPage,
   ListUserPage,
   SettingsPage,
@@ -27,9 +25,6 @@ export const PrivateRoutes: React.FC = () => {
     <AppLayout key="app-layout">
       <Routes>
         <Route path="/home" element={<HomePage />} />
-        <Route path="/customer/new" element={<CustomerPage />} />
-        <Route path="/customer/:id" element={<CustomerPage />} />
-        <Route path="/list-customer" element={<ListCustomerPage />} />
         <Route path="/user/new" element={<UserPage />} />
         <Route path="/user/:id" element={<UserPage />} />
         <Route path="/list-user" element={<ListUserPage />} />
@@ -37,15 +32,15 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/categories" element={<ListCategory />} />
         <Route path="/category/new" element={<CategoryPage />} />
         <Route path="/category/:id" element={<CategoryPage />} />
-        <Route path="/type-movement" element={<ListMovementPage/>}/>
-        <Route path="/type-movement/new" element={<MovementPage />} /> 
-        <Route path="/type-movement/:id" element={<MovementPage />} /> 
-        <Route path="/type-supplies" element={< ListSuppliesPage/>}/>
-        <Route path="/type-supplies/new" element={<SuppliesTypePage />} /> 
+        <Route path="/type-movement" element={<ListMovementPage />} />
+        <Route path="/type-movement/new" element={<MovementPage />} />
+        <Route path="/type-movement/:id" element={<MovementPage />} />
+        <Route path="/type-supplies" element={< ListSuppliesPage />} />
+        <Route path="/type-supplies/new" element={<SuppliesTypePage />} />
         <Route path="/type-supplies/:id" element={<SuppliesTypePage />} />
-        <Route path="/crops" element={<ListCropsPage/>}/> 
-        <Route path="/crops/new" element={<NewCropsPage/>}/> 
-        <Route path="/crops/:id" element={<NewCropsPage/>}/> 
+        <Route path="/crops" element={<ListCropsPage />} />
+        <Route path="/crops/new" element={<NewCropsPage />} />
+        <Route path="/crops/:id" element={<NewCropsPage />} />
 
 
 
