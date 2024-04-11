@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {
   Settings as SettingsIcon,
-  Group as GroupIcon,
+  // Group as GroupIcon,
   Person as PersonIcon,
   Category as CategoryIcon,
   SyncAlt as SyncAltIcon,
@@ -60,18 +60,6 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
         </Box> */}
         <Divider />
         <List>
-          <ListItem key="customer" disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to="/list-customer"
-              selected={pathname.includes("list-customer")}
-            >
-              <ListItemIcon>
-                <GroupIcon />
-              </ListItemIcon>
-              <ListItemText primary="Clientes" />
-            </ListItemButton>
-          </ListItem>
           <ListItem key="users-backoffice" disablePadding>
             <ListItemButton
               component={RouterLink}
