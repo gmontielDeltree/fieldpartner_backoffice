@@ -62,7 +62,7 @@ export const NewCountryPage: React.FC = () => {
     reset,
   } = useForm<Country>(initialForm);
 
-  const handleLanguageChange = (event: React.SyntheticEvent, value: { code: string; label: string } | null) => {
+  const handleLanguageChange = (_event: React.SyntheticEvent, value: { code: string; label: string } | null) => {
     if (value) {
       const selectedLanguageCode = value.code;
       setFormulario(prevState => ({
