@@ -118,7 +118,10 @@ export const useAuthStore = () => {
     //         localStorage.setItem('accessToken',"" );
     //         localStorage.setItem('token_expiration',"" );
 
-    //         dispatch(onLogin({isAdmin:true,username:"Rodrigo"}));
+    //         dispatch(onLogin({
+    //             isAdmin: true, firstName: "Rodrigo", accountId: "123", id: "123",
+    //             lastName: ''
+    //         }));
 
     //     } catch (error) {
     //         localStorage.clear();
