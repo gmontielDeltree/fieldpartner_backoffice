@@ -24,6 +24,8 @@ import { Loading } from "../components";
 
 const initialForm: Movement = {
   name: "",
+  conceptoEN:"",
+  conceptoPT:"",
   description: "",
   manual: false,
   sumaStock: "suma",
@@ -41,6 +43,8 @@ export const MovementPage: React.FC = () => {
 
   const {
     name,
+    conceptoEN,
+    conceptoPT,
     description,
     manual,
     sumaStock,
@@ -108,9 +112,11 @@ export const MovementPage: React.FC = () => {
             {movementActive ? "Editar" : "Nuevo"} Movimiento
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+          <Box sx={{ width: '45%', margin: 'auto' }}>
+          <Grid container spacing={2} >
+            <Grid item xs={12} >
               <TextField
-                label="Concepto"
+                label="Concepto ES"
                 variant="outlined"
                 type="text"
                 name="name"
@@ -122,23 +128,35 @@ export const MovementPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={6} container alignItems="center">
-              <Typography variant="body2" color="textSecondary" sx={{ mr: 1 }}>
-                Tipo de Movimiento
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={manual}
-                    onChange={handleSwitchChange}
-                    name="manual"
-                    color="primary"
-                  />
-                }
-                label={manual ? "Manual" : "Automático"}
+            <Grid item xs={12} >
+              <TextField
+                label="Concepto PT"
+                variant="outlined"
+                type="text"
+                name="conceptoPT"
+                value={conceptoPT}
+                onChange={handleInputChange}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
+                fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} >
+              <TextField
+                label="Concepto EN"
+                variant="outlined"
+                type="text"
+                name="conceptoEN"
+                value={conceptoEN}
+                onChange={handleInputChange}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
               <TextField
                 label="Descripcion"
                 variant="outlined"
@@ -150,8 +168,31 @@ export const MovementPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl component="fieldset" sx={{ display: 'flex', flexDirection: 'column' }}>
+            </Grid>
+            </Box>
+            <Box sx={{ marginLeft: 'auto' }}>
+            <Grid item xs={12} sm={6} container alignItems="center">
+            <Typography variant="body2" color="textSecondary" sx={{ mr: 1, width: 245 }}>
+              Tipo de Movimiento: {manual ? 'Manual' : 'Automático'}
+            </Typography>
+            <Grid container alignItems="center" justifyContent="space-between">
+              <Typography variant="body2" color="textPrimary">
+              Automático
+              </Typography>
+              <Switch
+                checked={manual}
+                onChange={handleSwitchChange}
+                name="manual"
+                color="primary"
+              />
+              <Typography variant="body2" color="textPrimary">
+                Manual
+              </Typography>
+            </Grid>
+          </Grid>
+          <Box mt={3}></Box>
+            <Grid item xs={12} sm={9}>
+            <FormControl component="fieldset" sx={{ display: 'flex', flexDirection: 'row' }}>
                 <RadioGroup
                   row
                   aria-label="stockOperation"
@@ -177,6 +218,7 @@ export const MovementPage: React.FC = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
+            </Box>
             <Grid item container spacing={2} justifyContent="center">
               <Grid item xs={6} sm={3}>
                 <Button variant="contained" onClick={() => onClickCancel()}>
