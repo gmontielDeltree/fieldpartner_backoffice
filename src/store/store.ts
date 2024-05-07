@@ -9,6 +9,8 @@ import { movementSlice } from './movements';
 import { supplieSlice } from './supplie';
 import { cropsSlice } from './crops';
 import { countrySlice } from './country';
+import { systemSlice } from './system';
+import { licencesSlice } from './licences';
 
 export const store = configureStore({
     reducer: {
@@ -21,6 +23,9 @@ export const store = configureStore({
         supplie: supplieSlice.reducer,
         crop: cropsSlice.reducer,
         country: countrySlice.reducer,
+        system: systemSlice.reducer,
+        licences:licencesSlice.reducer,
+
     },
 });
 

@@ -9,3 +9,5 @@ export * from './useMovements';
 export * from './useSupplies';
 export * from './useCrops';
 export * from './useCountry';
+export * from './useSystem';
+export * from './useLicences';

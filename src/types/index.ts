@@ -136,6 +136,29 @@ export interface Crops extends Document {
     harvest: boolean;
 }
 
+export interface System extends Document {
+    id: string
+    system: string;
+    description: string;
+    version:string;
+    technicalDetails:string;
+}
+
+// export interface SystemState {
+//     systemActive: SystemType | null;
+//     system: SystemType[];
+// }
+
+export interface Licences extends Document {
+    id: string
+    system: string;
+    description: string;
+    licenceType: string;
+    maximumUnitAllowed: number;
+}
+
+
+
 export interface Country extends Document {
     code: string
     descriptionES: string;

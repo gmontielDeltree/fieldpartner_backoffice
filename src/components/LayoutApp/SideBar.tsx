@@ -18,7 +18,9 @@ import {
   SyncAlt as SyncAltIcon,
   Inventory as InventoryIcon,
   Yard as YardIcon,
-  Public as PublicIcon
+  Public as PublicIcon,
+  Computer as ComputerIcon,
+  DisplaySettings as DisplaySettingsIcon,
 } from "@mui/icons-material";
 
 
@@ -130,6 +132,30 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <PublicIcon/>
               </ListItemIcon>
               <ListItemText primary="Paises" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="system" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/system"
+              selected={pathname.includes("system")}
+            >
+              <ListItemIcon>
+                <ComputerIcon />
+              </ListItemIcon>
+              <ListItemText primary="System" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="licences" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/licences"
+              selected={pathname.includes("lecences")}
+            >
+              <ListItemIcon>
+                <DisplaySettingsIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Licences" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>
