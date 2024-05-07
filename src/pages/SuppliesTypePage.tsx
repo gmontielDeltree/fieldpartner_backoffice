@@ -27,6 +27,8 @@ import { removeSupplieActive } from "../store/supplie";
 const initialForm: SupplyType = {
   name: "",
   description: "",
+  tipoPT:"",
+  tipoEN:"",
   fitosanitario: false,
   cultivo: false,
 };
@@ -39,6 +41,8 @@ export const SuppliesTypePage: React.FC = () => {
   const {
     name,
     description,
+    tipoPT,
+    tipoEN,
     formulario,
     setFormulario,
     handleInputChange,
@@ -107,9 +111,12 @@ export const SuppliesTypePage: React.FC = () => {
             alignItems="center"
             justifyContent="space-around"
           >
-            <Grid item xs={12} sm={6}>
+            <Box sx={{ width: '45%' }}>
+            <Grid container spacing={2}>
+
+            <Grid item xs={12} >
               <TextField
-                label="Tipo"
+                label="Tipo ES"
                 variant="outlined"
                 type="text"
                 name="name"
@@ -121,20 +128,52 @@ export const SuppliesTypePage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} >
               <TextField
-                label="Descripción"
+                label="Tipo PT"
                 variant="outlined"
                 type="text"
-                name="description"
-                value={description}
+                name="tipoPT"
+                value={tipoPT}
                 onChange={handleInputChange}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
                 fullWidth
               />
             </Grid>
+            <Grid item xs={12} >
+              <TextField
+                label="Tipo EN"
+                variant="outlined"
+                type="text"
+                name="tipoEN"
+                value={tipoEN}
+                onChange={handleInputChange}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
+                fullWidth
+              />
+            </Grid>
+            </Grid>
+            </Box>
+            <Box sx={{ width: '50%', marginTop: '-125px' }}>
+              <Grid item xs={12} style={{ marginTop: '-20px' }}>
+                <TextField
+                  label="Descripción"
+                  variant="outlined"
+                  type="text"
+                  name="description"
+                  value={description}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start" />,
+                  }}
+                  fullWidth
+                />
+              </Grid>
+            </Box>
             <Grid item xs={6}>
               <RadioGroup
                 row

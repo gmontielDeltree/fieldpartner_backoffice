@@ -115,6 +115,8 @@ export interface Movement extends Document {
     manual: boolean;
     sumaStock: "both" | "suma" | "descuenta";
     name: string;
+    conceptoPT: string;
+    conceptoEN: string;
     description: string;
     typeMovement: string;
     concepto: string;
@@ -313,6 +315,8 @@ export interface SupplieState {
 export interface SupplyType extends Document {
     name: string;
     description: string;
+    tipoPT: string;
+    tipoEN: string;
     fitosanitario: boolean;
     cultivo: boolean;
 }
