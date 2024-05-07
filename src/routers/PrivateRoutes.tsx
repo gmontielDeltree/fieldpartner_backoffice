@@ -15,10 +15,12 @@ import {
   ListCropsPage,
   NewCropsPage,
   ListCountryPage,
-  NewCountryPage
+  NewCountryPage,
+  ListSystemPage,
+  NewSystemPage,
+  ListLicencesPage,
+  NewLicencesPage
 } from "../pages";
-//  import NewMovementPage from "../pages/MovementList.tsx";
-//  import  MovementList  from "../pages/MovementsPage.tsx";
 
 
 
@@ -46,6 +48,12 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/country" element={<ListCountryPage/>}/> 
         <Route path="/country/new" element={<NewCountryPage/>}/>
         <Route path="/country/:id" element={<NewCountryPage/>}/>
+        <Route path="/system" element={<ListSystemPage/>}/>
+        <Route path="/system/new" element={<NewSystemPage/>}/>
+        <Route path="/system/:id" element={<NewSystemPage/>}/>
+        <Route path="/licences" element={<ListLicencesPage/>}/>
+        <Route path="/licences/new" element={<NewLicencesPage/>}/>
+        <Route path="/licences/:id" element={<NewLicencesPage/>}/>
         
 
 

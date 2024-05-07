@@ -15,3 +15,8 @@ export * from './ListCropsPage';
 export * from './NewCropsPage';
 export * from './LisCountryPage';
 export * from './NewCountryPage';
+export * from './ListSystemPage';
+export * from './NewSystemPage';
+export * from './ListLicencesPage';
+export * from './NewLicencesPage';
+
