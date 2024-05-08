@@ -21,11 +21,13 @@ export const NewMovementPage = () => {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [newMovement, setNewMovement] = useState<Movement>({
     concepto: "",
-  manual: false,
-  sumaStock: "both",
-  name: "", // Propiedad faltante
-  description: "", // Propiedad faltante
-  typeMovement: "", // Propiedad faltante
+    manual: false,
+    sumaStock: "both",
+    name: "", // Propiedad faltante
+    description: "", // Propiedad faltante
+    typeMovement: "", // Propiedad faltante
+    conceptoEN: "",
+    conceptoPT: "",
   });
   const [conceptoError, setConceptoError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,6 +75,8 @@ export const NewMovementPage = () => {
       name: "", // Agregar propiedad name con un valor vacío o adecuado
       description: "", // Agregar propiedad description con un valor vacío o adecuado
       typeMovement: "", // Agregar propiedad typeMovement con un valor vacío o adecuado
+      conceptoEN: "",
+      conceptoPT: ""
     });
     setConceptoError(false);
     setEditingMode(false);
@@ -88,6 +92,8 @@ export const NewMovementPage = () => {
       name: "", // Agregar propiedad name con un valor vacío o adecuado
       description: "", // Agregar propiedad description con un valor vacío o adecuado
       typeMovement: "", // Agregar propiedad typeMovement con un valor vacío o adecuado
+      conceptoEN: "",
+      conceptoPT: ""
     });
     setConceptoError(false);
     setEditingMode(false);
@@ -194,7 +200,7 @@ export const NewMovementPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 variant="outlined"
-                size="small" 
+                size="small"
               />
               {/* <Button
                 variant="contained"
