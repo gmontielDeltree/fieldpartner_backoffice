@@ -40,7 +40,6 @@ export const ListLicencesPage: React.FC = () => {
 
   const filterLicences = (licences: Licences[], filterText: string): Licences[] => {
     const filteredBySearch = licences.filter(licences => matchesFilter(licences, filterText));
-    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
     return filteredBySearch;
   };
   
@@ -55,7 +54,6 @@ export const ListLicencesPage: React.FC = () => {
     const searchableFields = [
       licences.id,
       licences.description,
-      licences.system,
       licences.licenceType,
     ];
   
@@ -195,7 +193,7 @@ export const ListLicencesPage: React.FC = () => {
                 {filterLicences(licences, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.id}</TableCellStyled>
-                    <TableCellStyled align="center">{row.system}</TableCellStyled>
+                    <TableCellStyled align="center">{row.systemType}</TableCellStyled>
                     <TableCellStyled align="center">{row.description}</TableCellStyled>
                     <TableCellStyled align="center">{row.licenceType}</TableCellStyled>
                     <TableCellStyled align="center">{row.maximumUnitAllowed}</TableCellStyled>

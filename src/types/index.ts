@@ -139,7 +139,6 @@ export interface Crops extends Document {
 export interface System extends Document {
     id: string
     system: string;
-    description: string;
     version:string;
     technicalDetails:string;
 }
@@ -150,10 +149,10 @@ export interface System extends Document {
 // }
 
 export interface Licences extends Document {
-    id: string
-    system: string;
+    id: string;
     description: string;
     licenceType: string;
+    systemType: string ,
     maximumUnitAllowed: number;
 }
 

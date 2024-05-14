@@ -20,10 +20,9 @@ import { removeSystemActive } from "../store/system";
 
 const initialForm: System = {
     id: "",
-    system: "FieldPartner",
+    system: "",
     version: "",
     technicalDetails: "",
-    description: ""
 };
 
 export const NewSystemPage: React.FC = () => {
@@ -37,7 +36,7 @@ export const NewSystemPage: React.FC = () => {
 
   const {
     id,
-    description,
+    system,
     version,
     technicalDetails,
     formulario,
@@ -46,7 +45,7 @@ export const NewSystemPage: React.FC = () => {
     reset,
   } = useForm<System>(initialForm);
 
-  
+  console.log("Datos de system", system);
 
 
   const handleAddSystem = () => {
@@ -125,11 +124,11 @@ export const NewSystemPage: React.FC = () => {
             <Grid item xs={12} sm={8}>
                 <Box sx={{ display: 'block', mt: 2 }}>
                 <TextField
-                    label="Descripción"
+                    label="System"
                     variant="outlined"
                     type="text"
-                    name="description"
-                    value={description}
+                    name="system"
+                    value={system}
                     onChange={handleInputChange}
                     inputProps={{ maxLength: 30 }} 
                     InputProps={{
