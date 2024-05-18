@@ -34,15 +34,10 @@ export const ListSystemPage: React.FC = () => {
   const { isLoading, system, getSystem, removeSystem} = useSystem();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  
-
   const filterSystem = (system: System[], filterText: string): System[] => {
     const filteredBySearch = system.filter(system => matchesFilter(system, filterText));
-    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
     return filteredBySearch;
   };
-  
-  
 
   const normalizeText = (text: string) => {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -59,27 +54,12 @@ export const ListSystemPage: React.FC = () => {
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
 
-  
-  // const handleFilter = () => {
-  //   setFilteredType(selectedType);
-  // };
- 
   const onClickSearch = () => {
     if (filterText === "") {
       getSystem();
       return;
     }
   };
-
-//   const handleFilterButtonClick = () => {
-//     setShowOptions(!showOptions); // Invertir el estado de showOptions
-//   };
-
-//   const handleSelectChange = (value: string) => {
-//     console.log("Tipo seleccionado:", value);
-//     setSelectedType(value);
-//     setShowOptions(false); // Ocultar las opciones cuando se seleccione una
-//   };
 
   const onClickUpdateSystem = (item: System) => {
     console.log("Item ID:", item._id);

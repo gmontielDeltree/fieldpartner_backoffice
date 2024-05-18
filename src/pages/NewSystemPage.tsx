@@ -17,7 +17,6 @@ import { System } from "../types";
 import { removeSystemActive } from "../store/system";
 
 
-
 const initialForm: System = {
     id: "",
     system: "FieldPartner",
@@ -31,9 +30,6 @@ export const NewSystemPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading, createSystem, updateSystem } = useSystem();
   const { systemActive } = useAppSelector((state) => state.system); 
-  
-
-
 
   const {
     id,
@@ -46,17 +42,12 @@ export const NewSystemPage: React.FC = () => {
     reset,
   } = useForm<System>(initialForm);
 
-  
-
-
   const handleAddSystem = () => {
-    console.log("Datos a guardar:", formulario);
     createSystem(formulario);
     reset();
   };
 
   const handleUpdateSystem = () => {
-    console.log("Datos a actualizar:", formulario);
     if (!formulario._id) return;
     updateSystem(formulario);
   };
