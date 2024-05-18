@@ -48,7 +48,7 @@ export const ListSystemPage: React.FC = () => {
     const searchableFields = [
       system.id,
       system.version,
-      system.description,
+      system.system,
     ];
   
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
@@ -62,7 +62,6 @@ export const ListSystemPage: React.FC = () => {
   };
 
   const onClickUpdateSystem = (item: System) => {
-    console.log("Item ID:", item._id);
     dispatch(setSystemACtive(item));
     navigate(`/system/${item._id}`);
   };

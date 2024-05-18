@@ -1,6 +1,7 @@
 import React, { useEffect} from "react";
 import { Loading } from "../components";
 import {
+  Autocomplete,
   Box,
   Button,
   Container,
@@ -17,34 +18,37 @@ import {
 } from "@mui/material";
 import { DisplaySettings as DisplaySettingsIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useLicences, useForm } from "../hooks";
-import { Licences } from "../types";
+import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../hooks";
+import { Licences,System } from "../types";
 import { removeLicencesActive } from "../store/licences";
 
 
 
 const initialForm: Licences = {
   id: "",
-  system: "FieldPartner",
   description: "",
   licenceType: "",
   maximumUnitAllowed: 0,
+  systemType: ""
 };
+
 
 export const NewLicencesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isLoading, createLicences, updateLicences } = useLicences();
   const { licencesActive } = useAppSelector((state) => state.licences); 
+  const { system, getSystem } = useSystem();
+  
+  
 
-
-
+  
 
   const {
     id,
     description,
-    system,
     licenceType,
+    // systemType,
     maximumUnitAllowed,
     formulario,
     setFormulario,
@@ -52,8 +56,21 @@ export const NewLicencesPage: React.FC = () => {
     reset,
   } = useForm<Licences>(initialForm);
 
+  const handleSystemChange = (_: React.ChangeEvent<object>, newValue: System | null) => {
+    if (newValue) {
+      setFormulario({ ...formulario, systemType: newValue.system });
+    } else {
+      setFormulario({ ...formulario, systemType: '' });
+    }
+  };
+  useEffect(() => {
+    getSystem();
+  }, [getSystem]);
+  const systemSeleccionado = system.find((sys) => sys.system === formulario.systemType);
+
   
-  const licenceOptions = ['Campo', 'Contrato', 'Hectárea'];
+  
+  const licenceOptions = ['Campo', 'Licencia', 'Hectárea'];
 
   const handleAddLicences = () => {
     console.log("Datos a guardar:", formulario);
@@ -159,20 +176,16 @@ export const NewLicencesPage: React.FC = () => {
             </Grid>
             <Grid container spacing={1} alignItems="center">
             <Grid item xs={12} sm={3} sx={{ width: '200%' }}>
-              <TextField
-                label="System"
-                variant="outlined"
-                type="text"
-                name="system"
-                value={system}
-                onChange={handleInputChange}
-                inputProps={{ maxLength: 20 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
+            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
+            <Autocomplete
+                options={system}
+                getOptionLabel={(system) => system.system}
                 fullWidth
-                sx={{ mt: 2 }}
+                renderInput={(params) => <TextField {...params} label="System" />}
+                value={systemSeleccionado || null} // Usa systemSeleccionado o null si no se encuentra
+                onChange={handleSystemChange}
               />
+              </FormControl>
             </Grid>
             </Grid>
             <Grid container spacing={1} alignItems="center">
