@@ -17,8 +17,10 @@ import { Category } from "../types";
 import { removeCategoryActive } from "../store/category";
 
 const initialForm: Category = {
-  name: "",
+  idCategory: "",
   description: "",
+  descriptionPt: "",
+  descriptionEn: ""
 };
 
 export const CategoryPage: React.FC = () => {
@@ -27,8 +29,10 @@ export const CategoryPage: React.FC = () => {
   const { categoryActive } = useAppSelector((state) => state.category); // Alta de usuario
 
   const {
-    name,
+    idCategory,
     description,
+    descriptionPt,
+    descriptionEn,
     formulario,
     setFormulario,
     handleInputChange,
@@ -67,22 +71,13 @@ export const CategoryPage: React.FC = () => {
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
       <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
+        <Box component="div" display="flex" alignItems="center"sx={{ ml: { sm: 2 }, pt: 2 }} >
           <CategoryIcon />
           <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
             Categoría
           </Typography>
         </Box>
-
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
+        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
           <Typography
             component="h1"
             variant="h4"
@@ -91,40 +86,77 @@ export const CategoryPage: React.FC = () => {
           >
             {categoryActive ? "Editar" : "Nueva"} Categoría
           </Typography>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-around"
-          >
-            <Grid item xs={6}>
-              <TextField
-                label="Nombre"
+          <Grid container spacing={1} alignItems="center">
+          <Grid item xs={12} sm={2}>
+          <TextField
+                label="ID Categoria"
                 variant="outlined"
                 type="text"
-                name="name"
-                value={name}
+                name="idCategory"
+                value={idCategory}
                 onChange={handleInputChange}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
-                fullWidth
-              />
+                inputProps={{ maxLength: 30 }} 
+                    InputProps={{
+                    startAdornment: <InputAdornment position="start" />,
+                    }}
+                    fullWidth
+                />
             </Grid>
+            <Grid container spacing={1} alignItems="center">
             <Grid item xs={6}>
+            <Box sx={{ display: 'block', mt: 2 }}>
               <TextField
-                label="Descripcion"
+                label="Descripcion ES"
                 variant="outlined"
                 type="text"
                 name="description"
                 value={description}
                 onChange={handleInputChange}
+                inputProps={{ maxLength: 30 }} 
+                    InputProps={{
+                    startAdornment: <InputAdornment position="start" />,
+                    }}
+                    fullWidth
+                />
+               </Box>
+            </Grid> 
+            </Grid>
+            <Grid container spacing={1} alignItems="center">
+            <Grid item xs={6}>
+            <Box sx={{ display: 'block', mt: 2 }}>
+              <TextField
+                label="Descripcion PT"
+                variant="outlined"
+                type="text"
+                name="descriptionPt"
+                value={descriptionPt}
+                onChange={handleInputChange}
                 InputProps={{
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
               />
+              </Box>
             </Grid>
+          </Grid>
+            <Grid container spacing={1} alignItems="center">
+            <Grid item xs={6}>
+            <Box sx={{ display: 'block', mt: 2 }}>
+              <TextField
+                label="Descripcion EN"
+                variant="outlined"
+                type="text"
+                name="descriptionEn"
+                value={descriptionEn}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+              />
+              </Box>
+            </Grid>
+          </Grid>
           </Grid>
           <Grid
             container
