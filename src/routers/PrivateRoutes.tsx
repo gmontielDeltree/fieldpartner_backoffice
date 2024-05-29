@@ -19,7 +19,9 @@ import {
   ListSystemPage,
   NewSystemPage,
   ListLicencesPage,
-  NewLicencesPage
+  NewLicencesPage,
+  ListMenuModulesPage,
+  NewMenuModulesPage
 } from "../pages";
 
 
@@ -54,7 +56,9 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/licences" element={<ListLicencesPage/>}/>
         <Route path="/licences/new" element={<NewLicencesPage/>}/>
         <Route path="/licences/:id" element={<NewLicencesPage/>}/>
-        
+        <Route path="/menus-modules" element={<ListMenuModulesPage/>}/>
+        <Route path="/menus-modules/new" element={<NewMenuModulesPage/>}/>
+        <Route path="/menus-modules/:id" element={<NewMenuModulesPage/>}/>
 
 
 

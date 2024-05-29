@@ -155,10 +155,20 @@ export interface Licences extends Document {
     id: string;
     description: string;
     licenceType: string;
-    systemType: string ,
+    systemType: string;
     maximumUnitAllowed: number;
 }
-
+export interface MenuModules extends Document {
+    id: number;
+    module: string;
+    menuOption: string;
+    systemType: string;
+    details: string;
+}
+// export interface MenuModuleState {
+//     menuModulesActive: MenuModules| null;
+//     menuModules: MenuModules[];
+// }
 
 
 export interface Country extends Document {

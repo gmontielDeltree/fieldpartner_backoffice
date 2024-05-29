@@ -21,6 +21,7 @@ import {
   Public as PublicIcon,
   Computer as ComputerIcon,
   DisplaySettings as DisplaySettingsIcon,
+  List as ListIcon
 } from "@mui/icons-material";
 
 
@@ -156,6 +157,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <DisplaySettingsIcon/>
               </ListItemIcon>
               <ListItemText primary="Licences" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="menus-modules" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/menus-modules"
+              selected={pathname.includes("menus-modules")}
+            >
+              <ListItemIcon>
+                <ListIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Menus y Modulos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>

@@ -11,3 +11,5 @@ export * from './useCrops';
 export * from './useCountry';
 export * from './useSystem';
 export * from './useLicences';
+export * from './useMenuModules';
+
