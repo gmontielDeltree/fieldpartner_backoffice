@@ -103,8 +103,11 @@ export interface Document {
 }
 
 export interface Category extends Document {
-    name: string;
+    idCategory: string;
     description: string;
+    descriptionPt: string;
+    descriptionEn: string;
+
 }
 
 export interface SupplieState {
@@ -437,8 +440,10 @@ export interface ItemZipCode extends Document {
 }
 
 export interface Category extends Document {
-    name: string;
+    idCategory: string;
     description: string;
+    descriptionPt: string;
+    descriptionEn: string;
 }
 
 export enum CountryCode {

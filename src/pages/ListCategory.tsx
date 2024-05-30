@@ -32,8 +32,10 @@ import {
 import { setCategoryACtive } from "../store/category";
 
 const columns: ColumnProps[] = [
-  { text: "Nombre", align: "left" },
-  { text: "Descripcion", align: "center" },
+  { text: "ID Categoria", align: "left" },
+  { text: "Descripcion ES", align: "center" },
+  { text: "Descripcion PT", align: "center" },
+  { text: "Descripcion EN", align: "center" },
 ];
 
 export const ListCategory: React.FC = () => {
@@ -135,10 +137,10 @@ export const ListCategory: React.FC = () => {
             >
               {categories.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.name}</TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.description}
-                  </TableCellStyled>
+                  <TableCellStyled align="left">{row.idCategory}</TableCellStyled>
+                  <TableCellStyled align="center"> {row.description} </TableCellStyled>
+                  <TableCellStyled align="center"> {row.descriptionPt} </TableCellStyled>
+                  <TableCellStyled align="center"> {row.descriptionEn} </TableCellStyled>
                   <TableCellStyled align="right">
                     <Tooltip title="Editar">
                       <IconButton
