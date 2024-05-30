@@ -19,4 +19,5 @@ export * from './ListSystemPage';
 export * from './NewSystemPage';
 export * from './ListLicencesPage';
 export * from './NewLicencesPage';
-
+export * from './ListMenuModulesPage';
+export * from './NewMenuModulesPage';

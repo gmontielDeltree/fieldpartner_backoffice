@@ -11,6 +11,7 @@ import { cropsSlice } from './crops';
 import { countrySlice } from './country';
 import { systemSlice } from './system';
 import { licencesSlice } from './licences';
+import { menuModulesSlice } from './menumodules/menuModulesSlice';
 
 export const store = configureStore({
     reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
         country: countrySlice.reducer,
         system: systemSlice.reducer,
         licences:licencesSlice.reducer,
+        menuModules:menuModulesSlice.reducer,
 
     },
 });
