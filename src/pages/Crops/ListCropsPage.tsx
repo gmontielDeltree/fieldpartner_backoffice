@@ -16,10 +16,10 @@ import { Box,
            
               } from "@mui/material";
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Yard as YardIcon , FilterList} from "@mui/icons-material";
-import { useAppDispatch, useCrops, useForm } from "../hooks";
-import { setCropsACtive } from "../store/crops";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
-import { ColumnProps, Crops } from "../types";
+import { useAppDispatch, useCrops, useForm } from "../../hooks";
+import { setCropsACtive } from "../../store/crops";
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import { ColumnProps, Crops } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Nombre", align: "left" },

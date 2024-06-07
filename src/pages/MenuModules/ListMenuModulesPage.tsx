@@ -17,10 +17,10 @@ Edit as EditIcon,
 Delete as DeleteIcon,
 List as ListIcon,
 } from "@mui/icons-material";
-import { useAppDispatch, useForm, useMenuModules } from "../hooks";
-import { setMenuModulesACtive } from "../store/menumodules/menuModulesSlice";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
-import { ColumnProps, MenuModules } from "../types";
+import { useAppDispatch, useForm, useMenuModules } from "../../hooks";
+import { setMenuModulesACtive } from "../../store/menumodules/menuModulesSlice";
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import { ColumnProps, MenuModules } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Modulo", align: "left" },

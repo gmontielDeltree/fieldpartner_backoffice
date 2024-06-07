@@ -1,14 +1,14 @@
 import { Link as RouterLink } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { DataTableCustomer, Loading } from '../components';
+import { DataTableCustomer, Loading } from '../../components';
 import { Box, Typography, Grid, Button, TextField, InputAdornment, Container } from '@mui/material';
 import {
     Add as AddIcon,
     Search as SearchIcon,
     PeopleAlt as PeopleAltIcon,
 } from '@mui/icons-material';
-import { ColumnProps } from '../types';
-import { useCustomer, useForm } from '../hooks';
+import { ColumnProps } from '../../types';
+import { useCustomer, useForm } from '../../hooks';
 
 const columns: ColumnProps[] = [
     { text: 'Tipo Entidad', align: 'left' },

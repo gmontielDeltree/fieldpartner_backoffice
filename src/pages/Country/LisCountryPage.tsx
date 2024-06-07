@@ -1,80 +1,100 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { 
-Box,
-Button,
-Container,
-Grid,
-IconButton,
-Tooltip,
-Typography,
-TableContainer,
-Paper,
-} from "@mui/material";
-import {
-Add as AddIcon,
-Edit as EditIcon,
-Delete as DeleteIcon,
-Computer as ComputerIcon,
-} from "@mui/icons-material";
-import { useAppDispatch, useForm, useSystem } from "../hooks";
-import { setSystemACtive } from "../store/system";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
-import { ColumnProps, System } from "../types";
+import { Box,
+   Button,
+    Container,
+     Grid,
+      IconButton,
+       Tooltip,
+       Typography,
+        TableContainer,
+         Paper,
+              } from "@mui/material";
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Public as PublicIcon } from "@mui/icons-material";
+import { useAppDispatch, useCountry, useForm } from "../../hooks";
+import { setCountryACtive } from "../../store/country";
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import { ColumnProps, Country } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "ID", align: "left" },
-  { text: "System", align: "center" },
-  { text: "Version", align: "center" },
+  { text: "Codigo", align: "left" },
+  { text: "Descripcion ES", align: "center" },
+  { text: "Descripcion PT", align: "center" },
+  { text: "Descripcion EN", align: "center" },
 ];
 
-export const ListSystemPage: React.FC = () => {
+export const ListCountryPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, system, getSystem, removeSystem} = useSystem();
+  // const [selectedType, setSelectedType] = useState("");
+//   const [showInactive,] = useState(false);
+//   const [selectedType, setSelectedType] = React.useState('');
+  const { isLoading, country, getCountry, removeCountry } = useCountry();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
+//   const [showOptions, setShowOptions] = React.useState(false);
 
-  const filterSystem = (system: System[], filterText: string): System[] => {
-    const filteredBySearch = system.filter(system => matchesFilter(system, filterText));
+  
+
+  const filterCountry = (country: Country[], filterText: string): Country[] => {
+    const filteredBySearch = country.filter(country => matchesFilter(country, filterText));
+    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
     return filteredBySearch;
   };
+  
+  
 
   const normalizeText = (text: string) => {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
-  const matchesFilter = (system: System, filter: string) => {
+  const matchesFilter = (country: Country, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
-      system.id,
-      system.version,
-      system.system,
+      country.descriptionES,
+      country.descriptionPT,
+      country.descriptionEN,
+      country.code
     ];
   
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
 
+  
+  // const handleFilter = () => {
+  //   setFilteredType(selectedType);
+  // };
   const onClickSearch = () => {
     if (filterText === "") {
-      getSystem();
+      getCountry();
       return;
     }
   };
 
-  const onClickUpdateSystem = (item: System) => {
-    dispatch(setSystemACtive(item));
-    navigate(`/system/${item._id}`);
+//   const handleFilterButtonClick = () => {
+//     setShowOptions(!showOptions); // Invertir el estado de showOptions
+//   };
+
+//   const handleSelectChange = (value: string) => {
+//     console.log("Tipo seleccionado:", value);
+//     setSelectedType(value);
+//     setShowOptions(false); // Ocultar las opciones cuando se seleccione una
+//   };
+
+  const onClickUpdateCountry = (item: Country) => {
+    console.log("Item ID:", item._id);
+    dispatch(setCountryACtive(item));
+    navigate(`/country/${item._id}`);
   };
 
-  const handleDeleteSystem = (item:  System) => {
+  const handleDeleteCountry = (item:  Country) => {
     if (item._id && item._rev) {
-      removeSystem(item._id, item._rev);
-      getSystem();
+      removeCountry(item._id, item._rev);
+      getCountry();
     }
   };
 
   useEffect(() => {
-    getSystem();
+    getCountry();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,9 +110,9 @@ export const ListSystemPage: React.FC = () => {
           alignItems="center"
           sx={{ ml: { sm: 2 }, pt: 2 }}
         >
-          <ComputerIcon/>
+          <PublicIcon/>
           <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            System
+            Paises
           </Typography>
         </Box>
         <Box component="div" sx={{ mt: 7 }}>
@@ -109,7 +129,7 @@ export const ListSystemPage: React.FC = () => {
                 variant="contained"
                 color="primary"
                 component={RouterLink}
-                to="/system/new"
+                to="/country/new"
                 startIcon={<AddIcon />}
                 sx={{ mb: 2 }}
               >
@@ -142,7 +162,7 @@ export const ListSystemPage: React.FC = () => {
                 <Grid item xs={8} sm={5}>
                   <SearchInput
                     value={filterText}
-                    placeholder="System /Descripcion"
+                    placeholder="Pais /Descripcion"
                     handleInputChange={handleInputChange}
                   />
                 </Grid>
@@ -154,7 +174,7 @@ export const ListSystemPage: React.FC = () => {
           </Grid>
           <Box component="div" sx={{ p: 1 }}>
             <TableContainer
-              key="table-system"
+              key="table-country"
               sx={{
                 minHeight: "120px",
                 maxHeight: "540px",
@@ -164,27 +184,28 @@ export const ListSystemPage: React.FC = () => {
               component={Paper}
             >
               <DataTable
-                key="datatable-system"
+                key="datatable-country"
                 columns={columns}
                 isLoading={isLoading}
               >
-                {filterSystem(system, filterText).map((row) => (
+                {filterCountry(country, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
-                    <TableCellStyled align="left">{row.id}</TableCellStyled>
-                    <TableCellStyled align="center">{row.system}</TableCellStyled>
-                    <TableCellStyled align="center">{row.version}</TableCellStyled>
+                    <TableCellStyled align="left">{row.code}</TableCellStyled>
+                    <TableCellStyled align="center">{row.descriptionES}</TableCellStyled>
+                    <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
+                    <TableCellStyled align="center">{row.descriptionEN}</TableCellStyled>
                     <TableCellStyled align="right">
                       <Tooltip title="Editar">
                         <IconButton
                           aria-label="Editar"
-                          onClick={() => onClickUpdateSystem(row)}
+                          onClick={() => onClickUpdateCountry(row)}
                         >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Eliminar">
                         <IconButton
-                          onClick={() => handleDeleteSystem(row)}
+                          onClick={() => handleDeleteCountry(row)}
                           style={{ fontSize: '1rem' }}
                           color="default"
                         >

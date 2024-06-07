@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm, useUser } from "../hooks";
-import { UserDto } from "../types";
-import { Loading, UserForm } from "../components";
-import { removeUserActive } from "../store/user";
+import { useAppDispatch, useAppSelector, useForm, useUser } from "../../hooks";
+import { UserDto } from "../../types";
+import { Loading, UserForm } from "../../components";
+import { removeUserActive } from "../../store/user";
 import {
   Button,
   Container,
@@ -30,19 +30,19 @@ export const UserPage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth); // sesion del usuario
   const { userActive } = useAppSelector((state) => state.user);// Alta de usuario
 
-  const { formulario, setFormulario, handleInputChange, reset } =
+  const { formValues, setFormValues, handleInputChange, reset } =
     useForm<UserDto>(initialForm);
 
   const { isLoading, createUser, updateUser } = useUser();
 
   const handleAddNewUser = () => {
-    createUser(formulario);
+    createUser(formValues);
     reset();
   };
 
   const handleUpdateUser = () => {
-    if (!formulario.id) return;
-    updateUser(formulario.id, formulario);
+    if (!formValues.id) return;
+    updateUser(formValues.id, formValues);
   };
 
   const onClickCancel = () => {
@@ -51,17 +51,17 @@ export const UserPage: React.FC = () => {
   };
 
   const handleChangeAdmin = () =>
-    setFormulario({ ...formulario, isAdmin: !formulario.isAdmin });
+    setFormValues({ ...formValues, isAdmin: !formValues.isAdmin });
 
   useEffect(() => {
     if (userActive)
-      setFormulario({
+      setFormValues({
         ...userActive,
         previousPassword: "",
         newPassword: "",
       });
-    else setFormulario(initialForm);
-  }, [userActive, setFormulario]);
+    else setFormValues(initialForm);
+  }, [userActive, setFormValues]);
 
   useEffect(() => {
     return () => {
@@ -101,7 +101,7 @@ export const UserPage: React.FC = () => {
               }}
               control={
                 <Switch
-                  checked={formulario.isAdmin}
+                  checked={formValues.isAdmin}
                   onChange={() => handleChangeAdmin()}
                   defaultChecked
                 />
@@ -111,8 +111,8 @@ export const UserPage: React.FC = () => {
           )}
           <UserForm
             key="users"
-            // user={formulario}
-            {...formulario}
+            // user={formValues}
+            {...formValues}
             isNewUser={!userActive}
             setUser={handleInputChange}
           />

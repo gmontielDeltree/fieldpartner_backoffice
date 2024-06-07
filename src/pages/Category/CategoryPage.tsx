@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
   Box,
   Button,
@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import { Category as CategoryIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useCategory, useForm } from "../hooks";
-import { Category } from "../types";
-import { removeCategoryActive } from "../store/category";
+import { useAppDispatch, useAppSelector, useCategory, useForm } from "../../hooks";
+import { Category } from "../../types";
+import { removeCategoryActive } from "../../store/category";
 
 const initialForm: Category = {
   idCategory: "",
@@ -33,8 +33,8 @@ export const CategoryPage: React.FC = () => {
     description,
     descriptionPt,
     descriptionEn,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<Category>(initialForm);
@@ -42,13 +42,13 @@ export const CategoryPage: React.FC = () => {
   const { isLoading, createCategory, updateCategory } = useCategory();
 
   const handleAddCategory = () => {
-    createCategory(formulario);
+    createCategory(formValues);
     reset();
   };
 
   const handleUpdateCategory = () => {
-    if (!formulario._id) return;
-    updateCategory(formulario);
+    if (!formValues._id) return;
+    updateCategory(formValues);
   };
 
   const onClickCancel = () => {
@@ -57,9 +57,9 @@ export const CategoryPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (categoryActive) setFormulario(categoryActive);
-    else setFormulario(initialForm);
-  }, [categoryActive, setFormulario]);
+    if (categoryActive) setFormValues(categoryActive);
+    else setFormValues(initialForm);
+  }, [categoryActive, setFormValues]);
 
   useEffect(() => {
     return () => {

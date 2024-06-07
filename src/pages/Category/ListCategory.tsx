@@ -1,7 +1,7 @@
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { ColumnProps, Category } from "../types";
+import { ColumnProps, Category } from "../../types";
 import React, { useEffect } from "react";
-import { useAppDispatch, useCategory, useForm } from "../hooks";
+import { useAppDispatch, useCategory, useForm } from "../../hooks";
 import {
   DataTable,
   ItemRow,
@@ -9,7 +9,7 @@ import {
   SearchButton,
   SearchInput,
   TableCellStyled,
-} from "../components";
+} from "../../components";
 import {
   Box,
   Button,
@@ -29,7 +29,7 @@ import {
   Delete as DeleteIcon,
   Category as CategoryIcon,
 } from "@mui/icons-material";
-import { setCategoryACtive } from "../store/category";
+import { setCategoryACtive } from "../../store/category";
 
 const columns: ColumnProps[] = [
   { text: "ID Categoria", align: "left" },

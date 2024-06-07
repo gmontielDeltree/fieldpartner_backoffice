@@ -1,5 +1,5 @@
 import React, { useEffect} from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
   Box,
   Button,
@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import { Computer as ComputerIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useSystem, useForm } from "../hooks";
-import { System } from "../types";
-import { removeSystemActive } from "../store/system";
+import { useAppDispatch, useAppSelector, useSystem, useForm } from "../../hooks";
+import { System } from "../../types";
+import { removeSystemActive } from "../../store/system";
 
 
 const initialForm: System = {
@@ -35,20 +35,20 @@ export const NewSystemPage: React.FC = () => {
     system,
     version,
     technicalDetails,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<System>(initialForm);
 
   const handleAddSystem = () => {
-    createSystem(formulario);
+    createSystem(formValues);
     reset();
   };
 
   const handleUpdateSystem = () => {
-    if (!formulario._id) return;
-    updateSystem(formulario);
+    if (!formValues._id) return;
+    updateSystem(formValues);
   };
 
   const onClickCancel = () => {
@@ -58,12 +58,12 @@ export const NewSystemPage: React.FC = () => {
 
   useEffect(() => {
     if (systemActive) {
-      setFormulario(systemActive); 
+      setFormValues(systemActive); 
     } else {
-      setFormulario(initialForm);
+      setFormValues(initialForm);
       
     }
-  }, [systemActive, setFormulario]);
+  }, [systemActive, setFormValues]);
 
 
 

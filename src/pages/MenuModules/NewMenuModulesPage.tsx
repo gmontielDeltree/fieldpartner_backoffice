@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
   Autocomplete,
   Box,
@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import { List as ListIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from "../hooks";
-import { MenuModules } from "../types";
-import { removeMenuModulesActive } from "../store/menumodules/menuModulesSlice";
+import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from "../../hooks";
+import { MenuModules } from "../../types";
+import { removeMenuModulesActive } from "../../store/menumodules/menuModulesSlice";
 
 const initialForm: MenuModules = {
   id: 0,
@@ -39,8 +39,8 @@ export const NewMenuModulesPage: React.FC = () => {
     menuOption,
     // systemType,
     details,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<MenuModules>(initialForm);
@@ -51,23 +51,23 @@ export const NewMenuModulesPage: React.FC = () => {
 
   useEffect(() => {
     if (menuModulesActive) {
-      setFormulario(menuModulesActive);
+      setFormValues(menuModulesActive);
     } else {
-      setFormulario(initialForm);
+      setFormValues(initialForm);
     }
-  }, [menuModulesActive, setFormulario]);
+  }, [menuModulesActive, setFormValues]);
 
   const handleSystemChange = (
     _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null
   ) => {
     if (newValue) {
-      setFormulario((prevForm) => ({
+      setFormValues((prevForm) => ({
         ...prevForm,
         systemType: newValue,
       }));
     } else {
-      setFormulario((prevForm) => ({
+      setFormValues((prevForm) => ({
         ...prevForm,
         systemType: "",
       }));
@@ -76,14 +76,14 @@ export const NewMenuModulesPage: React.FC = () => {
 
 
   const handleAddMenuModules = () => {
-    createMenuModules(formulario);
+    createMenuModules(formValues);
     dispatch(removeMenuModulesActive());
     reset();
   };
 
   const handleUpdateMenuModules = () => {
-    if (!formulario._id) return;
-    updateMenuModules(formulario);
+    if (!formValues._id) return;
+    updateMenuModules(formValues);
     dispatch(removeMenuModulesActive());
     reset();
   };
@@ -129,7 +129,7 @@ export const NewMenuModulesPage: React.FC = () => {
                   options={system.map((sys) => `${sys.system}: ${sys.version}`)}
                   fullWidth
                   renderInput={(params) => <TextField {...params} label="System" />}
-                  value={formulario.systemType}
+                  value={formValues.systemType}
                   onChange={handleSystemChange}
                 />
               </FormControl>

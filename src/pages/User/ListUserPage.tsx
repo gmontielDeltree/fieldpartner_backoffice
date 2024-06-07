@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { DataTableUser, Loading } from '../components';
+import { DataTableUser, Loading } from '../../components';
 import { Box, Typography, Grid, Button, TextField, InputAdornment, Container } from '@mui/material';
 import {
     Add as AddIcon,
     Search as SearchIcon,
     Person as PersonIcon,
 } from '@mui/icons-material';
-import { ColumnProps } from '../types';
-import { useForm, useUser } from '../hooks';
+import { ColumnProps } from '../../types';
+import { useForm, useUser } from '../../hooks';
 
 const columns: ColumnProps[] = [
     { text: 'Apellido', align: 'left' },

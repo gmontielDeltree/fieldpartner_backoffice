@@ -1,7 +1,7 @@
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { ColumnProps, Movement } from "../types";
+import { ColumnProps, Movement } from "../../types";
 import React, { useEffect } from "react";
-import { useAppDispatch, useMovements, useForm } from "../hooks";
+import { useAppDispatch, useMovements, useForm } from "../../hooks";
 import { SyncAlt as SyncAltIcon } from "@mui/icons-material";
 import {
   DataTable,
@@ -10,7 +10,7 @@ import {
   SearchButton,
   SearchInput,
   TableCellStyled,
-} from "../components";
+} from "../../components";
 import {
   Box,
   Button,
@@ -27,7 +27,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon
 } from "@mui/icons-material";
-import { setMovementACtive } from "../store/movements";
+import { setMovementACtive } from "../../store/movements";
 
 const columns: ColumnProps[] = [
   { text: "Concepto", align: "left" },

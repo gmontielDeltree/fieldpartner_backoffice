@@ -10,11 +10,11 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { AddressForm, InformationForm } from "../components/customer";
-import { useAppDispatch, useAppSelector, useCustomer, useForm } from "../hooks";
-import { Customer, TipoEntidad, TipoLicencia } from "../types";
-import { Loading, UserForm } from "../components";
-import { removeCustomerActive } from "../store/customer";
+import { AddressForm, InformationForm } from "../../components/customer";
+import { useAppDispatch, useAppSelector, useCustomer, useForm } from "../../hooks";
+import { Customer, TipoEntidad, TipoLicencia } from "../../types";
+import { Loading, UserForm } from "../../components";
+import { removeCustomerActive } from "../../store/customer";
 import { Grid } from "@mui/material";
 import { ChangeEvent } from "react";
 
@@ -61,8 +61,8 @@ export const CustomerPage: React.FC = () => {
   ]);
 
   const {
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     handleSelectChange,
     reset,
@@ -81,7 +81,7 @@ export const CustomerPage: React.FC = () => {
   const setUserByCustomer = useCallback(
     ({ target }: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = target;
-      setFormulario((prevState) => ({
+      setFormValues((prevState) => ({
         ...prevState,
         usuario: {
           ...prevState.usuario,
@@ -89,7 +89,7 @@ export const CustomerPage: React.FC = () => {
         },
       }));
     },
-    [setFormulario]
+    [setFormValues]
   );
 
   const getStepContent = useMemo(
@@ -99,8 +99,8 @@ export const CustomerPage: React.FC = () => {
           return (
             <InformationForm
               key="information-customer"
-              customer={formulario}
-              setCustomer={setFormulario}
+              customer={formValues}
+              setCustomer={setFormValues}
               handleInputChange={handleInputChange}
               handleSelectChange={handleSelectChange}
             />
@@ -109,7 +109,7 @@ export const CustomerPage: React.FC = () => {
           return (
             <AddressForm
               key="address-customer"
-              customer={formulario}
+              customer={formValues}
               handleInputChange={handleInputChange}
             />
           );
@@ -117,8 +117,8 @@ export const CustomerPage: React.FC = () => {
           return (
             <UserForm
               key="users-customer"
-              // user={formulario.usuario}
-              {...formulario.usuario}
+              // user={formValues.usuario}
+              {...formValues.usuario}
               setUser={setUserByCustomer}
             />
           );
@@ -127,8 +127,8 @@ export const CustomerPage: React.FC = () => {
       }
     },
     [
-      formulario,
-      setFormulario,
+      formValues,
+      setFormValues,
       handleInputChange,
       handleSelectChange,
       setUserByCustomer,
@@ -136,13 +136,13 @@ export const CustomerPage: React.FC = () => {
   );
 
   const addNewCustomer = () => {
-    createCustomer(formulario);
+    createCustomer(formValues);
     reset();
   };
 
   const handleUpdateCustomer = () => {
-    if (!formulario.id) return;
-    updateCustomer(formulario.id, formulario);
+    if (!formValues.id) return;
+    updateCustomer(formValues.id, formValues);
   };
 
   const onClickCancel = () => {
@@ -152,10 +152,10 @@ export const CustomerPage: React.FC = () => {
 
   useEffect(() => {
     if (customerActive) {
-      setFormulario({ ...customerActive });
+      setFormValues({ ...customerActive });
       setSteps(["Informacion Basica", "Direccion"]);
-    } else setFormulario(initialForm);
-  }, [customerActive, setFormulario]);
+    } else setFormValues(initialForm);
+  }, [customerActive, setFormValues]);
 
   useEffect(() => {
     return () => {

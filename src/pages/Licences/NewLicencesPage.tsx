@@ -1,5 +1,5 @@
 import React, { useEffect} from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
   Autocomplete,
   Box,
@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import { DisplaySettings as DisplaySettingsIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../hooks";
-import { Licences,System } from "../types";
-import { removeLicencesActive } from "../store/licences";
+import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../../hooks";
+import { Licences,System } from "../../types";
+import { removeLicencesActive } from "../../store/licences";
 
 
 
@@ -50,38 +50,38 @@ export const NewLicencesPage: React.FC = () => {
     licenceType,
     // systemType,
     maximumUnitAllowed,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<Licences>(initialForm);
 
   const handleSystemChange = (_: React.ChangeEvent<object>, newValue: System | null) => {
     if (newValue) {
-      setFormulario({ ...formulario, systemType: newValue.system });
+      setFormValues({ ...formValues, systemType: newValue.system });
     } else {
-      setFormulario({ ...formulario, systemType: '' });
+      setFormValues({ ...formValues, systemType: '' });
     }
   };
   useEffect(() => {
     getSystem();
   }, [getSystem]);
-  const systemSeleccionado = system.find((sys) => sys.system === formulario.systemType);
+  const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType);
 
   
   
   const licenceOptions = ['Campo', 'Licencia', 'Hectárea'];
 
   const handleAddLicences = () => {
-    console.log("Datos a guardar:", formulario);
-    createLicences(formulario);
+    console.log("Datos a guardar:", formValues);
+    createLicences(formValues);
     reset();
   };
 
   const handleUpdateLicences = () => {
-    console.log("Datos a actualizar:", formulario);
-    if (!formulario._id) return;
-    updateLicences(formulario);
+    console.log("Datos a actualizar:", formValues);
+    if (!formValues._id) return;
+    updateLicences(formValues);
   };
 
   const onClickCancel = () => {
@@ -91,18 +91,18 @@ export const NewLicencesPage: React.FC = () => {
 
   useEffect(() => {
     if (licencesActive) {
-      setFormulario(licencesActive); 
+      setFormValues(licencesActive); 
     } else {
-      setFormulario(initialForm);
+      setFormValues(initialForm);
       
     }
-  }, [licencesActive, setFormulario]);
+  }, [licencesActive, setFormValues]);
 
   const handleLicenceTypeChange = (
     event: SelectChangeEvent<string>,
   ) => {
     const value = event.target.value;
-    setFormulario(prevState => ({
+    setFormValues(prevState => ({
       ...prevState,
       licenceType: value
     }));

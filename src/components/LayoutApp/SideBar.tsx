@@ -21,10 +21,9 @@ import {
   Public as PublicIcon,
   Computer as ComputerIcon,
   DisplaySettings as DisplaySettingsIcon,
-  List as ListIcon
+  List as ListIcon,
+  AccountBox as AccountBoxIcon,
 } from "@mui/icons-material";
-
-
 
 
 export interface SideBarProps {
@@ -48,7 +47,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
         }}
         variant="permanent"
         anchor="left"
-        // open={open}
+      // open={open}
       >
         <Toolbar />
         {/* <Box
@@ -73,6 +72,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <PersonIcon />
               </ListItemIcon>
               <ListItemText primary="Usuarios Backoffice" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="accounts" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/accounts"
+              selected={pathname.includes("acccounts")}
+            >
+              <ListItemIcon>
+                <AccountBoxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Cuentas" />
             </ListItemButton>
           </ListItem>
           <ListItem key="categories" disablePadding>
@@ -106,7 +117,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("type-supplies")}
             >
               <ListItemIcon>
-                <InventoryIcon/>
+                <InventoryIcon />
               </ListItemIcon>
               <ListItemText primary="Tipos Insumos" />
             </ListItemButton>
@@ -118,7 +129,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("crops")}
             >
               <ListItemIcon>
-                <YardIcon/>
+                <YardIcon />
               </ListItemIcon>
               <ListItemText primary="Cultivos" />
             </ListItemButton>
@@ -130,7 +141,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("country")}
             >
               <ListItemIcon>
-                <PublicIcon/>
+                <PublicIcon />
               </ListItemIcon>
               <ListItemText primary="Paises" />
             </ListItemButton>
@@ -154,7 +165,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("lecences")}
             >
               <ListItemIcon>
-                <DisplaySettingsIcon/>
+                <DisplaySettingsIcon />
               </ListItemIcon>
               <ListItemText primary="Licences" />
             </ListItemButton>
@@ -166,7 +177,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("menus-modules")}
             >
               <ListItemIcon>
-                <ListIcon/>
+                <ListIcon />
               </ListItemIcon>
               <ListItemText primary="Menus y Modulos" />
             </ListItemButton>

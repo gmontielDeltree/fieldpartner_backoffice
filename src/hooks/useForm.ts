@@ -5,21 +5,21 @@ import { ChangeEvent, useState } from 'react';
 // const currentYear = new Date().getFullYear();
 export const useForm = <T extends object>(initialState: T) => {
 
-    const [formulario, setFormulario] = useState(initialState);
+    const [formValues, setFormValues] = useState(initialState);
 
     const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = target;
 
-        setFormulario({
-            ...formulario,
+        setFormValues({
+            ...formValues,
             [name]: value
         });
     };
 
     const handleSelectChange = ({ target }: SelectChangeEvent) => {
         const { name, value } = target;
-        setFormulario({
-            ...formulario,
+        setFormValues({
+            ...formValues,
             [name]: value
         });
     };
@@ -28,8 +28,8 @@ export const useForm = <T extends object>(initialState: T) => {
         const { name, value } = target;
 
         if (/^\d*$/.test(value) && value.length <= 4) {
-            setFormulario({
-                ...formulario,
+            setFormValues({
+                ...formValues,
                 [name]: value
             });
         }
@@ -37,32 +37,32 @@ export const useForm = <T extends object>(initialState: T) => {
 
     const handleCheckboxChange = ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => {
         const { name } = target;
-        setFormulario({
-            ...formulario,
+        setFormValues({
+            ...formValues,
             [name]: checked
         });
     }
 
     const reset = () => {
-        setFormulario(initialState);
+        setFormValues(initialState);
     }
 
     const handleFormValueChange = (key: string, value: string) => {
-        setFormulario({
-            ...formulario,
+        setFormValues({
+            ...formValues,
             [key]: value
         })
     }
 
     return {
-        formulario,
+        formValues,
         handleInputChange,
         handleSelectChange,
-        setFormulario,
+        setFormValues,
         reset,
         handleYearChange,
         handleFormValueChange,
         handleCheckboxChange,
-        ...formulario
+        ...formValues
     }
 };

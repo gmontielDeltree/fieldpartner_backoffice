@@ -15,88 +15,66 @@ import {
 Add as AddIcon,
 Edit as EditIcon,
 Delete as DeleteIcon,
-DisplaySettings as DisplaySettingsIcon,
+Computer as ComputerIcon,
 } from "@mui/icons-material";
-import { useAppDispatch, useForm, useLicences } from "../hooks";
-import { setLicencesACtive } from "../store/licences";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
-import { ColumnProps, Licences } from "../types";
+import { useAppDispatch, useForm, useSystem } from "../../hooks";
+import { setSystemACtive } from "../../store/system";
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import { ColumnProps, System } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "ID", align: "left" },
   { text: "System", align: "center" },
-  { text: "Descripcion", align: "center" },
-  { text: "Tipo", align: "center" },
-  { text: "Max Und", align: "center" },
+  { text: "Version", align: "center" },
 ];
 
-export const ListLicencesPage: React.FC = () => {
+export const ListSystemPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, licences, getLicences, removeLicences} = useLicences();
+  const { isLoading, system, getSystem, removeSystem} = useSystem();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  
-
-  const filterLicences = (licences: Licences[], filterText: string): Licences[] => {
-    const filteredBySearch = licences.filter(licences => matchesFilter(licences, filterText));
+  const filterSystem = (system: System[], filterText: string): System[] => {
+    const filteredBySearch = system.filter(system => matchesFilter(system, filterText));
     return filteredBySearch;
   };
-  
-  
 
   const normalizeText = (text: string) => {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
-  const matchesFilter = (licences: Licences, filter: string) => {
+  const matchesFilter = (system: System, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
-      licences.id,
-      licences.description,
-      licences.licenceType,
+      system.id,
+      system.version,
+      system.system,
     ];
   
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
 
-  
-  // const handleFilter = () => {
-  //   setFilteredType(selectedType);
-  // };
- 
   const onClickSearch = () => {
     if (filterText === "") {
-      getLicences();
+      getSystem();
       return;
     }
   };
 
-//   const handleFilterButtonClick = () => {
-//     setShowOptions(!showOptions); // Invertir el estado de showOptions
-//   };
-
-//   const handleSelectChange = (value: string) => {
-//     console.log("Tipo seleccionado:", value);
-//     setSelectedType(value);
-//     setShowOptions(false); // Ocultar las opciones cuando se seleccione una
-//   };
-
-  const onClickUpdateLicences = (item: Licences) => {
-    console.log("Item ID:", item._id);
-    dispatch(setLicencesACtive(item));
-    navigate(`/licences/${item._id}`);
+  const onClickUpdateSystem = (item: System) => {
+    dispatch(setSystemACtive(item));
+    navigate(`/system/${item._id}`);
   };
 
-  const handleDeleteLicences = (item:  Licences) => {
+  const handleDeleteSystem = (item:  System) => {
     if (item._id && item._rev) {
-      removeLicences(item._id, item._rev);
-      getLicences();
+      removeSystem(item._id, item._rev);
+      getSystem();
     }
   };
 
   useEffect(() => {
-    getLicences();
+    getSystem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -112,9 +90,9 @@ export const ListLicencesPage: React.FC = () => {
           alignItems="center"
           sx={{ ml: { sm: 2 }, pt: 2 }}
         >
-          <DisplaySettingsIcon/>
+          <ComputerIcon/>
           <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Licences
+            System
           </Typography>
         </Box>
         <Box component="div" sx={{ mt: 7 }}>
@@ -131,7 +109,7 @@ export const ListLicencesPage: React.FC = () => {
                 variant="contained"
                 color="primary"
                 component={RouterLink}
-                to="/licences/new"
+                to="/system/new"
                 startIcon={<AddIcon />}
                 sx={{ mb: 2 }}
               >
@@ -164,7 +142,7 @@ export const ListLicencesPage: React.FC = () => {
                 <Grid item xs={8} sm={5}>
                   <SearchInput
                     value={filterText}
-                    placeholder="Licences /Descripcion"
+                    placeholder="System /Descripcion"
                     handleInputChange={handleInputChange}
                   />
                 </Grid>
@@ -176,7 +154,7 @@ export const ListLicencesPage: React.FC = () => {
           </Grid>
           <Box component="div" sx={{ p: 1 }}>
             <TableContainer
-              key="table-licences"
+              key="table-system"
               sx={{
                 minHeight: "120px",
                 maxHeight: "540px",
@@ -186,29 +164,27 @@ export const ListLicencesPage: React.FC = () => {
               component={Paper}
             >
               <DataTable
-                key="datatable-licences"
+                key="datatable-system"
                 columns={columns}
                 isLoading={isLoading}
               >
-                {filterLicences(licences, filterText).map((row) => (
+                {filterSystem(system, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.id}</TableCellStyled>
-                    <TableCellStyled align="center">{row.systemType}</TableCellStyled>
-                    <TableCellStyled align="center">{row.description}</TableCellStyled>
-                    <TableCellStyled align="center">{row.licenceType}</TableCellStyled>
-                    <TableCellStyled align="center">{row.maximumUnitAllowed}</TableCellStyled>
+                    <TableCellStyled align="center">{row.system}</TableCellStyled>
+                    <TableCellStyled align="center">{row.version}</TableCellStyled>
                     <TableCellStyled align="right">
                       <Tooltip title="Editar">
                         <IconButton
                           aria-label="Editar"
-                          onClick={() => onClickUpdateLicences(row)}
+                          onClick={() => onClickUpdateSystem(row)}
                         >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Eliminar">
                         <IconButton
-                          onClick={() => handleDeleteLicences(row)}
+                          onClick={() => handleDeleteSystem(row)}
                           style={{ fontSize: '1rem' }}
                           color="default"
                         >

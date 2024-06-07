@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
   Autocomplete,
   Box,
@@ -19,9 +19,9 @@ import {
 } from "@mui/material";
 import { Yard as YardIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useCrops, useForm } from "../hooks";
-import { Crops } from "../types";
-import { removeCropsActive  } from "../store/crops";
+import { useAppDispatch, useAppSelector, useCrops, useForm } from "../../hooks";
+import { Crops } from "../../types";
+import { removeCropsActive  } from "../../store/crops";
 
 
 const initialForm: Crops = {
@@ -57,8 +57,8 @@ export const NewCropsPage: React.FC = () => {
     descriptionPT,
     cropType,
     cropVariety,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<Crops>(initialForm);
@@ -66,43 +66,43 @@ export const NewCropsPage: React.FC = () => {
   const handlePreparedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Prepared checkbox value:", event.target.checked);
     setPrepared(event.target.checked);
-    setFormulario({ ...formulario, prepared: event.target.checked });
+    setFormValues({ ...formValues, prepared: event.target.checked });
   };
   
   const handleSowingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Sowing checkbox value:", event.target.checked);
     setSowing(event.target.checked);
-    setFormulario({ ...formulario, sowing: event.target.checked });
+    setFormValues({ ...formValues, sowing: event.target.checked });
   };
   
   const handleApplicationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Application checkbox value:", event.target.checked);
     setApplication(event.target.checked);
-    setFormulario({ ...formulario, application: event.target.checked });
+    setFormValues({ ...formValues, application: event.target.checked });
   };
   
   const handleGerminationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Germination checkbox value:", event.target.checked);
     setGermination(event.target.checked);
-    setFormulario({ ...formulario, germination: event.target.checked });
+    setFormValues({ ...formValues, germination: event.target.checked });
   };
   
   const handleHarvestChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("Harvest checkbox value:", event.target.checked);
     setHarvest(event.target.checked);
-    setFormulario({ ...formulario, harvest: event.target.checked });
+    setFormValues({ ...formValues, harvest: event.target.checked });
   };
 
   const handleAddCrops = () => {
-    console.log("Datos a guardar:", formulario);
-    createCrops(formulario);
+    console.log("Datos a guardar:", formValues);
+    createCrops(formValues);
     reset();
   };
 
   const handleUpdateCrops = () => {
-    console.log("Datos a actualizar:", formulario);
-    if (!formulario._id) return;
-    updateCrops(formulario);
+    console.log("Datos a actualizar:", formValues);
+    if (!formValues._id) return;
+    updateCrops(formValues);
   };
 
   const onClickCancel = () => {
@@ -112,17 +112,17 @@ export const NewCropsPage: React.FC = () => {
 
   useEffect(() => {
     if (cropsActive) {
-      setFormulario(cropsActive); 
+      setFormValues(cropsActive); 
       setPrepared(cropsActive.prepared);
       setSowing(cropsActive.sowing);
       setApplication(cropsActive.application);
       setGermination(cropsActive.germination);
       setHarvest(cropsActive.harvest);
     } else {
-      setFormulario(initialForm);
+      setFormValues(initialForm);
       
     }
-  }, [cropsActive, setFormulario]);
+  }, [cropsActive, setFormValues]);
 
   useEffect(() => {
     return () => {
@@ -183,7 +183,7 @@ export const NewCropsPage: React.FC = () => {
               onChange={(event, newValue) => {
                 if (typeof newValue === 'string') {
                   handleInputChange(event as React.ChangeEvent<HTMLInputElement>); 
-                  setFormulario({ ...formulario, cropType: newValue });
+                  setFormValues({ ...formValues, cropType: newValue });
                   
                 }
               }}

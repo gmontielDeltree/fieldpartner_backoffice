@@ -21,7 +21,8 @@ import {
   ListLicencesPage,
   NewLicencesPage,
   ListMenuModulesPage,
-  NewMenuModulesPage
+  NewMenuModulesPage,
+  AccountPage,
 } from "../pages";
 
 
@@ -44,23 +45,23 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/type-supplies" element={< ListSuppliesPage />} />
         <Route path="/type-supplies/new" element={<SuppliesTypePage />} />
         <Route path="/type-supplies/:id" element={<SuppliesTypePage />} />
-        <Route path="/crops" element={<ListCropsPage/>}/> 
-        <Route path="/crops/new" element={<NewCropsPage/>}/> 
-        <Route path="/crops/:id" element={<NewCropsPage/>}/> 
-        <Route path="/country" element={<ListCountryPage/>}/> 
-        <Route path="/country/new" element={<NewCountryPage/>}/>
-        <Route path="/country/:id" element={<NewCountryPage/>}/>
-        <Route path="/system" element={<ListSystemPage/>}/>
-        <Route path="/system/new" element={<NewSystemPage/>}/>
-        <Route path="/system/:id" element={<NewSystemPage/>}/>
-        <Route path="/licences" element={<ListLicencesPage/>}/>
-        <Route path="/licences/new" element={<NewLicencesPage/>}/>
-        <Route path="/licences/:id" element={<NewLicencesPage/>}/>
-        <Route path="/menus-modules" element={<ListMenuModulesPage/>}/>
-        <Route path="/menus-modules/new" element={<NewMenuModulesPage/>}/>
-        <Route path="/menus-modules/:id" element={<NewMenuModulesPage/>}/>
+        <Route path="/crops" element={<ListCropsPage />} />
+        <Route path="/crops/new" element={<NewCropsPage />} />
+        <Route path="/crops/:id" element={<NewCropsPage />} />
+        <Route path="/country" element={<ListCountryPage />} />
+        <Route path="/country/new" element={<NewCountryPage />} />
+        <Route path="/country/:id" element={<NewCountryPage />} />
+        <Route path="/system" element={<ListSystemPage />} />
+        <Route path="/system/new" element={<NewSystemPage />} />
+        <Route path="/system/:id" element={<NewSystemPage />} />
+        <Route path="/licences" element={<ListLicencesPage />} />
+        <Route path="/licences/new" element={<NewLicencesPage />} />
+        <Route path="/licences/:id" element={<NewLicencesPage />} />
+        <Route path="/menus-modules" element={<ListMenuModulesPage />} />
+        <Route path="/menus-modules/new" element={<NewMenuModulesPage />} />
+        <Route path="/menus-modules/:id" element={<NewMenuModulesPage />} />
 
-
+        <Route path="/accounts" element={<AccountPage />} />
 
 
         <Route path="/*" element={<Navigate to="/home" />} />

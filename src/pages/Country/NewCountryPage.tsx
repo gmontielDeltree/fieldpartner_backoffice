@@ -1,5 +1,5 @@
 import React, { useEffect} from "react";
-import { Loading } from "../components";
+import { Loading } from "../../components";
 import {
     Autocomplete,
   Box,
@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import { Public as PublicIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useCountry, useForm } from "../hooks";
-import { Country } from "../types";
-import { removeCountryActive } from "../store/country";
+import { useAppDispatch, useAppSelector, useCountry, useForm } from "../../hooks";
+import { Country } from "../../types";
+import { removeCountryActive } from "../../store/country";
 
 
 
@@ -56,8 +56,8 @@ export const NewCountryPage: React.FC = () => {
     descriptionEN,
     descriptionPT,
     leguaje,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<Country>(initialForm);
@@ -65,7 +65,7 @@ export const NewCountryPage: React.FC = () => {
   const handleLanguageChange = (_event: React.SyntheticEvent, value: { code: string; label: string } | null) => {
     if (value) {
       const selectedLanguageCode = value.code;
-      setFormulario(prevState => ({
+      setFormValues(prevState => ({
         ...prevState,
         leguaje: selectedLanguageCode
       }));
@@ -74,15 +74,15 @@ export const NewCountryPage: React.FC = () => {
 
 
   const handleAddCountry = () => {
-    console.log("Datos a guardar:", formulario);
-    createCountry(formulario);
+    console.log("Datos a guardar:", formValues);
+    createCountry(formValues);
     reset();
   };
 
   const handleUpdateCountry = () => {
-    console.log("Datos a actualizar:", formulario);
-    if (!formulario._id) return;
-    updateCountry(formulario);
+    console.log("Datos a actualizar:", formValues);
+    if (!formValues._id) return;
+    updateCountry(formValues);
   };
 
   const onClickCancel = () => {
@@ -92,12 +92,12 @@ export const NewCountryPage: React.FC = () => {
 
   useEffect(() => {
     if (countryActive) {
-      setFormulario(countryActive); 
+      setFormValues(countryActive); 
     } else {
-      setFormulario(initialForm);
+      setFormValues(initialForm);
       
     }
-  }, [countryActive, setFormulario]);
+  }, [countryActive, setFormValues]);
 
 
 

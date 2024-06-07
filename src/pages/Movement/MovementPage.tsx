@@ -16,10 +16,10 @@ import {
 } from "@mui/material";
 import { SyncAlt as SyncAltIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useMovements, useForm } from "../hooks";
-import { Movement } from "../types";
-import { removeMovementActive } from "../store/movements";
-import { Loading } from "../components";
+import { useAppDispatch, useAppSelector, useMovements, useForm } from "../../hooks";
+import { Movement } from "../../types";
+import { removeMovementActive } from "../../store/movements";
+import { Loading } from "../../components";
 
 
 const initialForm: Movement = {
@@ -39,7 +39,7 @@ export const MovementPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { movementActive } = useAppSelector((state) => state.movement);
 
-  const handleSwitchChange = () => { setFormulario((prevFormulario) => ({ ...prevFormulario, manual: !prevFormulario.manual, })) }
+  const handleSwitchChange = () => { setFormValues((prevFormulario) => ({ ...prevFormulario, manual: !prevFormulario.manual, })) }
 
   const {
     name,
@@ -48,8 +48,8 @@ export const MovementPage: React.FC = () => {
     description,
     manual,
     sumaStock,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<Movement>(initialForm);
@@ -58,16 +58,16 @@ export const MovementPage: React.FC = () => {
 
   const handleAddMovement = () => {
     createMovement({
-      ...formulario,
+      ...formValues,
       manual,
     });
     reset();
   };
 
   const handleUpdateMovement = () => {
-    if (!formulario._id) return;
+    if (!formValues._id) return;
     updateMovement({
-      ...formulario,
+      ...formValues,
       manual,
     });
   };
@@ -78,10 +78,10 @@ export const MovementPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (movementActive) setFormulario(movementActive);
-    else setFormulario(initialForm);
+    if (movementActive) setFormValues(movementActive);
+    else setFormValues(initialForm);
 
-  }, [movementActive, setFormulario, dispatch]);
+  }, [movementActive, setFormValues, dispatch]);
 
   useEffect(() => {
 

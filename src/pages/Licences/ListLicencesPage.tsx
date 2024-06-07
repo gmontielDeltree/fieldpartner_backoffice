@@ -1,43 +1,45 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { Box,
-   Button,
-    Container,
-     Grid,
-      IconButton,
-       Tooltip,
-       Typography,
-        TableContainer,
-         Paper,
-              } from "@mui/material";
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Public as PublicIcon } from "@mui/icons-material";
-import { useAppDispatch, useCountry, useForm } from "../hooks";
-import { setCountryACtive } from "../store/country";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../components";
-import { ColumnProps, Country } from "../types";
+import { 
+Box,
+Button,
+Container,
+Grid,
+IconButton,
+Tooltip,
+Typography,
+TableContainer,
+Paper,
+} from "@mui/material";
+import {
+Add as AddIcon,
+Edit as EditIcon,
+Delete as DeleteIcon,
+DisplaySettings as DisplaySettingsIcon,
+} from "@mui/icons-material";
+import { useAppDispatch, useForm, useLicences } from "../../hooks";
+import { setLicencesACtive } from "../../store/licences";
+import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import { ColumnProps, Licences } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "Codigo", align: "left" },
-  { text: "Descripcion ES", align: "center" },
-  { text: "Descripcion PT", align: "center" },
-  { text: "Descripcion EN", align: "center" },
+  { text: "ID", align: "left" },
+  { text: "System", align: "center" },
+  { text: "Descripcion", align: "center" },
+  { text: "Tipo", align: "center" },
+  { text: "Max Und", align: "center" },
 ];
 
-export const ListCountryPage: React.FC = () => {
+export const ListLicencesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  // const [selectedType, setSelectedType] = useState("");
-//   const [showInactive,] = useState(false);
-//   const [selectedType, setSelectedType] = React.useState('');
-  const { isLoading, country, getCountry, removeCountry } = useCountry();
+  const { isLoading, licences, getLicences, removeLicences} = useLicences();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
-//   const [showOptions, setShowOptions] = React.useState(false);
 
   
 
-  const filterCountry = (country: Country[], filterText: string): Country[] => {
-    const filteredBySearch = country.filter(country => matchesFilter(country, filterText));
-    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
+  const filterLicences = (licences: Licences[], filterText: string): Licences[] => {
+    const filteredBySearch = licences.filter(licences => matchesFilter(licences, filterText));
     return filteredBySearch;
   };
   
@@ -47,13 +49,12 @@ export const ListCountryPage: React.FC = () => {
     return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
-  const matchesFilter = (country: Country, filter: string) => {
+  const matchesFilter = (licences: Licences, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
-      country.descriptionES,
-      country.descriptionPT,
-      country.descriptionEN,
-      country.code
+      licences.id,
+      licences.description,
+      licences.licenceType,
     ];
   
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
@@ -63,9 +64,10 @@ export const ListCountryPage: React.FC = () => {
   // const handleFilter = () => {
   //   setFilteredType(selectedType);
   // };
+ 
   const onClickSearch = () => {
     if (filterText === "") {
-      getCountry();
+      getLicences();
       return;
     }
   };
@@ -80,21 +82,21 @@ export const ListCountryPage: React.FC = () => {
 //     setShowOptions(false); // Ocultar las opciones cuando se seleccione una
 //   };
 
-  const onClickUpdateCountry = (item: Country) => {
+  const onClickUpdateLicences = (item: Licences) => {
     console.log("Item ID:", item._id);
-    dispatch(setCountryACtive(item));
-    navigate(`/country/${item._id}`);
+    dispatch(setLicencesACtive(item));
+    navigate(`/licences/${item._id}`);
   };
 
-  const handleDeleteCountry = (item:  Country) => {
+  const handleDeleteLicences = (item:  Licences) => {
     if (item._id && item._rev) {
-      removeCountry(item._id, item._rev);
-      getCountry();
+      removeLicences(item._id, item._rev);
+      getLicences();
     }
   };
 
   useEffect(() => {
-    getCountry();
+    getLicences();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -110,9 +112,9 @@ export const ListCountryPage: React.FC = () => {
           alignItems="center"
           sx={{ ml: { sm: 2 }, pt: 2 }}
         >
-          <PublicIcon/>
+          <DisplaySettingsIcon/>
           <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Paises
+            Licences
           </Typography>
         </Box>
         <Box component="div" sx={{ mt: 7 }}>
@@ -129,7 +131,7 @@ export const ListCountryPage: React.FC = () => {
                 variant="contained"
                 color="primary"
                 component={RouterLink}
-                to="/country/new"
+                to="/licences/new"
                 startIcon={<AddIcon />}
                 sx={{ mb: 2 }}
               >
@@ -162,7 +164,7 @@ export const ListCountryPage: React.FC = () => {
                 <Grid item xs={8} sm={5}>
                   <SearchInput
                     value={filterText}
-                    placeholder="Pais /Descripcion"
+                    placeholder="Licences /Descripcion"
                     handleInputChange={handleInputChange}
                   />
                 </Grid>
@@ -174,7 +176,7 @@ export const ListCountryPage: React.FC = () => {
           </Grid>
           <Box component="div" sx={{ p: 1 }}>
             <TableContainer
-              key="table-country"
+              key="table-licences"
               sx={{
                 minHeight: "120px",
                 maxHeight: "540px",
@@ -184,28 +186,29 @@ export const ListCountryPage: React.FC = () => {
               component={Paper}
             >
               <DataTable
-                key="datatable-country"
+                key="datatable-licences"
                 columns={columns}
                 isLoading={isLoading}
               >
-                {filterCountry(country, filterText).map((row) => (
+                {filterLicences(licences, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
-                    <TableCellStyled align="left">{row.code}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionES}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionEN}</TableCellStyled>
+                    <TableCellStyled align="left">{row.id}</TableCellStyled>
+                    <TableCellStyled align="center">{row.systemType}</TableCellStyled>
+                    <TableCellStyled align="center">{row.description}</TableCellStyled>
+                    <TableCellStyled align="center">{row.licenceType}</TableCellStyled>
+                    <TableCellStyled align="center">{row.maximumUnitAllowed}</TableCellStyled>
                     <TableCellStyled align="right">
                       <Tooltip title="Editar">
                         <IconButton
                           aria-label="Editar"
-                          onClick={() => onClickUpdateCountry(row)}
+                          onClick={() => onClickUpdateLicences(row)}
                         >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Eliminar">
                         <IconButton
-                          onClick={() => handleDeleteCountry(row)}
+                          onClick={() => handleDeleteLicences(row)}
                           style={{ fontSize: '1rem' }}
                           color="default"
                         >
