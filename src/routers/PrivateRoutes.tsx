@@ -1,5 +1,5 @@
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useMemo } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppLayout } from "../components";
 import {
   HomePage,
@@ -23,11 +23,18 @@ import {
   ListMenuModulesPage,
   NewMenuModulesPage,
   AccountPage,
+  ListAccountPage,
 } from "../pages";
 
 
 
 export const PrivateRoutes: React.FC = () => {
+
+  const { pathname, search } = useLocation();
+
+  const lastPath = useMemo(() => pathname + search, [pathname, search]);
+  localStorage.setItem("lastPath_bo", lastPath);
+
   return (
     <AppLayout key="app-layout">
       <Routes>
@@ -61,7 +68,8 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/menus-modules/new" element={<NewMenuModulesPage />} />
         <Route path="/menus-modules/:id" element={<NewMenuModulesPage />} />
 
-        <Route path="/accounts" element={<AccountPage />} />
+        <Route path="/accounts" element={<ListAccountPage />} />
+        <Route path="/accounts/new" element={<AccountPage />} />
 
 
         <Route path="/*" element={<Navigate to="/home" />} />

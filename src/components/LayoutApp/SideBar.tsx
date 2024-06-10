@@ -22,8 +22,9 @@ import {
   Computer as ComputerIcon,
   DisplaySettings as DisplaySettingsIcon,
   List as ListIcon,
-  AccountBox as AccountBoxIcon,
 } from "@mui/icons-material";
+import 'semantic-ui-css/semantic.min.css';
+import { Icon } from "semantic-ui-react";
 
 
 export interface SideBarProps {
@@ -81,7 +82,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               selected={pathname.includes("acccounts")}
             >
               <ListItemIcon>
-                <AccountBoxIcon />
+                <Icon name="id card" size="large" />
               </ListItemIcon>
               <ListItemText primary="Cuentas" />
             </ListItemButton>

@@ -14,6 +14,8 @@ import {
     StepLabel,
 } from "@mui/material";
 import { AccountBox as AccountBoxIcon } from "@mui/icons-material";
+import 'semantic-ui-css/semantic.min.css';
+import { Icon } from "semantic-ui-react";
 import { CompanyForm, LicenceForm } from "../../components/account";
 
 const initialForm = {
@@ -114,15 +116,15 @@ export const AccountPage: React.FC = () => {
                     alignItems="center"
                     sx={{ ml: { sm: 2 }, pt: 2 }}
                 >
-                    <AccountBoxIcon fontSize="large" />
-                    <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
+                    <Icon name="id card" size="huge" />
+                    <Typography variant="h4" sx={{ ml: { sm: 2 } }}>
                         Cuentas
                     </Typography>
                 </Box>
 
                 <Paper
                     variant="outlined"
-                    sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+                    sx={{ my: { xs: 3, md: 3 }, p: { xs: 2, md: 3 } }}
                 >
                     <Box
                         sx={{

@@ -33,7 +33,7 @@ export const AppRouter: React.FC = () => {
           : (<PrivateRoutes />)
       } */}
 
-      
+
 
       <Route path='/*' element={<Navigate to='/auth/login' />} />
     </Routes>

@@ -2,6 +2,10 @@ import axios from 'axios';
 import { getEnvVariables } from '../helpers/getEnvVariables';
 
 const baseUrl = getEnvVariables().VITE_AUTH_API;
+export const baseUrlImg = getEnvVariables().VITE_IMAGES_URL;
+
+export const urlImg = `${baseUrlImg}/general/files/`;
+
 
 export const backofficeApi = axios.create({
     baseURL: baseUrl,

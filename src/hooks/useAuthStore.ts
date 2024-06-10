@@ -9,6 +9,7 @@ import {
     HttpStatusCode
 } from 'axios';
 import { ResponseAuthLogin, ResponseAuthRenew, User, UserLogin, UserRegister } from '../types';
+import { convertTimestampToDate } from '../helpers/dates';
 
 
 export interface ErrorResponseAuth {
@@ -32,16 +33,18 @@ export const useAuthStore = () => {
         // dispatch(onChecking());
         dispatch(startLoading());
         try {
-            const response = await backofficeApi.post<ResponseAuthLogin>(`/${controller}/login`, {
+            const response = await backofficeApi.post<ResponseAuthLogin>(
+                `/${controller}/login`, {
                 email, password
             });
+
             if (response.data) {
                 const { auth, user } = response.data;
-                const { accessToken, refreshToken } = auth;
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('token_init_date', new Date().getTime().toString());
-                localStorage.setItem("user_session", JSON.stringify(user));
+                const { accessToken, refreshToken, expiration } = auth;
+                localStorage.setItem('t_bo', accessToken);
+                localStorage.setItem('r_bo', refreshToken);
+                localStorage.setItem('t_exp_bo', convertTimestampToDate(expiration).getTime().toString());
+                localStorage.setItem("user_session_bo", JSON.stringify(user));
                 dispatch(onLogin(user));
             }
             dispatch(finishLoading());
@@ -130,24 +133,35 @@ export const useAuthStore = () => {
     // }
 
     const checkAuthToken = async () => {
-        const token = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        const userSession = localStorage.getItem("user_session");
+        const token = localStorage.getItem('t_bo');
+        const refreshToken = localStorage.getItem('r_bo');
+        const userSession = localStorage.getItem("user_session_bo");
+
         if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
 
         dispatch(onChecking());
         try {
             // const { data } = await authApi.get('auth/renew');
-            const response = await backofficeApi.post<ResponseAuthRenew>(`/${controller}/renew`, { refreshToken });
+            const expiration = localStorage.getItem("t_exp_bo");
+            if (new Date().getTime() > Number(expiration)) {
+                dispatch(onLogout(""));
+                return;
+            }
+            const lastPath = localStorage.getItem("lastPath_bo") || "/";
+            navigate(lastPath, { replace: true });
+            const userLogin = JSON.parse(userSession || "") as User;
+            dispatch(onLogin(userLogin));
+
+            const response = await backofficeApi.post<ResponseAuthRenew>(
+                `/${controller}/renew`, { refreshToken });
 
             if (response.status === HttpStatusCode.Created) {
-                localStorage.setItem('accessToken', response.data.accessToken);
-                localStorage.setItem('token-init-date', new Date().getTime().toString());
-                const userLogin = JSON.parse(userSession || '') as User;
-                dispatch(onLogin(userLogin));
+                const expiresIn = new Date().getTime() + response.data.ExpiresIn * 1000;
+                localStorage.setItem('t_bo', response.data.accessToken);
+                // localStorage.setItem('r_bo', response.data.refreshToken);
+                localStorage.setItem('t_exp_bo', expiresIn.toString());
             }
 
-            //TODO: obtener el usuario.
         } catch (error) {
             localStorage.clear();
             dispatch(onLogout(""));

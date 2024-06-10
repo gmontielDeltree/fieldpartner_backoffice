@@ -45,7 +45,7 @@ export const useCustomer = () => {
             setIsLoading(false);
 
             if (response.status === HttpStatusCode.Ok)
-                setCustomers(response.data);
+                setCustomers([]);
             else
                 setCustomers([]);
 

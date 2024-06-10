@@ -26,7 +26,7 @@ const initialForm: Customer = {
   tipoEntidad: TipoEntidad.FISICA.toString(),
   razonSocial: "",
   account: {
-    tipoLicencia: TipoLicencia.LFPC05.toString(),
+    tipoLicencia: TipoLicencia.CAMPO.toString(),
     descripcion: "",
     inicioLicencia: "",
     finLicencia: "",

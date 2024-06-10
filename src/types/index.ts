@@ -54,12 +54,9 @@ export enum TipoEntidad {
 }
 
 export enum TipoLicencia {
-    LFPC05 = "LFPC05",
-    LFPC10 = "LFPC10",
-    LFPCPLUS = "LFPCPLUS",
-    LFPINT = "LFPINT",
-    LFPDEM = "LFPDEM",
-    LFPFREE = "LFPFREE",
+    CAMPO = "Campo",
+    LICENCIA = "Licencia",
+    HECTAREA = "Hectarea"
 }
 
 export interface Authenticate {
@@ -128,8 +125,8 @@ export interface Movement extends Document {
 export interface Crops extends Document {
     crop: string
     descriptionES: string;
-    descriptionPT:string;
-    descriptionEN:string;
+    descriptionPT: string;
+    descriptionEN: string;
     cropType: string
     cropVariety: string
     prepared: boolean;
@@ -142,8 +139,8 @@ export interface Crops extends Document {
 export interface System extends Document {
     id: string
     system: string;
-    version:string;
-    technicalDetails:string;
+    version: string;
+    technicalDetails: string;
 }
 
 // export interface SystemState {
@@ -174,8 +171,8 @@ export interface MenuModules extends Document {
 export interface Country extends Document {
     code: string
     descriptionES: string;
-    descriptionPT:string;
-    descriptionEN:string;
+    descriptionPT: string;
+    descriptionEN: string;
     leguaje: string;
     currency: string;
     taxKey: string;
