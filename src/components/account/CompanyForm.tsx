@@ -1,18 +1,30 @@
-import { Box, Button, Card, CardMedia, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material'
+import { Box, Button, Card, CardMedia, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
 import {
     Phone as PhoneIcon,
     CloudUpload as CloudUploadIcon,
     Cancel as CancelIcon,
     DoDisturb as DoDisturbIcon
 } from '@mui/icons-material';
-import React, { useState } from 'react';
-import uuid4 from "uuid4";
+import React, { ChangeEvent, SetStateAction, useState } from 'react';
 import { urlImg } from '../../config';
+import { Customer } from '../../interfaces/customer';
 
-export const CompanyForm: React.FC = () => {
+export interface CompanyFormProps {
+    formValues: Customer,
+    setFormValues: React.Dispatch<React.SetStateAction<Customer>>,
+    handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void,
+    setFile: React.Dispatch<SetStateAction<File | null>>;
+    // handleCheckboxChange: ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => void
+}
+
+export const CompanyForm: React.FC<CompanyFormProps> = ({
+    formValues,
+    setFormValues,
+    handleInputChange,
+    setFile,
+}) => {
 
     const [urlFile, setUrlFile] = useState('');
-
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const file = event.target.files ? event.target.files[0] : null;
@@ -21,20 +33,20 @@ export const CompanyForm: React.FC = () => {
             const extensionPos = fileNameOriginal.lastIndexOf(".");
             const fileType = fileNameOriginal.substring(extensionPos, fileNameOriginal.length);
 
-            const newFileName = `business-logo-${uuid4()}${fileType}`;
+            const newFileName = `company-logo-${formValues.accountID}${fileType}`;
             const renamedFile = new File([file], newFileName, { type: file.type });
             const fileURL = URL.createObjectURL(renamedFile);
 
             setUrlFile(fileURL);
-            // setFile(renamedFile);
-            // handleFormValueChange("logoBusiness", newFileName);
+            setFile(renamedFile);
+            setFormValues(prevState => ({ ...prevState, companyLogo: newFileName }));
         }
     };
 
     const handleCancelFile = () => {
         setUrlFile("");
-        // setFile(null);
-        // handleFormValueChange("logoBusiness", "");
+        setFile(null);
+        setFormValues(prevState => ({ ...prevState, companyLogo: "" }));
     }
 
     return (
@@ -46,10 +58,9 @@ export const CompanyForm: React.FC = () => {
                 <TextField
                     variant="outlined"
                     type='text'
-                    label="Account ID"
+                    label="Cliente ID"
                     disabled
-                    // value={documento}
-                    // onChange={handleInputChange}
+                    value={formValues.accountID}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -61,8 +72,7 @@ export const CompanyForm: React.FC = () => {
                     type='text'
                     label="Denominacion"
                     disabled
-                    // value={documento}
-                    // onChange={handleInputChange}
+                    value={formValues.denomination}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -74,8 +84,7 @@ export const CompanyForm: React.FC = () => {
                     type='text'
                     label="Pais"
                     disabled
-                    // value={documento}
-                    // onChange={handleInputChange}
+                    value={formValues.country}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -84,12 +93,11 @@ export const CompanyForm: React.FC = () => {
             <Grid item xs={12} sm={5}>
                 <TextField
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
                     label="Razon Social"
-                    name="razonSocial"
-                    // value={razonSocial}
-                    // onChange={handleInputChange}
+                    name="socialReason"
+                    value={formValues.socialReason}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -98,12 +106,11 @@ export const CompanyForm: React.FC = () => {
             <Grid item xs={12} sm={4}>
                 <TextField
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
                     label="Nombre Fantasia"
-                    name="nombreFantasia"
-                    // value={razonSocial}
-                    // onChange={handleInputChange}
+                    name="fantasyName"
+                    value={formValues.fantasyName}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -112,12 +119,11 @@ export const CompanyForm: React.FC = () => {
             <Grid item xs={12} sm={3}>
                 <TextField
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
                     label="Clave Tributaria"
-                    // name="nombreFantasia"
-                    // value={razonSocial}
-                    // onChange={handleInputChange}
+                    name="trybutaryCode"
+                    value={formValues.trybutaryCode}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -128,9 +134,9 @@ export const CompanyForm: React.FC = () => {
                     variant="outlined"
                     type='text'
                     label="Codigo postal"
-                    name="cp"
-                    // // value={cp}
-                    // // onChange={handleInputChange}
+                    name="zipCode"
+                    value={formValues.zipCode}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -140,11 +146,10 @@ export const CompanyForm: React.FC = () => {
                 <TextField
                     label="Provincia"
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
-                    name="provincia"
-                    // value={provincia}
-                    // onChange={handleInputChange}
+                    name="province"
+                    value={formValues.province}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -155,9 +160,9 @@ export const CompanyForm: React.FC = () => {
                     label="Localidad"
                     variant="outlined"
                     type='text'
-                    name="localidad"
-                    // value={localidad}
-                    // onChange={handleInputChange}
+                    name="locality"
+                    value={formValues.locality}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -168,24 +173,23 @@ export const CompanyForm: React.FC = () => {
                     label="Domicilio"
                     variant="outlined"
                     type='text'
-                    name="domicilio"
-                    // value={domicilio}
-                    // onChange={handleInputChange}
+                    name="address"
+                    value={formValues.address}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
             </Grid>
-            
+
             <Grid item xs={12} sm={3}>
                 <TextField
                     label="Telefono"
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
-                    name="telefono"
-                    // value={telefono}
-                    // onChange={handleInputChange}
+                    name="phone"
+                    value={formValues.phone}
+                    onChange={handleInputChange}
                     InputProps={{
                         // startAdornment: <InputAdornment position="start" />,
                         endAdornment: (
@@ -197,13 +201,12 @@ export const CompanyForm: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={3}>
                 <TextField
-                    label="Contacto principal"
+                    label="Contacto secundario"
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
-                    name="contactoPrincipal"
-                    // value={contactoPrincipal}
-                    // onChange={handleInputChange}
+                    name="secondaryContact"
+                    value={formValues.secondaryContact}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -213,11 +216,10 @@ export const CompanyForm: React.FC = () => {
                 <TextField
                     label="Web"
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
-                    name="web"
-                    // value={contactoPrincipal}
-                    // onChange={handleInputChange}
+                    name="website"
+                    value={formValues.website}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -227,11 +229,10 @@ export const CompanyForm: React.FC = () => {
                 <TextField
                     label="Observaciones"
                     variant="outlined"
-                    // disabled={disabledFields}
                     type='text'
-                    name="observations"
-                    // value={contactoPrincipal}
-                    // onChange={handleInputChange}
+                    name="observation"
+                    value={formValues.observation}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -245,7 +246,7 @@ export const CompanyForm: React.FC = () => {
                 alignItems: "center"
             }}>
                 {
-                    !(urlFile) ? (
+                    !(urlFile || formValues.companyLogo) ? (
                         <Button
                             component="label"
                             variant="contained"
@@ -266,12 +267,12 @@ export const CompanyForm: React.FC = () => {
 
                 <Box display="inline-block" component={Paper} sx={{ mb: 1 }}>
                     {
-                        (urlFile) ? (
+                        (urlFile || formValues.companyLogo) ? (
                             <Card sx={{ maxWidth: "220px", height: "120px" }}>
                                 <CardMedia
                                     component="img"
                                     sx={{ objectFit: "contain" }}
-                                    image={urlFile || `${urlImg}`}
+                                    image={urlFile || `${urlImg}/${formValues.companyLogo}`}
                                     alt="Logo"
                                 />
                             </Card>

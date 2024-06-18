@@ -17,8 +17,8 @@ import {
 import { Person as PersonIcon } from "@mui/icons-material";
 
 const initialForm: UserDto = {
-  nombre: "",
-  apellido: "",
+  name: "",
+  lastName: "",
   email: "",
   password: "",
   isAdmin: false,

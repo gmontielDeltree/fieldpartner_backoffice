@@ -24,7 +24,7 @@ const initialForm: Country = {
     descriptionES: "",
     descriptionPT: "",
     descriptionEN: "",
-    leguaje: "",
+    language: "",
     currency: "",
     taxKey: "",
     taxKeyFormat: ""
@@ -45,8 +45,6 @@ export const NewCountryPage: React.FC = () => {
     { code: 'ja', label: '日本語 JP' }
   ];
 
-
-
   const {
     code,
     currency,
@@ -55,7 +53,7 @@ export const NewCountryPage: React.FC = () => {
     descriptionES,
     descriptionEN,
     descriptionPT,
-    leguaje,
+    language,
     formValues,
     setFormValues,
     handleInputChange,
@@ -67,7 +65,7 @@ export const NewCountryPage: React.FC = () => {
       const selectedLanguageCode = value.code;
       setFormValues(prevState => ({
         ...prevState,
-        leguaje: selectedLanguageCode
+        language: selectedLanguageCode
       }));
     }
   };
@@ -104,7 +102,7 @@ export const NewCountryPage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
+      <Container maxWidth="lg" sx={{ mb: 4 }}>
         <Box
           component="div"
           display="flex"
@@ -247,7 +245,7 @@ export const NewCountryPage: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={2}>
             <Autocomplete
-                value={languageOptions.find(option => option.code === leguaje) || null}
+                value={languageOptions.find(option => option.code === language) || null}
                 onChange={handleLanguageChange}
                 options={languageOptions}
                 getOptionLabel={(option) => option.label}

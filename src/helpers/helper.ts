@@ -16,3 +16,11 @@ export const capitalizeText = (text: string, allText: boolean = false): string =
         return text.charAt(0).toUpperCase() + text.slice(1);
     }
 }
+//Array con prop code y label;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const enumToArray = (enumObj: any) => {
+    return Object.keys(enumObj).map(key => ({
+        code: key,
+        label: enumObj[key as keyof typeof enumObj]
+    }));
+};

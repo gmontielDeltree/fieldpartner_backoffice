@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Grid, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
-import { Customer, TipoEntidad, TipoLicencia } from '../../types';
+import { Customer, TipoEntidad, EnumLicenceType } from '../../types';
 
 
 
@@ -159,12 +159,12 @@ export const InformationForm: React.FC<InformationFormProps> = ({
                         label="Tipo licencia"
                         onChange={selectChangeAccount}
                     >
-                        <MenuItem value={TipoLicencia.LFPC05.toString()}>Hasta 5 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPC10.toString()}>Hasta 10 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPCPLUS.toString()}>Hasta 100 campos</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPINT.toString()}>Interna</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPDEM.toString()}>Demo</MenuItem>
-                        <MenuItem value={TipoLicencia.LFPFREE.toString()}>Free</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPC05.toString()}>Hasta 5 campos</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPC10.toString()}>Hasta 10 campos</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPCPLUS.toString()}>Hasta 100 campos</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPINT.toString()}>Interna</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPDEM.toString()}>Demo</MenuItem>
+                        <MenuItem value={EnumLicenceType.LFPFREE.toString()}>Free</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>

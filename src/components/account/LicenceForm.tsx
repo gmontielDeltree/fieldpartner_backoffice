@@ -1,12 +1,62 @@
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
-import React from 'react'
-import { TipoLicencia } from '../../types'
+import { Autocomplete, Box, Checkbox, FormControlLabel, Grid, InputAdornment, Paper, TextField, Typography } from '@mui/material';
+import React, { ChangeEvent, FC, SyntheticEvent } from 'react';
+import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences } from '../../types'
+import { Customer } from '../../interfaces/customer';
+import { enumToArray } from '../../helpers';
 
 interface LicenceFormProps {
-
+    formValues: Customer,
+    countries: Country[],
+    licences: Licences[],
+    setFormValues: React.Dispatch<React.SetStateAction<Customer>>,
+    handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void,
+    // handleSelectChange?: ({ target }: SelectChangeEvent) => void,
+    handleCheckboxChange: ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => void
 }
-export const LicenceForm = () => {
+export const LicenceForm: FC<LicenceFormProps> = ({
+    formValues,
+    countries,
+    licences,
+    setFormValues,
+    handleCheckboxChange,
+    handleInputChange,
+}) => {
 
+    const { username, email, password } = formValues.user;
+    const countryOptions = countries.map(c => ({ code: c.code, label: c.descriptionEN }));
+    const statusOptions = Object.values(EnumStatusAccount).map(x => x as string);
+    const categoryOptions = enumToArray(EnumCategoryAccount);
+    const licenceTypeOptions = Object.values(EnumLicenceType).map(x => x as string);
+    const licencesOptions = licences.
+        filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
+        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed }));
+
+    const onChangeCountry = (_event: SyntheticEvent, value: { code: string; label: string } | null) => {
+        if (value)
+            setFormValues(prevState => ({ ...prevState, country: value.code }));
+    }
+
+    const onChangeCategory = (_event: SyntheticEvent, value: { code: string; label: string } | null) => {
+        if (value)
+            setFormValues(prevState => ({ ...prevState, category: value.code }));
+    }
+
+    const onChangeStatus = (_event: SyntheticEvent, value: string | null) => {
+        if (value)
+            setFormValues(prevState => ({ ...prevState, status: value }));
+    }
+
+    const onChangeLicenceType = (_event: SyntheticEvent, value: string | null) => {
+        if (value) {
+            setFormValues(prevState => ({ ...prevState, licenceType: value }));
+
+        }
+    }
+
+    const onChangeLicence = (_event: SyntheticEvent, value: { code: string; label: string; allowedUnit: number } | null) => {
+        if (value)
+            setFormValues(prevState => ({ ...prevState, licence: value.code, amountLicencesAllowed: value.allowedUnit }));
+    }
 
     return (
         <Grid container spacing={1} alignItems="center">
@@ -14,10 +64,10 @@ export const LicenceForm = () => {
                 <TextField
                     variant="outlined"
                     type='text'
-                    label="Account ID"
+                    label="Cuenta ID"
                     name="accountID"
-                    // value={documento}
-                    // onChange={handleInputChange}
+                    value={formValues.accountID}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
@@ -28,64 +78,58 @@ export const LicenceForm = () => {
                     variant="outlined"
                     type='text'
                     label="Denominacion"
-                    name="denominacion"
-                    // value={documento}
-                    // onChange={handleInputChange}
+                    name="denomination"
+                    value={formValues.denomination}
+                    onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
             </Grid>
             <Grid item xs={12} sm={3}>
-                <FormControl fullWidth>
-                    <InputLabel id="pais">Pais</InputLabel>
-                    <Select
-                        labelId="pais"
-                        name='pais'
-                        // value={tipoEntidad}
-                        label="Pais"
-                    // onChange={handleSelectChange}
-                    >
-                        <MenuItem value={"fi"}>Fisica</MenuItem>
-                        <MenuItem value={"ju"}>Jurídica</MenuItem>
-                    </Select>
-                </FormControl>
+                <Autocomplete
+                    value={countryOptions.find(opts => opts.code === formValues.country) || null}
+                    onChange={onChangeCountry}
+                    options={countryOptions}
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Pais" variant="outlined" />
+                    )}
+                    fullWidth
+                />
             </Grid>
             <Grid item xs={12} sm={2.5} >
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Licencia Multipais" />
+                <FormControlLabel control={
+                    <Checkbox
+                        name="isLicenceMultipleCountry"
+                        checked={formValues.isLicenceMultipleCountry}
+                        onChange={handleCheckboxChange}
+                        defaultChecked />}
+                    label="Licencia Multipais" />
             </Grid>
             <Grid item xs={12} sm={2} >
-                <FormControl fullWidth>
-                    <InputLabel id="status">Status</InputLabel>
-                    <Select
-                        labelId="status"
-                        name='status'
-                        // value={tipoEntidad}
-                        label="Status"
-                    // onChange={handleSelectChange}
-                    >
-                        <MenuItem value={"activo"}>Activa</MenuItem>
-                        <MenuItem value={"inactivo"}>Inactiva</MenuItem>
-                        <MenuItem value={"suspendido"}>Suspendida</MenuItem>
-                        <MenuItem value={"cancelada"}>Cancelada</MenuItem>
-                    </Select>
-                </FormControl>
+                <Autocomplete
+                    value={formValues.status}
+                    onChange={onChangeStatus}
+                    options={statusOptions}
+                    // getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Estado" variant="outlined" />
+                    )}
+                    fullWidth
+                />
             </Grid>
             <Grid item xs={12} sm={4} >
-                <FormControl fullWidth>
-                    <InputLabel id="categoria">Categoria</InputLabel>
-                    <Select
-                        labelId="categoria"
-                        name='categoria'
-                        // value={tipoEntidad}
-                        label="Categoria"
-                    // onChange={handleSelectChange}
-                    >
-                        <MenuItem value={"A"}>Productores Agropecuarios / Empresas</MenuItem>
-                        <MenuItem value={"B"}>Ingenieros Agronomos - Cooperativas - Asociaciones</MenuItem>
-                        <MenuItem value={"C"}>Bancos - Seguros</MenuItem>
-                    </Select>
-                </FormControl>
+                <Autocomplete
+                    value={categoryOptions.find(opts => opts.code === formValues.category) || null}
+                    onChange={onChangeCategory}
+                    options={categoryOptions}
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Categoria" variant="outlined" />
+                    )}
+                    fullWidth
+                />
             </Grid>
             <Grid item xs={12} sm={6}>
                 <Box sx={{
@@ -100,9 +144,9 @@ export const LicenceForm = () => {
                         variant="outlined"
                         type='date'
                         label="Inicio"
-                        name="inicioLicencia"
-                        // value={inicioLicencia}
-                        // onChange={handleInputChangeAccount}
+                        name="startDateLicence"
+                        value={formValues.startDateLicence}
+                        onChange={handleInputChange}
                         InputProps={{
                             startAdornment: <InputAdornment position="start" />,
                         }}
@@ -112,49 +156,40 @@ export const LicenceForm = () => {
                         variant="outlined"
                         type='date'
                         label="Fin"
-                        name="finLicencia"
+                        name="endDateLicence"
                         fullWidth
-                        // value={finLicencia}
-                        // onChange={handleInputChangeAccount}
+                        value={formValues.endDateLicence}
+                        onChange={handleInputChange}
                         InputProps={{
                             startAdornment: <InputAdornment position="start" />,
                         }} />
                 </Box>
             </Grid>
-            <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                    <InputLabel id="label-tipo-licencia">Tipo licencia</InputLabel>
-                    <Select
-                        labelId="label-tipo-licencia"
-                        name='licenceType'
-                        // value={tipoLicencia}
-                        label="Tipo licencia"
-                    // onChange={selectChangeAccount}
-                    >
-                        <MenuItem value={TipoLicencia.CAMPO}>{TipoLicencia.CAMPO.toString()}</MenuItem>
-                        <MenuItem value={TipoLicencia.LICENCIA}>{TipoLicencia.LICENCIA.toString()}</MenuItem>
-                        <MenuItem value={TipoLicencia.HECTAREA}>{TipoLicencia.HECTAREA.toString()}</MenuItem>
-                    </Select>
-                </FormControl>
+            <Grid item xs={12} sm={5}>
+                <Autocomplete
+                    value={formValues.licenceType || null}
+                    onChange={onChangeLicenceType}
+                    options={licenceTypeOptions}
+                    // getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Tipo Licencia" variant="outlined" />
+                    )}
+                    fullWidth
+                />
             </Grid>
-            <Grid item xs={12} sm={4}>
-                <FormControl fullWidth>
-                    {/* Obtener de la tabla Licencias */}
-                    <InputLabel id="label-licence">Licencia</InputLabel>
-                    <Select
-                        labelId="label-licence"
-                        name='licenceType'
-                        // value={tipoLicencia}
-                        label="Licencia"
-                    // onChange={selectChangeAccount}
-                    >
-                        <MenuItem value={TipoLicencia.CAMPO}>{TipoLicencia.CAMPO.toString()}</MenuItem>
-                        <MenuItem value={TipoLicencia.LICENCIA}>{TipoLicencia.LICENCIA.toString()}</MenuItem>
-                        <MenuItem value={TipoLicencia.HECTAREA}>{TipoLicencia.HECTAREA.toString()}</MenuItem>
-                    </Select>
-                </FormControl>
+            <Grid item xs={12} sm={5}>
+                <Autocomplete
+                    value={licencesOptions.find(x => x.code === formValues.licence) || null}
+                    onChange={onChangeLicence}
+                    options={licencesOptions}
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Licencia" variant="outlined" />
+                    )}
+                    fullWidth
+                />
             </Grid>
-            <Grid item xs={12} sm={4} >
+            <Grid item xs={12} sm={2} >
                 <TextField
                     key="maxUnits"
                     variant="outlined"
@@ -162,47 +197,62 @@ export const LicenceForm = () => {
                     label="Unidad Maxima"
                     name="maxUnits"
                     disabled
-                    // value={inicioLicencia}
-                    // onChange={handleInputChangeAccount}
+                    value={formValues.amountLicencesAllowed}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
             </Grid>
-            <Grid item xs={12} sm={12} >
-                <Paper variant='elevation' elevation={2} sx={{ p: 2 }}>
+            <Grid item xs={12} sm={12} alignItems="center">
+                <Paper variant='elevation' elevation={1} sx={{ width: "60%", p: 2, margin: "auto" }}>
                     <Typography variant='h6' textAlign="center" sx={{ mb: 2 }}>Licencia Admin</Typography>
-                    <Box display="flex" alignItems="center">
-                        <TextField
-                            key="fin-licencia"
-                            variant="outlined"
-                            type='text'
-                            label="Nombre"
-                            name="username"
-                            // value={finLicencia}
-                            // onChange={handleInputChangeAccount}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start" />,
-                            }}
-                            fullWidth />
-                        <TextField
-                            label="Email"
-                            variant="outlined"
-                            // disabled={disabledFields}
-                            type='email'
-                            name="email"
-                            // value={email}
-                            // onChange={handleInputChange}
-                            InputProps={{
-                                // startAdornment: <InputAdornment position="start" />,
-                                startAdornment: <InputAdornment position="end">@</InputAdornment>
-                            }}
-                            fullWidth />
-                    </Box>
+                    <Grid container direction="column" spacing={1} >
+                        <Grid item xs={12}>
+                            <TextField
+                                key="fin-licencia"
+                                variant="outlined"
+                                type='text'
+                                label="Nombre"
+                                size='small'
+                                name="username"
+                                value={username}
+                                onChange={handleInputChange}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start" />,
+                                }}
+                                fullWidth />
+                        </Grid>
+                        <Grid item xs={12} sx={{ my: 1 }}>
+                            <TextField
+                                label="Email"
+                                variant="outlined"
+                                type='email'
+                                name="email"
+                                size='small'
+                                value={email}
+                                onChange={handleInputChange}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">@</InputAdornment>
+                                }}
+                                fullWidth />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Password"
+                                variant="outlined"
+                                type='password'
+                                name="password"
+                                size='small'
+                                value={password}
+                                onChange={handleInputChange}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start" />,
+                                }}
+                                fullWidth />
+                        </Grid>
+                    </Grid>
                 </Paper>
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-            </Grid> */}
         </Grid>
     )
 }

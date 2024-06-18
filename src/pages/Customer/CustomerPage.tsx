@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { AddressForm, InformationForm } from "../../components/customer";
 import { useAppDispatch, useAppSelector, useCustomer, useForm } from "../../hooks";
-import { Customer, TipoEntidad, TipoLicencia } from "../../types";
+import { Customer, TipoEntidad, EnumLicenceType } from "../../types";
 import { Loading, UserForm } from "../../components";
 import { removeCustomerActive } from "../../store/customer";
 import { Grid } from "@mui/material";
@@ -26,7 +26,7 @@ const initialForm: Customer = {
   tipoEntidad: TipoEntidad.FISICA.toString(),
   razonSocial: "",
   account: {
-    tipoLicencia: TipoLicencia.CAMPO.toString(),
+    tipoLicencia: EnumLicenceType.CAMPO.toString(),
     descripcion: "",
     inicioLicencia: "",
     finLicencia: "",
@@ -42,8 +42,8 @@ const initialForm: Customer = {
   provincia: "",
   pais: "",
   usuario: {
-    nombre: "",
-    apellido: "",
+    name: "",
+    lastName: "",
     email: "",
     password: ""
   },

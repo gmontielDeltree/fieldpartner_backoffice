@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm } from "../../hooks";
+import { useAppDispatch, useAppSelector, useCountry, useForm, useLicences } from "../../hooks";
 import { removeUserActive } from "../../store/user";
 import {
     Button,
@@ -13,36 +13,66 @@ import {
     Step,
     StepLabel,
 } from "@mui/material";
-import { AccountBox as AccountBoxIcon } from "@mui/icons-material";
+// import { AccountBox as AccountBoxIcon } from "@mui/icons-material";
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
 import { CompanyForm, LicenceForm } from "../../components/account";
+import { Customer } from "../../interfaces/customer";
+import { EnumCategoryAccount, EnumClaveTributaria } from "../../types";
+import { Loading } from '../../components/Loading';
+import { getShortDate } from "../../helpers/dates";
 
-const initialForm = {
-    denominacion: "",
-    pais: "",
-    email: "",
-    password: "",
+const initialForm: Customer = {
+    id: "",
+    accountID: "",
+    denomination: "",
+    country: "",
+    user: {
+        email: "",
+        password: "",
+        username: "",
+        isAdmin: true,
+    },
     status: "",
-    categoria: "",
-    fechaValidezInicio: "",
-    fechaValidezFin: "",
-    tipoLicencia: "",
-    licencia: "",
-    cantidadLicenciasPermitidas: 0,
-    nombre: "",
-    licenciaMultiPais: false,
+    category: EnumCategoryAccount.A,
+    startDateLicence: getShortDate(false, "-"),
+    endDateLicence: getShortDate(false, "-"),
+    licenceType: "",
+    licence: "",
+    amountLicencesAllowed: 0,
+    isLicenceMultipleCountry: false,
+    fantasyName: "",
+    companyLogo: "",
+    socialReason: "",
+    address: "",
+    zipCode: "",
+    locality: "",
+    province: "",
+    trybutaryCode: EnumClaveTributaria.CUIT,
+    phone: "",
+    website: "",
+    creationDate: getShortDate(),
+    observation: "",
 };
 
 const steps = ["Licencia", "Compañia"];
 export const AccountPage: React.FC = () => {
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-
-    const { userActive } = useAppSelector((state) => state.user);// Alta de usuario
+    const { userActive } = useAppSelector((state) => state.user);
     const [indexStep, setIndexStep] = useState(0);
+    const { country, isLoading, getCountry } = useCountry();
+    const { licences, isLoading: loadingLic, getLicences } = useLicences();
+    const [logoFile, setLogoFile] = useState<File | null>(null);
 
-    const { formValues, setFormValues, handleInputChange, reset } = useForm(initialForm);
+    const { formValues,
+        setFormValues,
+        handleInputChange,
+        handleCheckboxChange,
+        // reset 
+    } = useForm<Customer>(initialForm);
+    const disabledCompany = (formValues.category !== Object.keys(EnumCategoryAccount.A)[0] );
 
     const getStepContent = useMemo(
         () => (step: number) => {
@@ -51,21 +81,38 @@ export const AccountPage: React.FC = () => {
                     return (
                         <LicenceForm
                             key="info-licence"
-
+                            countries={country}
+                            licences={licences}
+                            formValues={formValues}
+                            setFormValues={setFormValues}
+                            handleInputChange={handleInputChange}
+                            // handleSelectChange={handleSelectChange}
+                            handleCheckboxChange={handleCheckboxChange}
                         />
                     );
                 case 1:
                     return (
                         <CompanyForm
                             key="info-company"
-
+                            formValues={formValues}
+                            setFile={setLogoFile}
+                            setFormValues={setFormValues}
+                            handleInputChange={handleInputChange}
                         />
                     );
                 default:
                     throw new Error("Unknown step");
             }
         },
-        []
+        [
+            formValues,
+            country,
+            licences,
+            setLogoFile,
+            setFormValues,
+            handleInputChange,
+            handleCheckboxChange
+        ]
     );
 
     const handleNext = () => {
@@ -79,16 +126,21 @@ export const AccountPage: React.FC = () => {
 
     const onClickAdd = () => {
         // createUser(formulario);
-        reset();
+        //   if (logoFile) await uploadFile(logoFile);
+        //   await createCustomer(formulario);
+        console.log(logoFile?.name);
+        console.log('formValues', formValues)
+        // reset();
     };
 
     const onClickUpdate = () => {
         // updateUser(formulario.id, formulario);
+        console.log('formValues', formValues)
     };
 
     const onClickCancel = () => {
         dispatch(removeUserActive());
-        navigate("/list-user");
+        navigate("/accounts");
     };
 
 
@@ -101,6 +153,13 @@ export const AccountPage: React.FC = () => {
     //   }, [userActive, setFormulario]);
 
     useEffect(() => {
+        getCountry();
+        getLicences();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+
+    useEffect(() => {
         return () => {
             dispatch(removeUserActive());
         };
@@ -108,8 +167,8 @@ export const AccountPage: React.FC = () => {
 
     return (
         <>
-            {/* <Loading key="loading-new-customer" loading={isLoading} /> */}
             <Container maxWidth="lg" sx={{ mb: 4 }}>
+                <Loading key="loading-new-customer" loading={isLoading || loadingLic} />
                 <Box
                     component="div"
                     display="flex"
@@ -152,8 +211,8 @@ export const AccountPage: React.FC = () => {
                         width: "60%",
                         margin: "auto"
                     }}>
-                        {steps.map((label) => (
-                            <Step key={label}>
+                        {steps.map((label, i) => (
+                            <Step key={label} disabled={i === 1}>
                                 <StepLabel>{label}</StepLabel>
                             </Step>
                         ))}
@@ -177,6 +236,7 @@ export const AccountPage: React.FC = () => {
                                     variant="contained"
                                     color="secondary"
                                     onClick={handleNext}
+                                    disabled={disabledCompany}
                                 // fullWidth
                                 >
                                     Siguiente

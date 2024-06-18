@@ -80,9 +80,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                             {rows.map((row) => (
                                 <StyledTableRow key={row.id}>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.apellido}
+                                        {row.lastName}
                                     </StyledTableCell>
-                                    <StyledTableCell align="center">{row.nombre}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.name}</StyledTableCell>
                                     <StyledTableCell align="center">{row.email}</StyledTableCell>
                                     <StyledTableCell align="center">
                                         <Tooltip title="Editar">

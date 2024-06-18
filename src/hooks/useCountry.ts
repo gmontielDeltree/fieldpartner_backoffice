@@ -16,7 +16,7 @@ export const useCountry = () => {
     const createCountry = async (newCountry: Country) => {
         setIsLoading(true);
         try {
-            const response = await dbContext.country.post(newCountry);
+            const response = await dbContext.countries.post(newCountry);
 
             setIsLoading(false);
             if (response.ok)
@@ -36,7 +36,7 @@ export const useCountry = () => {
     const getCountry = async () => {
         setIsLoading(true);
         try {
-            const response = await dbContext.country.allDocs({ include_docs: true });
+            const response = await dbContext.countries.allDocs({ include_docs: true });
 
             setIsLoading(false);
 
@@ -59,7 +59,7 @@ export const useCountry = () => {
         setIsLoading(true);
 
         try {
-            const response = await dbContext.country.put(updateCountry);
+            const response = await dbContext.countries.put(updateCountry);
             setIsLoading(false);
 
             if (response.ok)
@@ -78,7 +78,7 @@ export const useCountry = () => {
         setIsLoading(true);
 
         try {
-            const response = await dbContext.country.remove(countryId, revCountry);
+            const response = await dbContext.countries.remove(countryId, revCountry);
             setIsLoading(false);
 
             if (response.ok)

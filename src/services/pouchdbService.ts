@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find'
 import { getEnvVariables } from '../helpers/getEnvVariables';
-import { Category, Country, Crops, Movement, SupplyType, System, Licences,MenuModules} from '../types';
+import { Category, Country, Crops, Movement, SupplyType, System, Licences, MenuModules } from '../types';
 
 PouchDB.plugin(PouchDBFind);
 
@@ -12,11 +12,11 @@ const dbNames = Object.freeze({
     categories: "categories",
     movementsType: "movements-type",
     supply_type: "supply_type",
-    crops:"crops",
-    country:"country",
-    system:"system",
-    licences:"licences",
-    menuModules:"menu-modules"
+    crops: "crops",
+    countries: "countries",
+    system: "system",
+    licences: "licences",
+    menuModules: "menu-modules"
 });
 
 
@@ -25,10 +25,10 @@ export const dbContext = Object.freeze({
     movementsType: new PouchDB<Movement>(dbNames.movementsType),
     supply_type: new PouchDB<SupplyType>(dbNames.supply_type),
     crops: new PouchDB<Crops>(dbNames.crops),
-    country:new PouchDB<Country>(dbNames.country),
-    system:new PouchDB<System>(dbNames.system),
-    licences:new PouchDB<Licences>(dbNames.licences),
-    menuModules:new PouchDB<MenuModules>(dbNames.menuModules)
+    countries: new PouchDB<Country>(dbNames.countries),
+    system: new PouchDB<System>(dbNames.system),
+    licences: new PouchDB<Licences>(dbNames.licences),
+    menuModules: new PouchDB<MenuModules>(dbNames.menuModules)
 });
 
 dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`, { live: true, retry: true, });
@@ -39,11 +39,11 @@ dbContext.supply_type.sync(`${remoteCouchDBUrl}${dbNames.supply_type}`, { live: 
 
 dbContext.crops.sync(`${remoteCouchDBUrl}${dbNames.crops}`, { live: true, retry: true, });
 
-dbContext.country.sync(`${remoteCouchDBUrl}${dbNames.country}`, { live: true, retry: true, });
+dbContext.countries.sync(`${remoteCouchDBUrl}${dbNames.countries}`, { live: true, retry: true, });
 
 dbContext.system.sync(`${remoteCouchDBUrl}${dbNames.system}`, { live: true, retry: true, });
 
-dbContext.licences.sync(`${remoteCouchDBUrl}${dbNames.licences}`,{live: true, retry: true,});
+dbContext.licences.sync(`${remoteCouchDBUrl}${dbNames.licences}`, { live: true, retry: true, });
 
-dbContext.menuModules.sync(`${remoteCouchDBUrl}${dbNames.menuModules}`,{live: true, retry: true,});
+dbContext.menuModules.sync(`${remoteCouchDBUrl}${dbNames.menuModules}`, { live: true, retry: true, });
 

@@ -61,8 +61,8 @@ export const useUser = () => {
         try {
             delete updateUser.id;
             const response = await backofficeApi.patch(`/${controller}/${idUser}`, {
-                nombre: updateUser.nombre,
-                apellido: updateUser.apellido,
+                nombre: updateUser.name,
+                apellido: updateUser.lastName,
                 email: updateUser.email,
                 previousPassword: updateUser.previousPassword,
                 newPassword: updateUser.newPassword

@@ -34,7 +34,7 @@ export const ListUserPage: React.FC = () => {
             return;
         }
         const filtedUsers = users.filter(
-            ({ apellido, nombre }) =>
+            ({ lastName: apellido, name: nombre }) =>
                 (apellido && apellido.toLowerCase().includes(filterText.toLowerCase())) ||
                 (nombre && nombre.toLowerCase().includes(filterText.toLowerCase()))
         );

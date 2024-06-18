@@ -16,8 +16,7 @@ export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
 }) => {
 
     const {
-        nombre,
-        apellido,
+        username,
         email,
         password } = user;
 
@@ -34,20 +33,20 @@ export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
                     Usuario
                 </Typography>
             </Grid> */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     label="Nombre"
                     variant="outlined"
                     type='text'
-                    name="nombre"
-                    value={nombre}
+                    name="username"
+                    value={username}
                     onChange={setUser}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
                 <TextField
                     label="Apellido"
                     variant="outlined"
@@ -59,7 +58,7 @@ export const UsersByCustomer: React.FC<UsersByCustomerProps> = ({
                         startAdornment: <InputAdornment position="start" />,
                     }}
                     fullWidth />
-            </Grid>
+            </Grid> */}
             {
                 isNewUser && (
                     <>

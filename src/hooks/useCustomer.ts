@@ -2,7 +2,7 @@ import { HttpStatusCode } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react"
-import { Customer } from "../types";
+import { Customer } from "../interfaces/customer";
 import { backofficeApi } from "../config";
 
 const controller = 'customer';

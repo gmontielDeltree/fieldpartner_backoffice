@@ -4,59 +4,18 @@ export interface ColumnProps {
     align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
 
-export interface UserDto {
-    id?: string;
-    nombre: string;
-    apellido: string;
+export interface Document {
+    _id?: string;
+    _rev?: string;
+}
+
+export interface UserDto extends Document {
+    username: string;
     email: string;
     password: string;
     previousPassword?: string;
     newPassword?: string;
     isAdmin?: boolean;
-}
-
-
-export interface Account {
-    id?: string,
-    descripcion: string,
-    tipoLicencia: string,
-    inicioLicencia: string,
-    finLicencia: string,
-    estado?: string,
-    lenguaje: string
-}
-
-export interface Customer {
-    id?: string;
-    nombreCompleto?: string;
-    documento?: string;
-    telefono: string;
-    email: string;
-    tipoEntidad: string;
-    razonSocial?: string;
-    account: Account;
-    cuit?: string;
-    contactoPrincipal?: string;
-    contactoSecundario?: string;
-    sitioWeb?: string;
-    domicilio: string;
-    localidad: string;
-    cp: string;
-    provincia: string;
-    pais: string;
-    usuario: UserDto;
-}
-
-
-export enum TipoEntidad {
-    FISICA = 'fisica',
-    JURIDICA = 'juridica',
-}
-
-export enum TipoLicencia {
-    CAMPO = "Campo",
-    LICENCIA = "Licencia",
-    HECTAREA = "Hectarea"
 }
 
 export interface Authenticate {
@@ -93,24 +52,18 @@ export interface UserLogin {
     password: string;
 }
 
-
-export interface Document {
-    _id?: string;
-    _rev?: string;
-}
-
 export interface Category extends Document {
     idCategory: string;
     description: string;
     descriptionPt: string;
     descriptionEn: string;
-
 }
 
 export interface SupplieState {
     supplieActive: SupplyType | null;
     supplies: SupplyType[];
 }
+
 export interface Movement extends Document {
     manual: boolean;
     sumaStock: "both" | "suma" | "descuenta";
@@ -155,6 +108,7 @@ export interface Licences extends Document {
     systemType: string;
     maximumUnitAllowed: number;
 }
+
 export interface MenuModules extends Document {
     id: number;
     module: string;
@@ -173,7 +127,7 @@ export interface Country extends Document {
     descriptionES: string;
     descriptionPT: string;
     descriptionEN: string;
-    leguaje: string;
+    language: string;
     currency: string;
     taxKey: string;
     taxKeyFormat: string;
@@ -196,24 +150,12 @@ export interface MenuOptions {
     icon: React.ReactNode;
 }
 
-export enum TipoVehiculo {
-    Cosechadora = "Cosechadora",
-    Pulverizadora = "Pulverizadora",
-    Tractor = "Tractor",
-    Camioneta = "Camioneta",
-    Tolva = "Tolva",
-    Otros = "Otros",
-}
-
 export interface TypeVehicle {
     _id: string;
     name: string;
 }
 
 export enum TipoCombustible { Diesel = "Diesel", Nafta = "Nafta" }
-
-
-
 
 export interface EspecificacionTecnica {
     especificacion: string;
@@ -250,8 +192,6 @@ export interface ColumnProps {
     align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
 
-
-
 export interface RowData {
     name: string;
     description: string;
@@ -285,6 +225,7 @@ export interface ResponseAuthLogin {
     user: User;
     auth: Authenticate;
 }
+
 export interface ResponseAuthRenew {
     AccessToken: string;
     ExpiresIn: number;
@@ -307,8 +248,6 @@ export interface AuthState {
     errorMessage: string;
     isLoading: boolean;
 }
-
-
 
 export interface Business extends Document {
     // id?: string;
@@ -351,10 +290,6 @@ export interface SupplyType extends Document {
     tipoEN: string;
     fitosanitario: boolean;
     cultivo: boolean;
-}
-
-export enum TipoInsumo {
-    CULTIVO = "CuLtivo",
 }
 
 export const LaboresItems = [
@@ -453,11 +388,7 @@ export interface Category extends Document {
     descriptionEn: string;
 }
 
-export enum CountryCode {
-    ARGENTINA = 'ARG',
-    BRASIL = "BRA",
-    CHILE = "CHL",
-}
+
 
 export interface StockMovement extends Document {
     accountId: string;
@@ -507,6 +438,31 @@ export interface SupplieByDeposits {
     lotsStock?: SupplieByLot[];
 }
 
+// #region ENUMS
+
+export enum TipoInsumo {
+    CULTIVO = "CuLtivo",
+}
+
+export enum TipoVehiculo {
+    Cosechadora = "Cosechadora",
+    Pulverizadora = "Pulverizadora",
+    Tractor = "Tractor",
+    Camioneta = "Camioneta",
+    Tolva = "Tolva",
+    Otros = "Otros",
+}
+
+export enum TipoEntidad {
+    FISICA = 'fisica',
+    JURIDICA = 'juridica',
+}
+
+export enum CountryCode {
+    ARGENTINA = 'ARG',
+    BRASIL = "BRA",
+    CHILE = "CHL",
+}
 
 export enum CurrencyCode {
     ARG = 'ARS',
@@ -528,3 +484,30 @@ export enum DisplayModals {
     SupplieByDeposits = "SupplieByDeposits",
     SupplieByLots = "SupplieByLots"
 }
+
+export enum EnumClaveTributaria {
+    CUIT = "CUIT",
+    CNPJ = "CNPJ",
+    RUC = "RUC",
+}
+
+export enum EnumLicenceType {
+    Campo = "Campo",
+    Licencia = "Licencia",
+    Hectarea = "Hectarea",
+}
+
+export enum EnumStatusAccount {
+    Activa = "Activa",
+    Inactiva = "Inactiva",
+    Suspendida = "Suspendida",
+    Cancelada = "Cancelada",
+}
+
+export enum EnumCategoryAccount {
+    A = "Productores Agropecuarios - Empresas",
+    B = "Ingenieros Agronomos - Cooperativas - Asociaciones",
+    C = "Bancos - Seguros",
+}
+
+// #endregion ENUMS

@@ -19,7 +19,7 @@ import {
 import { DisplaySettings as DisplaySettingsIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../../hooks";
-import { Licences,System } from "../../types";
+import { EnumLicenceType, Licences,System } from "../../types";
 import { removeLicencesActive } from "../../store/licences";
 
 
@@ -27,7 +27,7 @@ import { removeLicencesActive } from "../../store/licences";
 const initialForm: Licences = {
   id: "",
   description: "",
-  licenceType: "",
+  licenceType: EnumLicenceType.Licencia,
   maximumUnitAllowed: 0,
   systemType: ""
 };
@@ -39,10 +39,6 @@ export const NewLicencesPage: React.FC = () => {
   const { isLoading, createLicences, updateLicences } = useLicences();
   const { licencesActive } = useAppSelector((state) => state.licences); 
   const { system, getSystem } = useSystem();
-  
-  
-
-  
 
   const {
     id,
@@ -69,8 +65,7 @@ export const NewLicencesPage: React.FC = () => {
   const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType);
 
   
-  
-  const licenceOptions = ['Campo', 'Licencia', 'Hectárea'];
+  const licenceOptions = Object.values(EnumLicenceType);
 
   const handleAddLicences = () => {
     console.log("Datos a guardar:", formValues);
