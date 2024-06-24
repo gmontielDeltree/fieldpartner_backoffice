@@ -1,6 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { DataTableCustomer, Loading } from '../../components';
+import { Loading } from '../../components';
+import { DataTable as DataTableAccount } from '../../components/account';
 import { Box, Typography, Grid, Button, TextField, InputAdornment, Container } from '@mui/material';
 import {
   Add as AddIcon,
@@ -135,8 +136,8 @@ export const ListAccountPage: React.FC = () => {
         <Box
           component="div"
           sx={{ p: 1, mt: 2 }}>
-          <DataTableCustomer
-            key="datatable-customer"
+          <DataTableAccount
+            key="datatable-account"
             columns={columns}
             rows={accounts}
             isLoading={isLoading}

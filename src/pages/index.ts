@@ -1,5 +1,4 @@
 export * from './LoginPage';
-export * from './Customer/ListCustomerPage';
 export * from './SettingsPage';
 export * from './HomePage';
 export * from './User/ListUserPage';
