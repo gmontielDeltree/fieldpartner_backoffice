@@ -43,8 +43,8 @@ export const SuppliesTypePage: React.FC = () => {
     description,
     tipoPT,
     tipoEN,
-    formulario,
-    setFormulario,
+    formValues,
+    setFormValues,
     handleInputChange,
     reset,
   } = useForm<SupplyType>(initialForm);
@@ -52,13 +52,13 @@ export const SuppliesTypePage: React.FC = () => {
   const { isLoading, createSupplies, updateSupplie, conceptoError } = useSupplies();
 
   const handleAddSupplie = () => {
-    createSupplies(formulario);
+    createSupplies(formValues);
     reset();
   };
 
   const handleUpdateSupplie = () => {
-    if (!formulario._id) return;
-    updateSupplie(formulario);
+    if (!formValues._id) return;
+    updateSupplie(formValues);
   };
 
   const onClickCancel = () => {
@@ -67,9 +67,9 @@ export const SuppliesTypePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (supplieActive) setFormulario(supplieActive);
-    else setFormulario(initialForm);
-  }, [supplieActive, setFormulario]);
+    if (supplieActive) setFormValues(supplieActive);
+    else setFormValues(initialForm);
+  }, [supplieActive, setFormValues]);
 
   useEffect(() => {
     return () => {
@@ -178,7 +178,7 @@ export const SuppliesTypePage: React.FC = () => {
               <RadioGroup
                 row
                 name="fitosanitario"
-                value={formulario.fitosanitario.toString()}
+                value={formValues.fitosanitario.toString()}
                 onChange={handleInputChange}
               >
                 <FormControlLabel
@@ -197,7 +197,7 @@ export const SuppliesTypePage: React.FC = () => {
               <RadioGroup
                 row
                 name="cultivo"
-                value={formulario.cultivo.toString()}
+                value={formValues.cultivo.toString()}
                 onChange={handleInputChange}
               >
                 <FormControlLabel
