@@ -53,7 +53,7 @@ export const NavBar: React.FC = () => {
 
           <Box display="flex" alignItems="center">
             <Typography variant="body1" noWrap component="h5">
-              {user && capitalizeText(user.firstName)}
+              {user && capitalizeText(user.username)}
             </Typography>
             <IconButton color="inherit" onClick={() => onClickLogout()}>
               <LogoutOutlined />

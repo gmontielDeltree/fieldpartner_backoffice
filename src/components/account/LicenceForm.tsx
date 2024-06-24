@@ -1,14 +1,15 @@
-import { Autocomplete, Box, Checkbox, FormControlLabel, Grid, InputAdornment, Paper, TextField, Typography } from '@mui/material';
+import { Alert, AlertTitle, Autocomplete, Box, Checkbox, FormControlLabel, Grid, IconButton, InputAdornment, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import React, { ChangeEvent, FC, SyntheticEvent } from 'react';
 import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences } from '../../types'
-import { Customer } from '../../interfaces/customer';
+import { Account } from '../../interfaces/account';
 import { enumToArray } from '../../helpers';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface LicenceFormProps {
-    formValues: Customer,
+    formValues: Account,
     countries: Country[],
     licences: Licences[],
-    setFormValues: React.Dispatch<React.SetStateAction<Customer>>,
+    setFormValues: React.Dispatch<React.SetStateAction<Account>>,
     handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void,
     // handleSelectChange?: ({ target }: SelectChangeEvent) => void,
     handleCheckboxChange: ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => void
@@ -22,7 +23,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
     handleInputChange,
 }) => {
 
-    const { username, email, password } = formValues.user;
+    // const { username, email, password } = formValues.user;
     const countryOptions = countries.map(c => ({ code: c.code, label: c.descriptionEN }));
     const statusOptions = Object.values(EnumStatusAccount).map(x => x as string);
     const categoryOptions = enumToArray(EnumCategoryAccount);
@@ -55,7 +56,16 @@ export const LicenceForm: FC<LicenceFormProps> = ({
 
     const onChangeLicence = (_event: SyntheticEvent, value: { code: string; label: string; allowedUnit: number } | null) => {
         if (value)
-            setFormValues(prevState => ({ ...prevState, licence: value.code, amountLicencesAllowed: value.allowedUnit }));
+            setFormValues(prevState => ({ ...prevState, licence: value.code, amountLicencesAllowed: Number(value.allowedUnit) }));
+    }
+
+    const onChangeUser = ({ target }: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = target;
+        if (formValues.user)
+            setFormValues(prevState => ({
+                ...prevState,
+                user: { ...formValues.user, [name]: value }
+            }));
     }
 
     return (
@@ -65,8 +75,9 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     variant="outlined"
                     type='text'
                     label="Cuenta ID"
-                    name="accountID"
-                    value={formValues.accountID}
+                    name="accountReference"
+                    disabled={!!formValues.accountId}
+                    value={formValues.accountReference}
                     onChange={handleInputChange}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
@@ -78,6 +89,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     variant="outlined"
                     type='text'
                     label="Denominacion"
+                    disabled={!!formValues.accountId}
                     name="denomination"
                     value={formValues.denomination}
                     onChange={handleInputChange}
@@ -90,6 +102,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                 <Autocomplete
                     value={countryOptions.find(opts => opts.code === formValues.country) || null}
                     onChange={onChangeCountry}
+                    disabled={!!formValues.accountId}
                     options={countryOptions}
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
@@ -123,6 +136,9 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                 <Autocomplete
                     value={categoryOptions.find(opts => opts.code === formValues.category) || null}
                     onChange={onChangeCategory}
+                    disabled={!!formValues.accountId}
+                    disableClearable={false}
+                    disableCloseOnSelect={false}
                     options={categoryOptions}
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
@@ -169,6 +185,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                 <Autocomplete
                     value={formValues.licenceType || null}
                     onChange={onChangeLicenceType}
+                    disabled={!!formValues.accountId}
                     options={licenceTypeOptions}
                     // getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
@@ -181,6 +198,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                 <Autocomplete
                     value={licencesOptions.find(x => x.code === formValues.licence) || null}
                     onChange={onChangeLicence}
+                    disabled={!!formValues.accountId}
                     options={licencesOptions}
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
@@ -203,56 +221,75 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     }}
                     fullWidth />
             </Grid>
-            <Grid item xs={12} sm={12} alignItems="center">
-                <Paper variant='elevation' elevation={1} sx={{ width: "60%", p: 2, margin: "auto" }}>
-                    <Typography variant='h6' textAlign="center" sx={{ mb: 2 }}>Licencia Admin</Typography>
-                    <Grid container direction="column" spacing={1} >
-                        <Grid item xs={12}>
-                            <TextField
-                                key="fin-licencia"
-                                variant="outlined"
-                                type='text'
-                                label="Nombre"
-                                size='small'
-                                name="username"
-                                value={username}
-                                onChange={handleInputChange}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start" />,
-                                }}
-                                fullWidth />
-                        </Grid>
-                        <Grid item xs={12} sx={{ my: 1 }}>
-                            <TextField
-                                label="Email"
-                                variant="outlined"
-                                type='email'
-                                name="email"
-                                size='small'
-                                value={email}
-                                onChange={handleInputChange}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">@</InputAdornment>
-                                }}
-                                fullWidth />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Password"
-                                variant="outlined"
-                                type='password'
-                                name="password"
-                                size='small'
-                                value={password}
-                                onChange={handleInputChange}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start" />,
-                                }}
-                                fullWidth />
-                        </Grid>
+            {
+                formValues.user && (
+                    <Grid item xs={12} sm={12} alignItems="center">
+                        <Paper variant='elevation' elevation={1} sx={{ width: "60%", p: 2, margin: "auto" }}>
+                            <Typography variant='h6' textAlign="center" sx={{ mb: 2 }}>Licencia Admin</Typography>
+                            <Grid container direction="column" spacing={1} >
+                                <Grid item xs={12}>
+                                    <TextField
+                                        key="fin-licencia"
+                                        variant="outlined"
+                                        type='text'
+                                        label="Nombre"
+                                        size='small'
+                                        name="username"
+                                        value={formValues.user.username}
+                                        onChange={onChangeUser}
+                                        InputProps={{
+                                            startAdornment: <InputAdornment position="start" />,
+                                        }}
+                                        fullWidth />
+                                </Grid>
+                                <Grid item xs={12} sx={{ my: 1 }}>
+                                    <TextField
+                                        label="Email"
+                                        variant="outlined"
+                                        type='email'
+                                        name="email"
+                                        size='small'
+                                        value={formValues.user.email}
+                                        onChange={onChangeUser}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end">@</InputAdornment>
+                                        }}
+                                        fullWidth />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        label="Password"
+                                        variant="outlined"
+                                        type='password'
+                                        name="password"
+                                        size='small'
+                                        value={formValues.user.password}
+                                        onChange={onChangeUser}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <Tooltip title={
+                                                        <Alert severity="warning">
+                                                            <AlertTitle>La contraseña debe tener al menos:</AlertTitle>
+                                                            <strong>-Debe tener al menos 8 caracteres.</strong><br />
+                                                            <strong>-Una mayúscula.</strong><br />
+                                                            <strong>-Un número.</strong><br />
+                                                            <strong>-Un carácter especial.</strong><br />
+                                                        </Alert>
+                                                    }>
+                                                        <IconButton>
+                                                            <InfoIcon fontSize='small' />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </InputAdornment>)
+                                        }}
+                                        fullWidth />
+                                </Grid>
+                            </Grid>
+                        </Paper>
                     </Grid>
-                </Paper>
-            </Grid>
+                )
+            }
         </Grid>
     )
 }

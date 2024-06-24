@@ -7,11 +7,11 @@ import {
 } from '@mui/icons-material';
 import React, { ChangeEvent, SetStateAction, useState } from 'react';
 import { urlImg } from '../../config';
-import { Customer } from '../../interfaces/customer';
+import { Account } from '../../interfaces/account';
 
 export interface CompanyFormProps {
-    formValues: Customer,
-    setFormValues: React.Dispatch<React.SetStateAction<Customer>>,
+    formValues: Account,
+    setFormValues: React.Dispatch<React.SetStateAction<Account>>,
     handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void,
     setFile: React.Dispatch<SetStateAction<File | null>>;
     // handleCheckboxChange: ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => void
@@ -33,7 +33,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
             const extensionPos = fileNameOriginal.lastIndexOf(".");
             const fileType = fileNameOriginal.substring(extensionPos, fileNameOriginal.length);
 
-            const newFileName = `company-logo-${formValues.accountID}${fileType}`;
+            const newFileName = `company-logo-${formValues.accountReference}${fileType}`;
             const renamedFile = new File([file], newFileName, { type: file.type });
             const fileURL = URL.createObjectURL(renamedFile);
 
@@ -60,7 +60,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
                     type='text'
                     label="Cliente ID"
                     disabled
-                    value={formValues.accountID}
+                    value={formValues.accountReference}
                     InputProps={{
                         startAdornment: <InputAdornment position="start" />,
                     }}

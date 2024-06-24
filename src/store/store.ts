@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import { uiSlice } from './ui';
 import { authSlice } from './auth';
-import { customerSlice } from './customer';
+import { accountSlice } from './account';
 import { userSlice } from './user';
 import { categorySlice } from './category';
 import { movementSlice } from './movements';
@@ -17,7 +17,7 @@ export const store = configureStore({
     reducer: {
         ui: uiSlice.reducer,
         auth: authSlice.reducer,
-        customer: customerSlice.reducer,
+        account: accountSlice.reducer,
         user: userSlice.reducer,
         category: categorySlice.reducer,
         movement: movementSlice.reducer,

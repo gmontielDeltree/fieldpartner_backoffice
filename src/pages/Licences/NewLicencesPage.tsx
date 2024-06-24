@@ -27,7 +27,7 @@ import { removeLicencesActive } from "../../store/licences";
 const initialForm: Licences = {
   id: "",
   description: "",
-  licenceType: EnumLicenceType.Licencia,
+  licenceType: EnumLicenceType.LICENCIA,
   maximumUnitAllowed: 0,
   systemType: ""
 };

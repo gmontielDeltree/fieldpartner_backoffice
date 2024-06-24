@@ -6,6 +6,9 @@ export const baseUrlImg = getEnvVariables().VITE_IMAGES_URL;
 
 export const urlImg = `${baseUrlImg}/general/files/`;
 
+export const imagesAPI = axios.create({
+    baseURL: baseUrlImg
+});
 
 export const backofficeApi = axios.create({
     baseURL: baseUrl,

@@ -10,10 +10,10 @@ import {
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
 import { ColumnProps } from '../../types';
-import { useCustomer, useForm } from '../../hooks';
+import { useAccount, useForm } from '../../hooks';
 
 const columns: ColumnProps[] = [
-  { text: 'ID', align: 'left' },
+  { text: 'Referencia Id', align: 'left' },
   { text: 'Status', align: 'left' },
   { text: 'Pais', align: 'left' },
   { text: 'Denominacion', align: 'left' },
@@ -22,7 +22,7 @@ const columns: ColumnProps[] = [
   { text: '#Campos', align: 'left' },
   { text: '#Contratos', align: 'left' },
   { text: '#Hectareas', align: 'left' },
-  { text: '', align: 'center' }
+  // { text: '', align: 'center' }
 ];
 
 
@@ -30,10 +30,10 @@ export const ListAccountPage: React.FC = () => {
 
   const {
     isLoading,
-    customers,
-    getCustomers,
-    setCustomers
-  } = useCustomer();
+    accounts,
+    getAccounts,
+    setAccounts,
+  } = useAccount();
 
   const {
     filterText,
@@ -42,20 +42,20 @@ export const ListAccountPage: React.FC = () => {
 
   const onClickSearch = (): void => {
     if (filterText === '') {
-      getCustomers();
+      getAccounts();
       return;
     }
-    const filteredCustomers = customers.filter(
-      ({ nombreCompleto, razonSocial }) =>
-        (nombreCompleto && nombreCompleto.toLowerCase().includes(filterText.toLowerCase())) ||
-        (razonSocial && razonSocial.toLowerCase().includes(filterText.toLowerCase()))
+    const filteredCustomers = accounts.filter(
+      ({ denomination, country }) =>
+        (denomination && denomination.toLowerCase().includes(filterText.toLowerCase())) ||
+        (country && country.toLowerCase().includes(filterText.toLowerCase()))
     );
-    setCustomers(filteredCustomers);
+    setAccounts(filteredCustomers);
   }
 
 
   useEffect(() => {
-    getCustomers();
+    getAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -138,7 +138,7 @@ export const ListAccountPage: React.FC = () => {
           <DataTableCustomer
             key="datatable-customer"
             columns={columns}
-            rows={customers}
+            rows={accounts}
             isLoading={isLoading}
           />
         </Box>

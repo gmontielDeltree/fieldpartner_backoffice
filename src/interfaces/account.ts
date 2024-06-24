@@ -1,15 +1,15 @@
 import { Document, UserDto } from "../types";
 
-export interface Customer extends Document {
-    id: string;
-    accountID: string;
+export interface Account extends Document {
+    accountReference: string;
+    accountId?: string;
     denomination: string;
     country: string;
     status: string;
     category: string;
     startDateLicence: string;
     endDateLicence: string;
-    licenceType: string;    
+    licenceType: string;
     licence: string;
     amountLicencesAllowed: number;
     isLicenceMultipleCountry: boolean;
@@ -24,7 +24,18 @@ export interface Customer extends Document {
     address: string;
     locality: string;
     province: string;
-    creationDate: string;
+    // creationDate: string;
     observation: string;
     user: UserDto;
+    countCampos?: number;
+    countLicencias?: number;
+    countHectareas?: number;
+}
+
+
+export interface UpdateAccount {
+    isLicenceMultipleCountry?: boolean;
+    status?: string;
+    startDateLicence?: string;
+    endDateLicence?: string;
 }

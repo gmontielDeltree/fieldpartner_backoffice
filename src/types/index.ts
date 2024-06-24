@@ -26,9 +26,9 @@ export interface Authenticate {
 
 export interface User {
     id: string;
-    firstName: string;
-    lastName: string;
+    username: string;
     accountId: string;
+    countryId: string;
     isAdmin: boolean;
 }
 export interface ResponseAuthLogin {
@@ -492,9 +492,9 @@ export enum EnumClaveTributaria {
 }
 
 export enum EnumLicenceType {
-    Campo = "Campo",
-    Licencia = "Licencia",
-    Hectarea = "Hectarea",
+    C = "Campo",
+    L = "Licencia",
+    H = "Hectarea",
 }
 
 export enum EnumStatusAccount {
@@ -502,6 +502,12 @@ export enum EnumStatusAccount {
     Inactiva = "Inactiva",
     Suspendida = "Suspendida",
     Cancelada = "Cancelada",
+}
+
+export enum EnumCategoryCod {
+    A = "A",
+    B = "B",
+    C = "C"
 }
 
 export enum EnumCategoryAccount {

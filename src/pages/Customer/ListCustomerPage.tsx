@@ -8,7 +8,7 @@ import {
     PeopleAlt as PeopleAltIcon,
 } from '@mui/icons-material';
 import { ColumnProps } from '../../types';
-import { useCustomer, useForm } from '../../hooks';
+import { useAccount, useForm } from '../../hooks';
 
 const columns: ColumnProps[] = [
     { text: 'Tipo Entidad', align: 'left' },
@@ -26,7 +26,7 @@ export const ListCustomerPage: React.FC = () => {
         customers,
         getCustomers,
         setCustomers
-    } = useCustomer();
+    } = useAccount();
     const {
         filterText,
         handleInputChange,

@@ -3,7 +3,7 @@ export * from './Customer/ListCustomerPage';
 export * from './SettingsPage';
 export * from './HomePage';
 export * from './User/ListUserPage';
-export * from './Customer/CustomerPage';
+// export * from './Customer/CustomerPage';
 export * from './User/UserPage';
 export * from './Category/ListCategory';
 export * from './Category/CategoryPage';

@@ -7,11 +7,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { ColumnProps, Customer } from '../../types';
+import { ColumnProps } from '../../types';
 import { Box, Skeleton, Tooltip, IconButton } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
-import { setCustomerActive } from '../../store/customer';
+import { setAccountActive } from '../../store/account';
 import { useAppDispatch } from '../../hooks';
+import { Account } from '../../interfaces/account';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -37,7 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export interface DataTableProps {
     columns: ColumnProps[];
-    rows: Customer[];
+    rows: Account[];
     isLoading: boolean;
 }
 
@@ -50,9 +51,9 @@ export const DataTable: React.FC<DataTableProps> = ({
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const onClickEditCustomer = (item: Customer): void => {
-        dispatch(setCustomerActive(item));
-        navigate(`/customer/${item.id}`);
+    const onClickEditCustomer = (item: Account): void => {
+        dispatch(setAccountActive(item));
+        navigate(`/accounts/${item.accountId}`);
     }
 
     return (
@@ -79,14 +80,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                         </TableHead>
                         <TableBody>
                             {rows.map((row) => (
-                                <StyledTableRow key={row.id}>
+                                <StyledTableRow key={row.accountId}>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.tipoEntidad}
+                                        {row.accountReference}
                                     </StyledTableCell>
-                                    <StyledTableCell align="center">{row.nombreCompleto || row.razonSocial}</StyledTableCell>
-                                    <StyledTableCell align="center">{row.account.tipoLicencia}</StyledTableCell>
-                                    <StyledTableCell align="center">{row.contactoPrincipal}</StyledTableCell>
-                                    <StyledTableCell align="center">{row.account.finLicencia}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.status}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.country}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.denomination}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.licenceType}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.licence}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.countCampos || "-"}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.countLicencias || "-"}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.countHectareas || "-"}</StyledTableCell>
                                     <StyledTableCell align="center">
                                         <Tooltip title="Editar">
                                             <IconButton

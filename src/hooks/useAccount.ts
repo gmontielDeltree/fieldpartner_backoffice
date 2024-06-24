@@ -1,53 +1,61 @@
 import { HttpStatusCode } from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react"
-import { Customer } from "../interfaces/customer";
+import { Account, UpdateAccount } from "../interfaces/account";
 import { backofficeApi } from "../config";
 
-const controller = 'customer';
+const controller = 'account';
 
-export const useCustomer = () => {
+export const useAccount = () => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [status, setStatus] = useState<number>();
     const [error, setError] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [accounts, setAccounts] = useState<Account[]>([]);
 
 
-    const createCustomer = async (newCustomer: Customer) => {
+    const createAccount = async (newAccount: Account) => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.post(`/${controller}`, newCustomer);
+            const response = await backofficeApi.post(`/${controller}`, {
+                ...newAccount,
+                amountLicencesAllowed: Number(newAccount.amountLicencesAllowed)
+            });
 
             setIsLoading(false);
             setStatus(response.status);
-            if (response.status === HttpStatusCode.Created)
+            if (response.status === HttpStatusCode.Created) {
                 Swal.fire('Cliente', 'Nuevo cliente agregado.', 'success');
-            else
+                return true;
+            }
+            else {
                 Swal.fire('Cliente', 'Verificar campos obligatorios.', 'error');
+                return false
+            }
 
-            navigate('/list-customer');
+
         } catch (error) {
             console.log(error)
             Swal.fire('Ups', 'Ocurrio un error inesperado ', 'error');
             setIsLoading(false);
             if (error) setError(error);
+            return false;
         }
     }
 
-    const getCustomers = async () => {
+    const getAccounts = async () => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.get<Customer[]>(`/${controller}`);
+            const response = await backofficeApi.get<Account[]>(`/${controller}`);
 
             setIsLoading(false);
 
             if (response.status === HttpStatusCode.Ok)
-                setCustomers([]);
+                setAccounts(response.data);
             else
-                setCustomers([]);
+                setAccounts([]);
 
         } catch (error) {
             console.log(error)
@@ -57,22 +65,26 @@ export const useCustomer = () => {
         }
     }
 
-    const updateCustomer = async (idCustomer: string, updateCustomer: Customer) => {
+    const updateAccount = async (accountId: string, updateAccount: UpdateAccount) => {
         setIsLoading(true);
 
         try {
-            const response = await backofficeApi.patch(`/${controller}/${idCustomer}`, updateCustomer);
+            const response = await backofficeApi.patch(`/${controller}/${accountId}`, updateAccount);
             setIsLoading(false);
 
-            if (response.status === HttpStatusCode.Ok)
+            if (response.status === HttpStatusCode.Ok) {
                 Swal.fire('Cliente', 'Cliente actualizado.', 'success');
+                return true;
+            }
+            else
+                return false;
 
-            navigate('/list-customer');
         } catch (error) {
             console.log(error)
             Swal.fire('Error', 'No hay registro de clientes.', 'error');
             setIsLoading(false);
             if (error) setError(error);
+            return false;
         }
     }
 
@@ -82,12 +94,12 @@ export const useCustomer = () => {
         status,
         error,
         isLoading,
-        customers,
+        accounts,
 
         //* Métodos
-        createCustomer,
-        getCustomers,
-        setCustomers,
-        updateCustomer
+        createAccount,
+        getAccounts,
+        setAccounts,
+        updateAccount
     }
 }

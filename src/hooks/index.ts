@@ -2,7 +2,7 @@ export * from './useForm';
 export * from './useRedux';
 export * from './useAuthStore';
 export * from './useFormValid';
-export * from './useCustomer';
+export * from './useAccount';
 export * from './useUserBackoffice';
 export * from './useCategory';
 export * from './useMovements';

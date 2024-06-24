@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useCountry, useForm, useLicences } from "../../hooks";
+import { useAccount, useAppDispatch, useAppSelector, useCountry, useForm, useLicences } from "../../hooks";
 import { removeUserActive } from "../../store/user";
 import {
     Button,
@@ -17,14 +17,15 @@ import {
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
 import { CompanyForm, LicenceForm } from "../../components/account";
-import { Customer } from "../../interfaces/customer";
-import { EnumCategoryAccount, EnumClaveTributaria } from "../../types";
+import { Account } from "../../interfaces/account";
+import { EnumCategoryAccount, EnumCategoryCod, EnumClaveTributaria, EnumLicenceType } from "../../types";
 import { Loading } from '../../components/Loading';
 import { getShortDate } from "../../helpers/dates";
+import { uploadFile } from "../../helpers/fileUpload";
+import { removeAccountActive } from "../../store";
 
-const initialForm: Customer = {
-    id: "",
-    accountID: "",
+const initialForm: Account = {
+    accountReference: "",
     denomination: "",
     country: "",
     user: {
@@ -37,7 +38,7 @@ const initialForm: Customer = {
     category: EnumCategoryAccount.A,
     startDateLicence: getShortDate(false, "-"),
     endDateLicence: getShortDate(false, "-"),
-    licenceType: "",
+    licenceType: EnumLicenceType.L,
     licence: "",
     amountLicencesAllowed: 0,
     isLicenceMultipleCountry: false,
@@ -51,28 +52,32 @@ const initialForm: Customer = {
     trybutaryCode: EnumClaveTributaria.CUIT,
     phone: "",
     website: "",
-    creationDate: getShortDate(),
+    // creationDate: getShortDate(),
     observation: "",
 };
 
-const steps = ["Licencia", "Compañia"];
+const initialSteps = ["Licencia", "Compañia"];
 export const AccountPage: React.FC = () => {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { userActive } = useAppSelector((state) => state.user);
+    const { createAccount, updateAccount } = useAccount();
+    const { accountActive } = useAppSelector((state) => state.account);
     const [indexStep, setIndexStep] = useState(0);
+    const [steps, setSteps] = useState(initialSteps);
     const { country, isLoading, getCountry } = useCountry();
     const { licences, isLoading: loadingLic, getLicences } = useLicences();
     const [logoFile, setLogoFile] = useState<File | null>(null);
 
-    const { formValues,
+    const {
+        category,
+        formValues,
         setFormValues,
         handleInputChange,
         handleCheckboxChange,
-        // reset 
-    } = useForm<Customer>(initialForm);
-    const disabledCompany = (formValues.category !== Object.keys(EnumCategoryAccount.A)[0] );
+        reset
+    } = useForm<Account>(initialForm);
+    const disabledCompany = (formValues.category !== Object.keys(EnumCategoryAccount)[0]);
 
     const getStepContent = useMemo(
         () => (step: number) => {
@@ -123,34 +128,50 @@ export const AccountPage: React.FC = () => {
         setIndexStep(indexStep - 1);
     };
 
+    const initAddAcount = async () => {
+        if (logoFile) await uploadFile(logoFile);
+        if (await createAccount(formValues)) {
+            navigate('/accounts');
+            reset();
+        }
+    }
 
-    const onClickAdd = () => {
-        // createUser(formulario);
-        //   if (logoFile) await uploadFile(logoFile);
-        //   await createCustomer(formulario);
-        console.log(logoFile?.name);
-        console.log('formValues', formValues)
-        // reset();
-    };
+    const onClickAdd = () => initAddAcount();
 
-    const onClickUpdate = () => {
-        // updateUser(formulario.id, formulario);
-        console.log('formValues', formValues)
-    };
+    const initUpdateAccount = async () => {
+        if (formValues.accountId) {
+            const { isLicenceMultipleCountry, startDateLicence, endDateLicence, status } = formValues;
+            if (await updateAccount(formValues.accountId,
+                {
+                    isLicenceMultipleCountry, startDateLicence, endDateLicence, status
+                })) {
+                navigate('/accounts');
+                reset();
+            }
+        }
+    }
+
+    const onClickUpdate = () => initUpdateAccount();
 
     const onClickCancel = () => {
         dispatch(removeUserActive());
         navigate("/accounts");
     };
 
+    useEffect(() => {
+        if (accountActive)
+            setFormValues({ ...accountActive });
+        else
+            setFormValues(initialForm);
+    }, [accountActive, setFormValues]);
 
-    //   useEffect(() => {
-    //     if (userActive)
-    //       setFormValues({
-    //         ...userActive,
-    //       });
-    //     else setFormValues(initialForm);
-    //   }, [userActive, setFormulario]);
+    useEffect(() => {
+        if (category !== EnumCategoryCod.A) {
+            setSteps([]);
+        } else
+            setSteps(initialSteps);
+    }, [category])
+
 
     useEffect(() => {
         getCountry();
@@ -161,7 +182,7 @@ export const AccountPage: React.FC = () => {
 
     useEffect(() => {
         return () => {
-            dispatch(removeUserActive());
+            dispatch(removeAccountActive());
         };
     }, [dispatch]);
 
@@ -201,22 +222,26 @@ export const AccountPage: React.FC = () => {
                             margin: "auto",
                         }}
                     />
-                    <Typography component="h1" variant="h4" align="center" sx={{ my: 1 }}>
-                        {userActive ? "Editar" : "Nueva"} Cuenta Cliente
+                    <Typography component="h1" variant="h4" align="center" sx={{ my: 2 }}>
+                        {accountActive ? "Editar" : "Nueva"} Cuenta Cliente
                     </Typography>
-                    <Stepper activeStep={indexStep} sx={{
-                        pt: 3,
-                        pb: 3,
-                        mb: 2,
-                        width: "60%",
-                        margin: "auto"
-                    }}>
-                        {steps.map((label, i) => (
-                            <Step key={label} disabled={i === 1}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
+                    {
+                        !accountActive && (
+                            <Stepper activeStep={indexStep} sx={{
+                                pt: 3,
+                                pb: 3,
+                                mb: 2,
+                                width: "60%",
+                                margin: "auto"
+                            }}>
+                                {steps.map((label, i) => (
+                                    <Step key={label} disabled={i === 1}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                        )
+                    }
                     {getStepContent(indexStep)}
                     <Grid
                         container
@@ -231,7 +256,7 @@ export const AccountPage: React.FC = () => {
                             </Button>
                         </Grid>
                         <Grid item xs={12} sm={3} key="grid-next">
-                            {!(indexStep === steps.length - 1) && (
+                            {!(indexStep === steps.length - 1 || !!accountActive) && (
                                 <Button
                                     variant="contained"
                                     color="secondary"
@@ -248,11 +273,11 @@ export const AccountPage: React.FC = () => {
                                 variant="contained"
                                 color="success"
                                 onClick={
-                                    userActive ? onClickUpdate : onClickAdd
+                                    accountActive ? onClickUpdate : onClickAdd
                                 }
                             // fullWidth
                             >
-                                {!userActive ? "Guardar" : "Actualizar"}
+                                {!accountActive ? "Guardar" : "Actualizar"}
                             </Button>
                         </Grid>
                     </Grid>

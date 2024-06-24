@@ -70,6 +70,7 @@ export const PrivateRoutes: React.FC = () => {
 
         <Route path="/accounts" element={<ListAccountPage />} />
         <Route path="/accounts/new" element={<AccountPage />} />
+        <Route path="/accounts/:id" element={<AccountPage />} />
 
 
         <Route path="/*" element={<Navigate to="/home" />} />
