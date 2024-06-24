@@ -51,7 +51,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     const onClickEditUser = (item: UserDto): void => {
         dispatch(setUserActive(item));
-        navigate(`/user/${item.id}`);
+        navigate(`/user/${item._id}`);
     }
 
     return (
@@ -78,11 +78,10 @@ export const DataTable: React.FC<DataTableProps> = ({
                         </TableHead>
                         <TableBody>
                             {rows.map((row) => (
-                                <StyledTableRow key={row.id}>
+                                <StyledTableRow key={row._id}>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.lastName}
+                                        {row.username}
                                     </StyledTableCell>
-                                    <StyledTableCell align="center">{row.name}</StyledTableCell>
                                     <StyledTableCell align="center">{row.email}</StyledTableCell>
                                     <StyledTableCell align="center">
                                         <Tooltip title="Editar">
