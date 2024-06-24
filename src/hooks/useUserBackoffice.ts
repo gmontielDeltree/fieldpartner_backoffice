@@ -5,7 +5,7 @@ import { useState } from "react";
 import { UserDto } from "../types";
 import { backofficeApi } from "../config";
 
-const controller = "user";
+const controller = "user-licence";
 
 export const useUser = () => {
 
@@ -59,10 +59,8 @@ export const useUser = () => {
         setIsLoading(true);
 
         try {
-            delete updateUser.id;
             const response = await backofficeApi.patch(`/${controller}/${idUser}`, {
-                nombre: updateUser.name,
-                apellido: updateUser.lastName,
+                username: updateUser.username,
                 email: updateUser.email,
                 previousPassword: updateUser.previousPassword,
                 newPassword: updateUser.newPassword

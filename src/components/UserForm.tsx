@@ -7,8 +7,7 @@ export interface UserFormProps {
     // user: User;
     setUser: ({ target }: ChangeEvent<HTMLInputElement>) => void;
     isNewUser?: boolean;
-    nombre: string;
-    apellido: string;
+    username: string;
     email: string;
     password: string;
     previousPassword?: string;
@@ -18,8 +17,7 @@ export interface UserFormProps {
 export const UserForm: React.FC<UserFormProps> = ({
     setUser,
     isNewUser = true,
-    nombre,
-    apellido,
+    username,
     email,
     password,
     previousPassword,
@@ -40,20 +38,20 @@ export const UserForm: React.FC<UserFormProps> = ({
                     Usuario
                 </Typography>
             </Grid> */}
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                     <TextField
                         label="Nombre"
                         variant="outlined"
                         type='text'
-                        name="nombre"
-                        value={nombre}
+                        name="username"
+                        value={username}
                         onChange={setUser}
                         InputProps={{
                             startAdornment: <InputAdornment position="start" />,
                         }}
                         fullWidth />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                {/* <Grid item xs={12} sm={6}>
                     <TextField
                         label="Apellido"
                         variant="outlined"
@@ -65,7 +63,7 @@ export const UserForm: React.FC<UserFormProps> = ({
                             startAdornment: <InputAdornment position="start" />,
                         }}
                         fullWidth />
-                </Grid>
+                </Grid> */}
                 {
                     isNewUser ? (
                         <>

@@ -17,8 +17,7 @@ import {
 import { Person as PersonIcon } from "@mui/icons-material";
 
 const initialForm: UserDto = {
-  name: "",
-  lastName: "",
+  username: "",
   email: "",
   password: "",
   isAdmin: false,
@@ -41,8 +40,8 @@ export const UserPage: React.FC = () => {
   };
 
   const handleUpdateUser = () => {
-    if (!formValues.id) return;
-    updateUser(formValues.id, formValues);
+    if (!formValues._id) return;
+    updateUser(formValues._id, formValues);
   };
 
   const onClickCancel = () => {
@@ -131,7 +130,7 @@ export const UserPage: React.FC = () => {
                 variant="contained"
                 color="primary"
                 onClick={userActive ? handleUpdateUser : handleAddNewUser}
-                // fullWidth
+              // fullWidth
               >
                 {!userActive ? "Guardar" : "Actualizar"}
               </Button>
