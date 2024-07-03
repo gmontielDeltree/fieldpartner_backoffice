@@ -24,6 +24,6 @@ backofficeApi.interceptors.request.use((config) => {
     //     'x-token': localStorage.getItem('token')
     // }
     config.headers.set('channel', 'backoffice', false);
-    config.headers.set('Authorization', localStorage.getItem('accessToken'));
+    config.headers.set('Authorization', localStorage.getItem('t_bo'));
     return config;
 })
