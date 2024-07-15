@@ -123,7 +123,9 @@ export const useAuthStore = () => {
 
     //         dispatch(onLogin({
     //             isAdmin: true, firstName: "Rodrigo", accountId: "123", id: "123",
-    //             lastName: ''
+    //             lastName: 'Garro',
+    //             username: 'Rodrigo',
+    //             countryId: 'AR'
     //         }));
 
     //     } catch (error) {
