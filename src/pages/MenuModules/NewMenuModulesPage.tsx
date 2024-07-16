@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from "../../hooks";
 import { MenuModules } from "../../types";
 import { removeMenuModulesActive } from "../../store/menumodules/menuModulesSlice";
+import Swal from "sweetalert2";
 
 const initialForm: MenuModules = {
   id: 0,
@@ -29,9 +30,10 @@ const initialForm: MenuModules = {
 export const NewMenuModulesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { isLoading, createMenuModules, updateMenuModules } = useMenuModules();
+  const { isLoading, createMenuModules, updateMenuModules, menuModules, getMenuModules } = useMenuModules();
   const { menuModulesActive } = useAppSelector((state) => state.menuModules);
   const { system, getSystem } = useSystem();
+
 
   const {
     id,
@@ -48,6 +50,12 @@ export const NewMenuModulesPage: React.FC = () => {
   useEffect(() => {
     getSystem();
   }, [getSystem]);
+
+  useEffect(() => {
+     getMenuModules();
+  }, []);
+
+
 
   useEffect(() => {
     if (menuModulesActive) {
@@ -73,6 +81,36 @@ export const NewMenuModulesPage: React.FC = () => {
       }));
     }
   };
+
+  const handleVerifyId = () => {
+    const idExists = menuModules.some(module => module.id === id);
+    if (idExists) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El ID ya existe',
+      }).then(() => {
+        setFormValues(prevForm => ({
+          ...prevForm,
+          id: 0
+        }));
+      });
+    }
+    return idExists;
+  };
+
+  // const logIdData = async (menuModules: MenuModules[]) => {
+  //   try {
+  //     const mappedData = menuModules.map((sys: MenuModules) => `${sys.id}: ${sys.module}`);
+  //     console.log("Mapeado",mappedData);
+  //   } catch (error) {
+  //     console.error('Error al obtener los módulos:', error);
+  //   }
+  // };
+
+  // const handleClickId = () => {
+  //   logIdData(menuModules);
+  // };
 
 
   const handleAddMenuModules = () => {
@@ -160,6 +198,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 type="text"
                 name="id"
                 value={id}
+                onBlur={handleVerifyId}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 30 }}
                 InputProps={{
