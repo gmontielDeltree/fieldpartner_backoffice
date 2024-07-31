@@ -11,7 +11,7 @@ export const useMenuModules = () => {
     const [error, setError] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [menuModules, setMenuModule] = useState<MenuModules[]>([]);
-    
+
 
 
     const createMenuModules = async (newMenuModules: MenuModules) => {
@@ -43,10 +43,15 @@ export const useMenuModules = () => {
 
             if (response.rows.length) {
                 const documents: MenuModules[] = response.rows.map(row => row.doc as MenuModules);
-                setMenuModule(documents);
+                const documentsOrdAsc = documents.sort((a, b) => {
+                    const orderA = a.order !== undefined ? Number(a.order) : Infinity;
+                    const orderB = b.order !== undefined ? Number(b.order) : Infinity;
+                    return orderA - orderB;
+                });
+                setMenuModule(documentsOrdAsc);
             }
             else
-            setMenuModule([]);
+                setMenuModule([]);
 
         } catch (error) {
             console.log(error)
@@ -101,7 +106,7 @@ export const useMenuModules = () => {
         error,
         isLoading,
         menuModules,
-    
+
         //* Métodos
         createMenuModules,
         getMenuModules,

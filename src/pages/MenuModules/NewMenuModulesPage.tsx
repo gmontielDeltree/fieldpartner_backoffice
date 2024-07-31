@@ -25,7 +25,7 @@ const initialForm: MenuModules = {
   menuOption: "",
   systemType: "",
   details: "",
-  order: 0,
+  order: "",
 };
 
 export const NewMenuModulesPage: React.FC = () => {
