@@ -112,6 +112,7 @@ export interface Licences extends Document {
 export interface MenuModules extends Document {
     id: number;
     module: string;
+    order: number;
     menuOption: string;
     systemType: string;
     details: string;

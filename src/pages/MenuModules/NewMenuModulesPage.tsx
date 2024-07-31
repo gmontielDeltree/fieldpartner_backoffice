@@ -25,6 +25,7 @@ const initialForm: MenuModules = {
   menuOption: "",
   systemType: "",
   details: "",
+  order: 0,
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -39,7 +40,7 @@ export const NewMenuModulesPage: React.FC = () => {
     id,
     module,
     menuOption,
-    // systemType,
+    order,
     details,
     formValues,
     setFormValues,
@@ -49,13 +50,13 @@ export const NewMenuModulesPage: React.FC = () => {
 
   useEffect(() => {
     getSystem();
-  }, [getSystem]);
-
-  useEffect(() => {
-     getMenuModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
+  useEffect(() => {
+    getMenuModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (menuModulesActive) {
@@ -147,7 +148,7 @@ export const NewMenuModulesPage: React.FC = () => {
             Menus y Modulos
           </Typography>
         </Box>
-  
+
         <Paper
           variant="outlined"
           sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
@@ -161,9 +162,9 @@ export const NewMenuModulesPage: React.FC = () => {
             {menuModulesActive ? "Editar" : "Nuevo"} Menus y Modulos
           </Typography>
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={3.3} sx={{ width: '200%' }}>
-              <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-              <Autocomplete
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth variant="outlined" >
+                <Autocomplete
                   options={system.map((sys) => `${sys.system}: ${sys.version}`)}
                   fullWidth
                   renderInput={(params) => <TextField {...params} label="System" />}
@@ -173,25 +174,35 @@ export const NewMenuModulesPage: React.FC = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Box sx={{ display: 'block', mt: 2 }}>
-                <TextField
-                  label="Modulo"
-                  variant="outlined"
-                  type="text"
-                  name="module"
-                  value={module}
-                  onChange={handleInputChange}
-                  inputProps={{ maxLength: 30 }}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start" />,
-                  }}
-                  fullWidth
-                />
-              </Box>
+              <TextField
+                label="Modulo"
+                variant="outlined"
+                type="text"
+                name="module"
+                value={module}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: 30 }}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+              />
             </Grid>
-          </Grid>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs={6} sm={2}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Orden"
+                variant="outlined"
+                type="number"
+                name="order"
+                value={order}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="ID"
                 variant="outlined"
@@ -208,7 +219,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 sx={{ mt: 2 }}
               />
             </Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu"
                 variant="outlined"
@@ -216,7 +227,6 @@ export const NewMenuModulesPage: React.FC = () => {
                 name="menuOption"
                 value={menuOption}
                 onChange={handleInputChange}
-                inputProps={{ maxLength: 30 }}
                 InputProps={{
                   startAdornment: <InputAdornment position="start" />,
                 }}
@@ -224,9 +234,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 sx={{ mt: 2 }}
               />
             </Grid>
-          </Grid>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12}>
               <TextField
                 label="Detalles"
                 variant="outlined"
@@ -234,7 +242,6 @@ export const NewMenuModulesPage: React.FC = () => {
                 name="details"
                 value={details}
                 onChange={handleInputChange}
-                inputProps={{ maxLength: 30 }}
                 InputProps={{
                   startAdornment: <InputAdornment position="start" />,
                 }}
@@ -242,23 +249,23 @@ export const NewMenuModulesPage: React.FC = () => {
                 sx={{ mt: 2 }}
               />
             </Grid>
-            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ mt: { sm: 5 } }}>
-              <Grid item xs={12} sm={3}>
-                <Button onClick={onClickCancel}>Cancelar</Button>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
-                >
-                  {!menuModulesActive ? "Guardar" : "Actualizar"}
-                </Button>
-              </Grid>
+          </Grid>
+          <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ mt: { sm: 5 } }}>
+            <Grid item xs={12} sm={3}>
+              <Button onClick={onClickCancel}>Cancelar</Button>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
+              >
+                {!menuModulesActive ? "Guardar" : "Actualizar"}
+              </Button>
             </Grid>
           </Grid>
         </Paper>
-      </Container>
+      </Container >
     </>
   );
 };
