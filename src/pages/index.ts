@@ -22,3 +22,6 @@ export * from './MenuModules/ListMenuModulesPage';
 export * from './MenuModules/NewMenuModulesPage';
 export * from './Accounts/AccountPage';
 export * from './Accounts/ListAccountsPage';
+export * from './TypeOfDevices/ListTypeDevicesPage';
+export * from './TypeOfDevices/NewTypeDevicesPage';
+

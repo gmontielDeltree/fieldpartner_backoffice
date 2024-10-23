@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find'
 import { getEnvVariables } from '../helpers/getEnvVariables';
-import { Category, Country, Crops, Movement, SupplyType, System, Licences, MenuModules } from '../types';
+import { Category, Country, Crops, Movement, SupplyType, System, Licences, MenuModules, TypeDevices } from '../types';
 
 PouchDB.plugin(PouchDBFind);
 
@@ -16,7 +16,8 @@ const dbNames = Object.freeze({
     countries: "countries",
     system: "system",
     licences: "licences",
-    menuModules: "menu-modules"
+    menuModules: "menu-modules",
+    typeDevices: "type-of-devices"
 });
 
 
@@ -28,7 +29,8 @@ export const dbContext = Object.freeze({
     countries: new PouchDB<Country>(dbNames.countries),
     system: new PouchDB<System>(dbNames.system),
     licences: new PouchDB<Licences>(dbNames.licences),
-    menuModules: new PouchDB<MenuModules>(dbNames.menuModules)
+    menuModules: new PouchDB<MenuModules>(dbNames.menuModules),
+    typeDevices: new PouchDB<TypeDevices>(dbNames.typeDevices)
 });
 
 dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`, { live: true, retry: true, });
@@ -46,4 +48,6 @@ dbContext.system.sync(`${remoteCouchDBUrl}${dbNames.system}`, { live: true, retr
 dbContext.licences.sync(`${remoteCouchDBUrl}${dbNames.licences}`, { live: true, retry: true, });
 
 dbContext.menuModules.sync(`${remoteCouchDBUrl}${dbNames.menuModules}`, { live: true, retry: true, });
+
+dbContext.typeDevices.sync(`${remoteCouchDBUrl}${dbNames.typeDevices}`,{live: true, retry: true,});
 

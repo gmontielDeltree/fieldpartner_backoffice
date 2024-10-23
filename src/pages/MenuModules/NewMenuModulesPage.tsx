@@ -22,10 +22,12 @@ import Swal from "sweetalert2";
 const initialForm: MenuModules = {
   id: 0,
   module: "",
-  menuOption: "",
+  menuOptionEs: "",
   systemType: "",
   details: "",
   order: "",
+  menuOptionEn: "",
+  menuOptionPt: ""
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -39,7 +41,9 @@ export const NewMenuModulesPage: React.FC = () => {
   const {
     id,
     module,
-    menuOption,
+    menuOptionEs,
+    menuOptionPt,
+    menuOptionEn,
     order,
     details,
     formValues,
@@ -221,11 +225,41 @@ export const NewMenuModulesPage: React.FC = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Opcion de menu"
+                label="Opcion de menu ES"
                 variant="outlined"
                 type="text"
-                name="menuOption"
-                value={menuOption}
+                name="menuOptionEs"
+                value={menuOptionEs}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+                sx={{ mt: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Opcion de menu EN"
+                variant="outlined"
+                type="text"
+                name="menuOptionEn"
+                value={menuOptionEn}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start" />,
+                }}
+                fullWidth
+                sx={{ mt: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Opcion de menu PT"
+                variant="outlined"
+                type="text"
+                name="menuOptionPt"
+                value={menuOptionPt}
                 onChange={handleInputChange}
                 InputProps={{
                   startAdornment: <InputAdornment position="start" />,

@@ -113,7 +113,9 @@ export interface MenuModules extends Document {
     id: number;
     module: string;
     order: string;
-    menuOption: string;
+    menuOptionEs: string;
+    menuOptionEn: string;
+    menuOptionPt: string;
     systemType: string;
     details: string;
 }
@@ -121,6 +123,16 @@ export interface MenuModules extends Document {
 //     menuModulesActive: MenuModules| null;
 //     menuModules: MenuModules[];
 // }
+
+export interface TypeDevices extends Document {
+    model: string;
+    description: string;
+    family: string;
+    subFamily: string;
+    available: DeviceStatus;
+}
+
+export enum DeviceStatus { Activo = "Activo", Inactivo = "Inactivo" }
 
 
 export interface Country extends Document {

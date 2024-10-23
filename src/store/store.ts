@@ -12,6 +12,7 @@ import { countrySlice } from './country';
 import { systemSlice } from './system';
 import { licencesSlice } from './licences';
 import { menuModulesSlice } from './menumodules/menuModulesSlice';
+import { typeDevicesSlice } from './typedevices';
 
 export const store = configureStore({
     reducer: {
@@ -27,7 +28,7 @@ export const store = configureStore({
         system: systemSlice.reducer,
         licences:licencesSlice.reducer,
         menuModules:menuModulesSlice.reducer,
-
+        typeDevices:typeDevicesSlice.reducer,
     },
 });
 

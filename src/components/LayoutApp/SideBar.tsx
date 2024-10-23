@@ -22,6 +22,7 @@ import {
   Computer as ComputerIcon,
   DisplaySettings as DisplaySettingsIcon,
   List as ListIcon,
+  SettingsInputAntenna as SettingsInputAntennaIcon,
 } from "@mui/icons-material";
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
@@ -97,6 +98,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <CategoryIcon />
               </ListItemIcon>
               <ListItemText primary="Categorías" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="type of devices" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/type-of-devices"
+              selected={pathname.includes("type of devices")}
+            >
+              <ListItemIcon>
+                <SettingsInputAntennaIcon />
+              </ListItemIcon>
+              <ListItemText primary="Tipo de Dispositivos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="Tipos Movimientos" disablePadding>
