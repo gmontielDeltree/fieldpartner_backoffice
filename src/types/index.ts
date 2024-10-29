@@ -113,9 +113,9 @@ export interface MenuModules extends Document {
     id: number;
     module: string;
     order: string;
-    menuOptionEs: string;
-    menuOptionEn: string;
-    menuOptionPt: string;
+    menuOption: string; // NOMBRE DEL MENU EN ESPAÑOL
+    menuOptionEn: string; // NOMBRE DEL MENU EN INGLES
+    menuOptionPt: string; // NOMBRE DEL MENU EN PORTUGUES
     systemType: string;
     details: string;
 }

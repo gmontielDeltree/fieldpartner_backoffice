@@ -22,7 +22,7 @@ import Swal from "sweetalert2";
 const initialForm: MenuModules = {
   id: 0,
   module: "",
-  menuOptionEs: "",
+  menuOption: "",
   systemType: "",
   details: "",
   order: "",
@@ -41,7 +41,7 @@ export const NewMenuModulesPage: React.FC = () => {
   const {
     id,
     module,
-    menuOptionEs,
+    menuOption: menuOptionEs,
     menuOptionPt,
     menuOptionEn,
     order,
