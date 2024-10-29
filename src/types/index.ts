@@ -119,10 +119,7 @@ export interface MenuModules extends Document {
     systemType: string;
     details: string;
 }
-// export interface MenuModuleState {
-//     menuModulesActive: MenuModules| null;
-//     menuModules: MenuModules[];
-// }
+
 
 export interface TypeDevices extends Document {
     model: string;

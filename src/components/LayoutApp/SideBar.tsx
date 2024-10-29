@@ -23,6 +23,7 @@ import {
   DisplaySettings as DisplaySettingsIcon,
   List as ListIcon,
   SettingsInputAntenna as SettingsInputAntennaIcon,
+  SatelliteAlt as SatelliteAltIcon,
 } from "@mui/icons-material";
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
@@ -110,6 +111,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <SettingsInputAntennaIcon />
               </ListItemIcon>
               <ListItemText primary="Tipo de Dispositivos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="devices" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/devices"
+              selected={pathname.includes("devices")}
+            >
+              <ListItemIcon>
+                <SatelliteAltIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dispositivos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="Tipos Movimientos" disablePadding>

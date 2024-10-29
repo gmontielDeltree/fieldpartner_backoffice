@@ -112,63 +112,63 @@ export const useAuthStore = () => {
         }
     }
 
-    //    const checkAuthToken = async () => {
+       const checkAuthToken = async () => {
 
-    //     dispatch(onChecking())
-    //     try {
-
-
-    //         localStorage.setItem('accessToken',"" );
-    //         localStorage.setItem('token_expiration',"" );
-
-    //         dispatch(onLogin({
-    //             isAdmin: true, firstName: "Rodrigo", accountId: "123", id: "123",
-    //             lastName: 'Garro',
-    //             username: 'Rodrigo',
-    //             countryId: 'AR'
-    //         }));
-
-    //     } catch (error) {
-    //         localStorage.clear();
-    //         dispatch(onLogout(""));
-    //     }
-    // }
-
-    const checkAuthToken = async () => {
-        const token = localStorage.getItem('t_bo');
-        const refreshToken = localStorage.getItem('r_bo');
-        const userSession = localStorage.getItem("user_session_bo");
-
-        if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
-
-        dispatch(onChecking());
+        dispatch(onChecking())
         try {
-            // const { data } = await authApi.get('auth/renew');
-            const expiration = localStorage.getItem("t_exp_bo");
-            if (new Date().getTime() > Number(expiration)) {
-                dispatch(onLogout(""));
-                return;
-            }
-            const lastPath = localStorage.getItem("lastPath_bo") || "/";
-            navigate(lastPath, { replace: true });
-            const userLogin = JSON.parse(userSession || "") as User;
-            dispatch(onLogin(userLogin));
 
-            const response = await backofficeApi.post<ResponseAuthRenew>(
-                `/${controller}/renew`, { refreshToken });
 
-            if (response.status === HttpStatusCode.Created) {
-                const expiresIn = new Date().getTime() + response.data.ExpiresIn * 1000;
-                localStorage.setItem('t_bo', response.data.accessToken);
-                // localStorage.setItem('r_bo', response.data.refreshToken);
-                localStorage.setItem('t_exp_bo', expiresIn.toString());
-            }
+            localStorage.setItem('accessToken',"" );
+            localStorage.setItem('token_expiration',"" );
+
+            dispatch(onLogin({
+                isAdmin: true, firstName: "Rodrigo", accountId: "123", id: "123",
+                lastName: 'Garro',
+                username: 'Rodrigo',
+                countryId: 'AR'
+            }));
 
         } catch (error) {
             localStorage.clear();
             dispatch(onLogout(""));
         }
     }
+
+    // const checkAuthToken = async () => {
+    //     const token = localStorage.getItem('t_bo');
+    //     const refreshToken = localStorage.getItem('r_bo');
+    //     const userSession = localStorage.getItem("user_session_bo");
+
+    //     if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
+
+    //     dispatch(onChecking());
+    //     try {
+    //         // const { data } = await authApi.get('auth/renew');
+    //         const expiration = localStorage.getItem("t_exp_bo");
+    //         if (new Date().getTime() > Number(expiration)) {
+    //             dispatch(onLogout(""));
+    //             return;
+    //         }
+    //         const lastPath = localStorage.getItem("lastPath_bo") || "/";
+    //         navigate(lastPath, { replace: true });
+    //         const userLogin = JSON.parse(userSession || "") as User;
+    //         dispatch(onLogin(userLogin));
+
+    //         const response = await backofficeApi.post<ResponseAuthRenew>(
+    //             `/${controller}/renew`, { refreshToken });
+
+    //         if (response.status === HttpStatusCode.Created) {
+    //             const expiresIn = new Date().getTime() + response.data.ExpiresIn * 1000;
+    //             localStorage.setItem('t_bo', response.data.accessToken);
+    //             // localStorage.setItem('r_bo', response.data.refreshToken);
+    //             localStorage.setItem('t_exp_bo', expiresIn.toString());
+    //         }
+
+    //     } catch (error) {
+    //         localStorage.clear();
+    //         dispatch(onLogout(""));
+    //     }
+    // }
 
     const startLogout = () => {
         localStorage.clear();

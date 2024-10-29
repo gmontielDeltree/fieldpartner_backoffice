@@ -24,4 +24,6 @@ export * from './Accounts/AccountPage';
 export * from './Accounts/ListAccountsPage';
 export * from './TypeOfDevices/ListTypeDevicesPage';
 export * from './TypeOfDevices/NewTypeDevicesPage';
+export * from './Devices/ListDevicesPage';
+export * from './Devices/EditDevicesPage';
 
