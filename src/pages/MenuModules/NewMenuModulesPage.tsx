@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Loading } from "../../components";
+import React, { useEffect } from 'react'
+import { Loading } from '../../components'
 import {
   Autocomplete,
   Box,
@@ -11,32 +11,43 @@ import {
   Paper,
   TextField,
   Typography,
-} from "@mui/material";
-import { List as ListIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from "../../hooks";
-import { MenuModules } from "../../types";
-import { removeMenuModulesActive } from "../../store/menumodules/menuModulesSlice";
-import Swal from "sweetalert2";
+} from '@mui/material'
+import { List as ListIcon } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
+import {
+  useAppDispatch,
+  useAppSelector,
+  useForm,
+  useMenuModules,
+  useSystem,
+} from '../../hooks'
+import { MenuModules } from '../../types'
+import { removeMenuModulesActive } from '../../store/menumodules/menuModulesSlice'
+import Swal from 'sweetalert2'
 
 const initialForm: MenuModules = {
   id: 0,
-  module: "",
-  menuOption: "",
-  systemType: "",
-  details: "",
-  order: "",
-  menuOptionEn: "",
-  menuOptionPt: ""
-};
+  module: '',
+  menuOption: '',
+  systemType: '',
+  details: '',
+  order: '',
+  menuOptionEn: '',
+  menuOptionPt: '',
+}
 
 export const NewMenuModulesPage: React.FC = () => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { isLoading, createMenuModules, updateMenuModules, menuModules, getMenuModules } = useMenuModules();
-  const { menuModulesActive } = useAppSelector((state) => state.menuModules);
-  const { system, getSystem } = useSystem();
-
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const {
+    isLoading,
+    createMenuModules,
+    updateMenuModules,
+    menuModules,
+    getMenuModules,
+  } = useMenuModules()
+  const { menuModulesActive } = useAppSelector((state) => state.menuModules)
+  const { system, getSystem } = useSystem()
 
   const {
     id,
@@ -50,92 +61,78 @@ export const NewMenuModulesPage: React.FC = () => {
     setFormValues,
     handleInputChange,
     reset,
-  } = useForm<MenuModules>(initialForm);
+  } = useForm<MenuModules>(initialForm)
 
   useEffect(() => {
-    getSystem();
+    getSystem()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
-    getMenuModules();
+    getMenuModules()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (menuModulesActive) {
-      setFormValues(menuModulesActive);
+      setFormValues(menuModulesActive)
     } else {
-      setFormValues(initialForm);
+      setFormValues(initialForm)
     }
-  }, [menuModulesActive, setFormValues]);
+  }, [menuModulesActive, setFormValues])
 
   const handleSystemChange = (
     _event: React.SyntheticEvent<Element, Event>,
-    newValue: string | null
+    newValue: string | null,
   ) => {
     if (newValue) {
       setFormValues((prevForm) => ({
         ...prevForm,
         systemType: newValue,
-      }));
+      }))
     } else {
       setFormValues((prevForm) => ({
         ...prevForm,
-        systemType: "",
-      }));
+        systemType: '',
+      }))
     }
-  };
+  }
 
   const handleVerifyId = () => {
-    const idExists = menuModules.some(module => module.id === id);
+    const idExists = menuModules.some((module) => module.id === id)
     if (idExists) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'El ID ya existe',
       }).then(() => {
-        setFormValues(prevForm => ({
+        setFormValues((prevForm) => ({
           ...prevForm,
-          id: 0
-        }));
-      });
+          id: 0,
+        }))
+      })
     }
-    return idExists;
-  };
-
-  // const logIdData = async (menuModules: MenuModules[]) => {
-  //   try {
-  //     const mappedData = menuModules.map((sys: MenuModules) => `${sys.id}: ${sys.module}`);
-  //     console.log("Mapeado",mappedData);
-  //   } catch (error) {
-  //     console.error('Error al obtener los módulos:', error);
-  //   }
-  // };
-
-  // const handleClickId = () => {
-  //   logIdData(menuModules);
-  // };
-
+    return idExists
+  }
 
   const handleAddMenuModules = () => {
-    createMenuModules(formValues);
-    dispatch(removeMenuModulesActive());
-    reset();
-  };
+    createMenuModules(formValues)
+    dispatch(removeMenuModulesActive())
+    reset()
+  }
 
   const handleUpdateMenuModules = () => {
-    if (!formValues._id) return;
-    updateMenuModules(formValues);
-    dispatch(removeMenuModulesActive());
-    reset();
-  };
+    if (!formValues._id) return
+    updateMenuModules(formValues)
+    dispatch(removeMenuModulesActive())
+    reset()
+  }
 
   const onClickCancel = () => {
-    dispatch(removeMenuModulesActive());
-    navigate("/menus-modules");
-    reset();
-  };
+    dispatch(removeMenuModulesActive())
+    navigate('/menus-modules')
+    reset()
+  }
 
   return (
     <>
@@ -163,15 +160,17 @@ export const NewMenuModulesPage: React.FC = () => {
             align="center"
             sx={{ my: 3, mb: 5 }}
           >
-            {menuModulesActive ? "Editar" : "Nuevo"} Menus y Modulos
+            {menuModulesActive ? 'Editar' : 'Nuevo'} Menus y Modulos
           </Typography>
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={12} sm={4}>
-              <FormControl fullWidth variant="outlined" >
+              <FormControl fullWidth variant="outlined">
                 <Autocomplete
                   options={system.map((sys) => `${sys.system}: ${sys.version}`)}
                   fullWidth
-                  renderInput={(params) => <TextField {...params} label="System" />}
+                  renderInput={(params) => (
+                    <TextField {...params} label="System" />
+                  )}
                   value={formValues.systemType}
                   onChange={handleSystemChange}
                 />
@@ -196,7 +195,7 @@ export const NewMenuModulesPage: React.FC = () => {
               <TextField
                 label="Orden"
                 variant="outlined"
-                type="number"
+                type="text" // Cambiado de "number" a "text" para permitir alfanuméricos
                 name="order"
                 value={order}
                 onChange={handleInputChange}
@@ -284,7 +283,13 @@ export const NewMenuModulesPage: React.FC = () => {
               />
             </Grid>
           </Grid>
-          <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ mt: { sm: 5 } }}>
+          <Grid
+            container
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mt: { sm: 5 } }}
+          >
             <Grid item xs={12} sm={3}>
               <Button onClick={onClickCancel}>Cancelar</Button>
             </Grid>
@@ -292,14 +297,18 @@ export const NewMenuModulesPage: React.FC = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
+                onClick={
+                  menuModulesActive
+                    ? handleUpdateMenuModules
+                    : handleAddMenuModules
+                }
               >
-                {!menuModulesActive ? "Guardar" : "Actualizar"}
+                {!menuModulesActive ? 'Guardar' : 'Actualizar'}
               </Button>
             </Grid>
           </Grid>
         </Paper>
-      </Container >
+      </Container>
     </>
-  );
-};
+  )
+}
