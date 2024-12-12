@@ -120,6 +120,23 @@ export interface MenuModules extends Document {
     details: string;
 }
 
+export interface Devices extends Document {
+    idDevice: string;
+    model?: string;
+    description: string;
+    identificacion: string;
+    installationDate : string;
+    licence: string;
+    status: DeviceStatus;
+    name: string;
+    campaña: string;
+    account?: string;
+    latitud?: number;
+    longitud?: number;
+}
+
+
+  
 
 export interface TypeDevices extends Document {
     model: string;

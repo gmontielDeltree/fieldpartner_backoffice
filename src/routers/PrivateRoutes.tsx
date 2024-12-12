@@ -27,6 +27,7 @@ import {
   ListTypeDevicesPage,
   NewTypeDevicesPage,
   ListDevicesPage,
+  EditDevicesPage,
 } from "../pages";
 
 
@@ -80,7 +81,9 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/type-of-devices/:id" element={<NewTypeDevicesPage />} />  
 
         <Route path="/devices" element={<ListDevicesPage />} />    
-
+        <Route path="/devices/new" element={<EditDevicesPage onClose={function (): void {
+          throw new Error("Function not implemented.");
+        } } />} /> 
 
         <Route path="/*" element={<Navigate to="/home" />} />
       </Routes>

@@ -13,6 +13,7 @@ import { systemSlice } from './system';
 import { licencesSlice } from './licences';
 import { menuModulesSlice } from './menumodules/menuModulesSlice';
 import { typeDevicesSlice } from './typedevices';
+import { devicesSlice } from './devices';
 
 export const store = configureStore({
     reducer: {
@@ -29,6 +30,7 @@ export const store = configureStore({
         licences:licencesSlice.reducer,
         menuModules:menuModulesSlice.reducer,
         typeDevices:typeDevicesSlice.reducer,
+        devices: devicesSlice.reducer,
     },
 });
 

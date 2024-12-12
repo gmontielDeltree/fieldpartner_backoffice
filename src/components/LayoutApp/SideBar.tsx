@@ -101,11 +101,11 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Categorías" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="type of devices" disablePadding>
+          <ListItem key="type-of-devices" disablePadding>
             <ListItemButton
               component={RouterLink}
               to="/type-of-devices"
-              selected={pathname.includes("type of devices")}
+              selected={pathname.includes("type-of-devices")}
             >
               <ListItemIcon>
                 <SettingsInputAntennaIcon />
@@ -117,7 +117,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
             <ListItemButton
               component={RouterLink}
               to="/devices"
-              selected={pathname.includes("devices")}
+              selected={pathname === "/devices"}
             >
               <ListItemIcon>
                 <SatelliteAltIcon />

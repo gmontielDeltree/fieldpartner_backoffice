@@ -13,4 +13,5 @@ export * from './useSystem';
 export * from './useLicences';
 export * from './useMenuModules';
 export * from './useTypeDevices';
-
+export * from './useDevices';
+export * from './useDevicesDetalles';

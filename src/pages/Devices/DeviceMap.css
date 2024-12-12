@@ -1,0 +1,34 @@
+@keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #4efb8b79; 
+  }
+  
+  .loading-image {
+    width: 50px;
+    height: 50px;
+    animation: blink 1.5s infinite;
+  }
+  
+  .loading-text {
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+    animation: blink 1.5s infinite;
+  }
+  
