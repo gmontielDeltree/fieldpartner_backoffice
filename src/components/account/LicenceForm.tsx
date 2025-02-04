@@ -1,5 +1,5 @@
-import { Alert, AlertTitle, Autocomplete, Box, Checkbox, FormControlLabel, Grid, IconButton, InputAdornment, Paper, TextField, Tooltip, Typography } from '@mui/material';
-import React, { ChangeEvent, FC, SyntheticEvent } from 'react';
+import { Alert, AlertTitle, Autocomplete, Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, ListItemText, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import React, { ChangeEvent, FC, SyntheticEvent, useState } from 'react';
 import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences } from '../../types'
 import { Account } from '../../interfaces/account';
 import { enumToArray } from '../../helpers';
@@ -24,6 +24,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
 }) => {
 
     // const { username, email, password } = formValues.user;
+    const [countrySelected, setCountrySelected] = useState<Country | null>(null);
     const countryOptions = countries.map(c => ({ code: c.code, label: c.descriptionEN }));
     const statusOptions = Object.values(EnumStatusAccount).map(x => x as string);
     const categoryOptions = enumToArray(EnumCategoryAccount);
@@ -33,8 +34,11 @@ export const LicenceForm: FC<LicenceFormProps> = ({
         .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed }));
 
     const onChangeCountry = (_event: SyntheticEvent, value: { code: string; label: string } | null) => {
-        if (value)
-            setFormValues(prevState => ({ ...prevState, country: value.code }));
+        const countryFound = countries.find(c => c.code === value?.code);
+        if (countryFound) {
+            setCountrySelected(countryFound);
+            setFormValues(prevState => ({ ...prevState, country: countryFound.code }));
+        }
     }
 
     const onChangeCategory = (_event: SyntheticEvent, value: { code: string; label: string } | null) => {
@@ -111,14 +115,17 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     fullWidth
                 />
             </Grid>
-            <Grid item xs={12} sm={2.5} >
-                <FormControlLabel control={
-                    <Checkbox
-                        name="isLicenceMultipleCountry"
-                        checked={formValues.isLicenceMultipleCountry}
-                        onChange={handleCheckboxChange}
-                        defaultChecked />}
-                    label="Licencia Multipais" />
+            <Grid item xs={12} sm={2} textAlign="center">
+                <FormControl fullWidth>
+                    <ListItemText
+                        primary={<Typography color="GrayText" variant='subtitle2'>Moneda</Typography>}
+                        secondary={
+                            <Typography sx={{ fontWeight: "bold" }} letterSpacing={1} variant='subtitle1'>
+                                {countrySelected?.currency || "-"}
+                            </Typography>}
+                    />
+                </FormControl>
+
             </Grid>
             <Grid item xs={12} sm={2} >
                 <Autocomplete
@@ -181,7 +188,16 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                         }} />
                 </Box>
             </Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={2}>
+                <FormControlLabel control={
+                    <Checkbox
+                        name="isLicenceMultipleCountry"
+                        checked={formValues.isLicenceMultipleCountry}
+                        onChange={handleCheckboxChange}
+                        defaultChecked />}
+                    label="Licencia Multipais" />
+            </Grid>
+            <Grid item xs={12} sm={3}>
                 <Autocomplete
                     value={formValues.licenceType || null}
                     onChange={onChangeLicenceType}
@@ -194,7 +210,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     fullWidth
                 />
             </Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={4}>
                 <Autocomplete
                     value={licencesOptions.find(x => x.code === formValues.licence) || null}
                     onChange={onChangeLicence}

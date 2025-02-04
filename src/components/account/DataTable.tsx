@@ -57,7 +57,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ maxHeight: "440px" }}>
             {
                 isLoading ? (
                     <Box sx={{ p: 1 }}>
@@ -67,7 +67,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                         <Skeleton variant="text" sx={{ width: '100%', height: 30 }} />
                     </Box>
                 ) : (
-                    <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
                         <TableHead>
                             <TableRow>
                                 {columns.map(({ text, align }) => (
