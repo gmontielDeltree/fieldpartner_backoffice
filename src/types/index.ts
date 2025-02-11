@@ -118,6 +118,8 @@ export interface MenuModules extends Document {
     menuOptionPt: string; // NOMBRE DEL MENU EN PORTUGUES
     systemType: string;
     details: string;
+    full: string;
+    light: string;
 }
 // export interface MenuModuleState {
 //     menuModulesActive: MenuModules| null;

@@ -34,7 +34,7 @@ const columns: ColumnProps[] = [
   { text: 'System', align: 'center' },
   { text: 'ID', align: 'center' },
   { text: 'Menu', align: 'center' },
-  { text: 'Orden', align: 'center' }, // Nueva columna "Orden"
+  { text: 'Orden', align: 'center' },
 ]
 
 export const ListMenuModulesPage: React.FC = () => {
@@ -52,10 +52,18 @@ export const ListMenuModulesPage: React.FC = () => {
     menuModules: MenuModules[],
     filterText: string,
   ): MenuModules[] => {
+    // Primero filtramos por el texto de búsqueda
     const filteredBySearch = menuModules.filter((menuModules) =>
       matchesFilter(menuModules, filterText),
     )
-    return filteredBySearch
+    
+    // Luego ordenamos por el campo order
+    return filteredBySearch.sort((a, b) => {
+      // Asumimos que order es un número. Si es undefined, lo tratamos como infinito
+      const orderA = typeof a.order === 'number' ? a.order : Infinity
+      const orderB = typeof b.order === 'number' ? b.order : Infinity
+      return orderA - orderB
+    })
   }
 
   const normalizeText = (text: string) => {
@@ -183,8 +191,7 @@ export const ListMenuModulesPage: React.FC = () => {
                     </TableCellStyled>
                     <TableCellStyled align="center">
                       {row.order}
-                    </TableCellStyled>{' '}
-                    {/* Celda para "Orden" */}
+                    </TableCellStyled>
                     <TableCellStyled align="right">
                       <Tooltip title="Editar">
                         <IconButton

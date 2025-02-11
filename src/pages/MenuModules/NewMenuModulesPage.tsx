@@ -11,6 +11,8 @@ import {
   Paper,
   TextField,
   Typography,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material'
 import { List as ListIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
@@ -34,6 +36,8 @@ const initialForm: MenuModules = {
   order: '',
   menuOptionEn: '',
   menuOptionPt: '',
+  full: 'X',
+  light: 'X',
 }
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -57,11 +61,20 @@ export const NewMenuModulesPage: React.FC = () => {
     menuOptionEn,
     order,
     details,
+    full,
+    light,
     formValues,
     setFormValues,
     handleInputChange,
     reset,
   } = useForm<MenuModules>(initialForm)
+
+  const handleCheckboxChange = (field: 'full' | 'light') => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [field]: event.target.checked ? 'X' : ''
+    }))
+  }
 
   useEffect(() => {
     getSystem()
@@ -162,7 +175,8 @@ export const NewMenuModulesPage: React.FC = () => {
           >
             {menuModulesActive ? 'Editar' : 'Nuevo'} Menus y Modulos
           </Typography>
-          <Grid container spacing={1} alignItems="center">
+          
+          <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth variant="outlined">
                 <Autocomplete
@@ -176,6 +190,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 />
               </FormControl>
             </Grid>
+            
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Modulo"
@@ -191,11 +206,12 @@ export const NewMenuModulesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
+            
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Orden"
                 variant="outlined"
-                type="text" // Cambiado de "number" a "text" para permitir alfanuméricos
+                type="text"
                 name="order"
                 value={order}
                 onChange={handleInputChange}
@@ -205,6 +221,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="ID"
@@ -219,9 +236,9 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu ES"
@@ -234,9 +251,9 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu EN"
@@ -249,9 +266,9 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu PT"
@@ -264,9 +281,9 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 label="Detalles"
@@ -279,24 +296,65 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position="start" />,
                 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
           </Grid>
+
+          {/* Checkboxes antes de los botones */}
+          <Grid 
+            container 
+            spacing={2} 
+            sx={{ mt: 3, mb: 3 }}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={full === 'X'}
+                    onChange={handleCheckboxChange('full')}
+                    color="primary"
+                  />
+                }
+                label="Full"
+              />
+            </Grid>
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={light === 'X'}
+                    onChange={handleCheckboxChange('light')}
+                    color="primary"
+                  />
+                }
+                label="Light"
+              />
+            </Grid>
+          </Grid>
+
           <Grid
             container
             spacing={2}
             justifyContent="center"
             alignItems="center"
-            sx={{ mt: { sm: 5 } }}
+            sx={{ mt: 2 }}
           >
             <Grid item xs={12} sm={3}>
-              <Button onClick={onClickCancel}>Cancelar</Button>
+              <Button 
+                onClick={onClickCancel}
+                fullWidth
+                variant="outlined"
+              >
+                Cancelar
+              </Button>
             </Grid>
             <Grid item xs={12} sm={3}>
               <Button
                 variant="contained"
                 color="primary"
+                fullWidth
                 onClick={
                   menuModulesActive
                     ? handleUpdateMenuModules
