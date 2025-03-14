@@ -6,18 +6,24 @@ import { Category, Country, Crops, Movement, SupplyType, System, Licences, MenuM
 PouchDB.plugin(PouchDBFind);
 
 const remoteCouchDBUrl = Object.freeze(getEnvVariables().VITE_COUCHDB_URL);
+// const environment = getEnvVariables().VITE_ENVIRONMENT;
 
+
+const isEnvSTG = () => {
+  // return environment === "stg" ? "_stg" : "";
+  return "";
+};
 
 const dbNames = Object.freeze({
-    categories: "categories",
-    movementsType: "movements-type",
-    supply_type: "supply_type",
-    crops: "crops",
-    countries: "countries",
-    system: "system",
-    licences: "licences",
-    menuModules: "menu-modules",
-    typeDevices: "type-of-devices"
+    categories: `categories${isEnvSTG()}`,
+    movementsType: `movements-type${isEnvSTG()}`,
+    supply_type: `supply-type${isEnvSTG()}`,
+    crops: `crops${isEnvSTG()}`,
+    countries: `countries${isEnvSTG()}`,
+    system: `system${isEnvSTG()}`,
+    licences: `licences${isEnvSTG()}`,
+    menuModules: `menu-modules${isEnvSTG()}`,
+    typeDevices: `type-of-devices${isEnvSTG()}`
 });
 
 
