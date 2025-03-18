@@ -6,12 +6,11 @@ import { Category, Country, Crops, Movement, SupplyType, System, Licences, MenuM
 PouchDB.plugin(PouchDBFind);
 
 const remoteCouchDBUrl = Object.freeze(getEnvVariables().VITE_COUCHDB_URL);
-// const environment = getEnvVariables().VITE_ENVIRONMENT;
+const environment = getEnvVariables().VITE_ENVIRONMENT;
 
 
 const isEnvSTG = () => {
-  // return environment === "stg" ? "_stg" : "";
-  return "";
+  return environment === "stg" ? "_stg" : "";
 };
 
 const dbNames = Object.freeze({
