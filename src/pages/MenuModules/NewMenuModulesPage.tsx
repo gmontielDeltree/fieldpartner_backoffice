@@ -175,7 +175,7 @@ export const NewMenuModulesPage: React.FC = () => {
           >
             {menuModulesActive ? 'Editar' : 'Nuevo'} Menus y Modulos
           </Typography>
-          
+
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth variant="outlined">
@@ -190,7 +190,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 />
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Modulo"
@@ -206,7 +206,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Orden"
@@ -238,13 +238,12 @@ export const NewMenuModulesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu ES"
                 variant="outlined"
                 type="text"
-                name="menuOptionEs"
+                name="menuOption"
                 value={menuOptionEs}
                 onChange={handleInputChange}
                 InputProps={{
@@ -253,7 +252,6 @@ export const NewMenuModulesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Opcion de menu EN"
@@ -301,9 +299,9 @@ export const NewMenuModulesPage: React.FC = () => {
           </Grid>
 
           {/* Checkboxes antes de los botones */}
-          <Grid 
-            container 
-            spacing={2} 
+          <Grid
+            container
+            spacing={2}
             sx={{ mt: 3, mb: 3 }}
             justifyContent="center"
             alignItems="center"
@@ -342,7 +340,7 @@ export const NewMenuModulesPage: React.FC = () => {
             sx={{ mt: 2 }}
           >
             <Grid item xs={12} sm={3}>
-              <Button 
+              <Button
                 onClick={onClickCancel}
                 fullWidth
                 variant="outlined"
