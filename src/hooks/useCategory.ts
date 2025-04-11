@@ -93,7 +93,25 @@ export const useCategory = () => {
         }
     }
 
+    const categoryIdExists = async (idCategory: string) => {
+        try {
+            if (!idCategory) return false;
+            const response = await dbContext.categories.find({
+                selector: {
+                    idCategory: { $eq: idCategory }
+                }
+            });
+            setIsLoading(false);
 
+            return !!response.docs.length;
+
+        } catch (error) {
+            console.log(error)
+            Swal.fire('Ups', 'Ocurrio un error inesperado ', 'error');
+            setIsLoading(false);
+            return false;
+        }
+    }
 
     return {
         //* Propiedades
@@ -106,6 +124,7 @@ export const useCategory = () => {
         getCategories,
         setCategories,
         updateCategory,
-        removeCategory
+        removeCategory,
+        categoryIdExists
     }
 }

@@ -139,7 +139,7 @@ export const useAuthStore = () => {
         const refreshToken = localStorage.getItem('r_bo');
         const userSession = localStorage.getItem("user_session_bo");
 
-        if (!token || !refreshToken || userSession) return dispatch(onLogout(""));
+        if (!token || !refreshToken || !userSession) return dispatch(onLogout(""));
 
         dispatch(onChecking());
         try {

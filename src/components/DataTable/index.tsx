@@ -43,7 +43,7 @@ const DataTable: React.FC<DataTableProps> = ({
   children,
 }) => {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ maxHeight: 540 }}>
       {isLoading ? (
         <Box sx={{ p: 1 }}>
           <Skeleton variant="rounded" sx={{ width: "100%", height: 60 }} />
@@ -52,7 +52,7 @@ const DataTable: React.FC<DataTableProps> = ({
           <Skeleton variant="text" sx={{ width: "100%", height: 30 }} />
         </Box>
       ) : (
-        <Table sx={{ minWidth: 500 }} aria-label="customized table">
+        <Table stickyHeader sx={{ minWidth: 500 }} aria-label="customized table">
           <TableHead>
             <TableRow sx={{ backgroundColor: "rgb(0 0 0 / 25%)" }}>
               {columns.map(({ text, align }) => (
