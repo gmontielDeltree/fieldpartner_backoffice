@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Loading } from '../../components'
+import React, { useEffect } from 'react';
+import { Loading, AutoCompleteSelect, OptionType, NumericTextField } from '../../components';
 import {
   Autocomplete,
   Box,
@@ -13,19 +13,13 @@ import {
   Typography,
   Checkbox,
   FormControlLabel,
-} from '@mui/material'
-import { List as ListIcon } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
-import {
-  useAppDispatch,
-  useAppSelector,
-  useForm,
-  useMenuModules,
-  useSystem,
-} from '../../hooks'
-import { MenuModules } from '../../types'
-import { removeMenuModulesActive } from '../../store/menumodules/menuModulesSlice'
-import Swal from 'sweetalert2'
+} from '@mui/material';
+import { List as ListIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from '../../hooks';
+import { MenuModules, MenuOptionType } from '../../types';
+import { removeMenuModulesActive } from '../../store/menumodules/menuModulesSlice';
+import Swal from 'sweetalert2';
 
 const initialForm: MenuModules = {
   id: 0,
@@ -38,20 +32,16 @@ const initialForm: MenuModules = {
   menuOptionPt: '',
   full: 'X',
   light: 'X',
-}
+  menuType: '',
+};
 
 export const NewMenuModulesPage: React.FC = () => {
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const {
-    isLoading,
-    createMenuModules,
-    updateMenuModules,
-    menuModules,
-    getMenuModules,
-  } = useMenuModules()
-  const { menuModulesActive } = useAppSelector((state) => state.menuModules)
-  const { system, getSystem } = useSystem()
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoading, createMenuModules, updateMenuModules, menuModules, getMenuModules } =
+    useMenuModules();
+  const { menuModulesActive } = useAppSelector(state => state.menuModules);
+  const { system, getSystem } = useSystem();
 
   const {
     id,
@@ -67,124 +57,125 @@ export const NewMenuModulesPage: React.FC = () => {
     setFormValues,
     handleInputChange,
     reset,
-  } = useForm<MenuModules>(initialForm)
+  } = useForm<MenuModules>(initialForm);
 
-  const handleCheckboxChange = (field: 'full' | 'light') => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValues((prev) => ({
-      ...prev,
-      [field]: event.target.checked ? 'X' : ''
-    }))
-  }
-
-  useEffect(() => {
-    getSystem()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const handleCheckboxChange =
+    (field: 'full' | 'light') => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFormValues(prev => ({
+        ...prev,
+        [field]: event.target.checked ? 'X' : '',
+      }));
+    };
 
   useEffect(() => {
-    getMenuModules()
+    getSystem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    getMenuModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (menuModulesActive) {
-      setFormValues(menuModulesActive)
+      setFormValues(menuModulesActive);
     } else {
-      setFormValues(initialForm)
+      setFormValues(initialForm);
     }
-  }, [menuModulesActive, setFormValues])
+  }, [menuModulesActive, setFormValues]);
 
   const handleSystemChange = (
     _event: React.SyntheticEvent<Element, Event>,
     newValue: string | null,
   ) => {
     if (newValue) {
-      setFormValues((prevForm) => ({
+      setFormValues(prevForm => ({
         ...prevForm,
         systemType: newValue,
-      }))
+      }));
     } else {
-      setFormValues((prevForm) => ({
+      setFormValues(prevForm => ({
         ...prevForm,
         systemType: '',
-      }))
+      }));
     }
-  }
+  };
 
   const handleVerifyId = () => {
-    const idExists = menuModules.some((module) => module.id === id)
+    const idExists = menuModules.some(module => module.id === id);
     if (idExists) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'El ID ya existe',
       }).then(() => {
-        setFormValues((prevForm) => ({
+        setFormValues(prevForm => ({
           ...prevForm,
           id: 0,
-        }))
-      })
+        }));
+      });
     }
-    return idExists
-  }
+    return idExists;
+  };
 
   const handleAddMenuModules = () => {
-    createMenuModules(formValues)
-    dispatch(removeMenuModulesActive())
-    reset()
-  }
+    createMenuModules(formValues);
+    dispatch(removeMenuModulesActive());
+    reset();
+  };
 
   const handleUpdateMenuModules = () => {
-    if (!formValues._id) return
-    updateMenuModules(formValues)
-    dispatch(removeMenuModulesActive())
-    reset()
-  }
+    if (!formValues._id) return;
+    updateMenuModules(formValues);
+    dispatch(removeMenuModulesActive());
+    reset();
+  };
 
   const onClickCancel = () => {
-    dispatch(removeMenuModulesActive())
-    navigate('/menus-modules')
-    reset()
-  }
+    dispatch(removeMenuModulesActive());
+    navigate('/menus-modules');
+    reset();
+  };
+
+  const menuTypeOptions: OptionType[] = Object.values(MenuOptionType).map(value => ({
+    id: value,
+    label: value,
+  }));
+
+  const selectedMenuType =
+    menuTypeOptions.find(option => option.id === formValues.menuType) || null;
+
+  const handleMenuTypeChange = (value: OptionType | null) => {
+    setFormValues(prev => ({
+      ...prev,
+      menuType: value ? (value.id as MenuOptionType) : '',
+    }));
+  };
 
   return (
     <>
-      <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
+      <Loading key='loading-new-customer' loading={isLoading} />
+      <Container maxWidth='md' sx={{ mb: 4 }}>
+        <Box component='div' display='flex' alignItems='center' sx={{ ml: { sm: 2 }, pt: 2 }}>
           <ListIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
+          <Typography variant='h5' sx={{ ml: { sm: 2 } }}>
             Menus y Modulos
           </Typography>
         </Box>
 
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            sx={{ my: 3, mb: 5 }}
-          >
+        <Paper variant='outlined' sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+          <Typography component='h1' variant='h4' align='center' sx={{ my: 3, mb: 5 }}>
             {menuModulesActive ? 'Editar' : 'Nuevo'} Menus y Modulos
           </Typography>
 
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
-              <FormControl fullWidth variant="outlined">
+              <FormControl fullWidth variant='outlined'>
                 <Autocomplete
-                  options={system.map((sys) => `${sys.system}: ${sys.version}`)}
+                  options={system.map(sys => `${sys.system}: ${sys.version}`)}
                   fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} label="System" />
-                  )}
+                  renderInput={params => <TextField {...params} label='System' />}
                   value={formValues.systemType}
                   onChange={handleSystemChange}
                 />
@@ -193,15 +184,15 @@ export const NewMenuModulesPage: React.FC = () => {
 
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Modulo"
-                variant="outlined"
-                type="text"
-                name="module"
+                label='Modulo'
+                variant='outlined'
+                type='text'
+                name='module'
                 value={module}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 30 }}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
@@ -209,59 +200,73 @@ export const NewMenuModulesPage: React.FC = () => {
 
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Orden"
-                variant="outlined"
-                type="text"
-                name="order"
+                label='Orden'
+                variant='outlined'
+                type='text'
+                name='order'
                 value={order}
                 onChange={handleInputChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="ID"
-                variant="outlined"
-                type="text"
-                name="id"
+            <Grid item xs={12} sm={2}>
+              <NumericTextField
+                label='ID'
+                name='id'
                 value={id}
-                onBlur={handleVerifyId}
-                onChange={handleInputChange}
+                onChange={newValue => {
+                  // Actualiza el formulario manteniendo el tipo number
+                  setFormValues(prev => ({
+                    ...prev,
+                    id: newValue === null ? 0 : newValue,
+                  }));
+                }}
+                onBlur={handleVerifyId} // Tu validación existente
                 inputProps={{ maxLength: 30 }}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
+                fullWidth
+                variant={'outlined'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <AutoCompleteSelect
+                options={menuTypeOptions}
+                label='Tipo de Menú'
+                value={selectedMenuType}
+                onChange={handleMenuTypeChange}
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Opcion de menu ES"
-                variant="outlined"
-                type="text"
-                name="menuOption"
+                label='Opcion de menu ES'
+                variant='outlined'
+                type='text'
+                name='menuOption'
                 value={menuOptionEs}
                 onChange={handleInputChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Opcion de menu EN"
-                variant="outlined"
-                type="text"
-                name="menuOptionEn"
+                label='Opcion de menu EN'
+                variant='outlined'
+                type='text'
+                name='menuOptionEn'
                 value={menuOptionEn}
                 onChange={handleInputChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
@@ -269,14 +274,14 @@ export const NewMenuModulesPage: React.FC = () => {
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Opcion de menu PT"
-                variant="outlined"
-                type="text"
-                name="menuOptionPt"
+                label='Opcion de menu PT'
+                variant='outlined'
+                type='text'
+                name='menuOptionPt'
                 value={menuOptionPt}
                 onChange={handleInputChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
@@ -284,14 +289,14 @@ export const NewMenuModulesPage: React.FC = () => {
 
             <Grid item xs={12}>
               <TextField
-                label="Detalles"
-                variant="outlined"
-                type="text"
-                name="details"
+                label='Detalles'
+                variant='outlined'
+                type='text'
+                name='details'
                 value={details}
                 onChange={handleInputChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
+                  startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
               />
@@ -303,8 +308,8 @@ export const NewMenuModulesPage: React.FC = () => {
             container
             spacing={2}
             sx={{ mt: 3, mb: 3 }}
-            justifyContent="center"
-            alignItems="center"
+            justifyContent='center'
+            alignItems='center'
           >
             <Grid item>
               <FormControlLabel
@@ -312,10 +317,10 @@ export const NewMenuModulesPage: React.FC = () => {
                   <Checkbox
                     checked={full === 'X'}
                     onChange={handleCheckboxChange('full')}
-                    color="primary"
+                    color='primary'
                   />
                 }
-                label="Full"
+                label='Full'
               />
             </Grid>
             <Grid item>
@@ -324,40 +329,26 @@ export const NewMenuModulesPage: React.FC = () => {
                   <Checkbox
                     checked={light === 'X'}
                     onChange={handleCheckboxChange('light')}
-                    color="primary"
+                    color='primary'
                   />
                 }
-                label="Light"
+                label='Light'
               />
             </Grid>
           </Grid>
 
-          <Grid
-            container
-            spacing={2}
-            justifyContent="center"
-            alignItems="center"
-            sx={{ mt: 2 }}
-          >
+          <Grid container spacing={2} justifyContent='center' alignItems='center' sx={{ mt: 2 }}>
             <Grid item xs={12} sm={3}>
-              <Button
-                onClick={onClickCancel}
-                fullWidth
-                variant="outlined"
-              >
+              <Button onClick={onClickCancel} fullWidth variant='outlined'>
                 Cancelar
               </Button>
             </Grid>
             <Grid item xs={12} sm={3}>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 fullWidth
-                onClick={
-                  menuModulesActive
-                    ? handleUpdateMenuModules
-                    : handleAddMenuModules
-                }
+                onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
               >
                 {!menuModulesActive ? 'Guardar' : 'Actualizar'}
               </Button>
@@ -366,5 +357,5 @@ export const NewMenuModulesPage: React.FC = () => {
         </Paper>
       </Container>
     </>
-  )
-}
+  );
+};

@@ -9,10 +9,7 @@ export * from './user';
 export * from './UserForm';
 export * from './SearchButton';
 export * from './SearchInput';
+export * from './AutoCompleteSelect/AutoCompleteSelect';
+export * from './NumericTextField/NumericTextField';
 
-
-export {
-    DataTable,
-    ItemRow,
-    TableCellStyled
-}
+export { DataTable, ItemRow, TableCellStyled };
