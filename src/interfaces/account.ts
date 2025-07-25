@@ -26,10 +26,12 @@ export interface Account extends Document {
     province: string;
     // creationDate: string;
     observation: string;
-    user: UserDto;
+    user: UserDto | null;
     countCampos?: number;
     countLicencias?: number;
     countHectareas?: number;
+    associateUser: boolean;
+    emailToAssociate: string;
 }
 
 

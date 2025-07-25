@@ -4,8 +4,10 @@ import Swal from 'sweetalert2';
 import { useState } from "react"
 import { Account, UpdateAccount } from "../interfaces/account";
 import { backofficeApi } from "../config";
+// import { UserDto } from "../types";
 
-const controller = 'account';
+const urlAccount = 'account';
+const urlUserLicence = 'user-licence';
 
 export const useAccount = () => {
 
@@ -19,7 +21,7 @@ export const useAccount = () => {
     const createAccount = async (newAccount: Account) => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.post(`/${controller}`, {
+            const response = await backofficeApi.post(`/${urlAccount}`, {
                 ...newAccount,
                 amountLicencesAllowed: Number(newAccount.amountLicencesAllowed)
             });
@@ -48,7 +50,7 @@ export const useAccount = () => {
     const getAccounts = async () => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.get<Account[]>(`/${controller}`);
+            const response = await backofficeApi.get<Account[]>(`/${urlAccount}`);
 
             setIsLoading(false);
 
@@ -65,11 +67,26 @@ export const useAccount = () => {
         }
     }
 
+    const getUserByEmail = async (email: string) => {
+        setIsLoading(true);
+        try {
+            const response = await backofficeApi.get(`/${urlUserLicence}/email/${email}`);
+            return response.data;
+
+        } catch (error) {
+            console.error(error)
+            if (error) setError(error);
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const updateAccount = async (accountId: string, updateAccount: UpdateAccount) => {
         setIsLoading(true);
 
         try {
-            const response = await backofficeApi.patch(`/${controller}/${accountId}`, updateAccount);
+            const response = await backofficeApi.patch(`/${urlAccount}/${accountId}`, updateAccount);
             setIsLoading(false);
 
             if (response.status === HttpStatusCode.Ok) {
@@ -100,6 +117,7 @@ export const useAccount = () => {
         createAccount,
         getAccounts,
         setAccounts,
-        updateAccount
+        updateAccount,
+        getUserByEmail
     }
 }

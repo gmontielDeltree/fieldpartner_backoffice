@@ -1,9 +1,13 @@
 import { Alert, AlertTitle, Autocomplete, Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, ListItemText, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import React, { ChangeEvent, FC, SyntheticEvent, useState } from 'react';
-import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences } from '../../types'
+import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences, UserDto } from '../../types'
 import { Account } from '../../interfaces/account';
-import { enumToArray } from '../../helpers';
+import { enumToArray, regexEmail } from '../../helpers';
 import InfoIcon from '@mui/icons-material/Info';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useAccount } from '../../hooks';
+
 
 interface LicenceFormProps {
     formValues: Account,
@@ -23,12 +27,15 @@ export const LicenceForm: FC<LicenceFormProps> = ({
     handleInputChange,
 }) => {
 
-    // const { username, email, password } = formValues.user;
+    const { getUserByEmail } = useAccount();
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [errorToEmailAssociation, setErrorToEmailAssociation] = useState<boolean>(false);
     const [countrySelected, setCountrySelected] = useState<Country | null>(null);
     const countryOptions = countries.map(c => ({ code: c.code, label: c.descriptionEN }));
     const statusOptions = Object.values(EnumStatusAccount).map(x => x as string);
     const categoryOptions = enumToArray(EnumCategoryAccount);
     const licenceTypeOptions = Object.values(EnumLicenceType).map(x => x as string);
+
     const licencesOptions = licences.
         filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
         .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed }));
@@ -65,11 +72,19 @@ export const LicenceForm: FC<LicenceFormProps> = ({
 
     const onChangeUser = ({ target }: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = target;
-        if (formValues.user)
-            setFormValues(prevState => ({
-                ...prevState,
-                user: { ...formValues.user, [name]: value }
-            }));
+        setFormValues(prevState => ({
+            ...prevState,
+            user: { ...prevState.user!, [name]: value } as UserDto
+        }));
+    }
+
+    const onBlurEmailToAssociate = async () => {
+        const email = formValues.emailToAssociate.trim();
+        if (email && regexEmail.test(email)) {
+            const user = await getUserByEmail(email);
+            if (user) setErrorToEmailAssociation(false);
+            else setErrorToEmailAssociation(true);
+        }
     }
 
     return (
@@ -237,10 +252,55 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     }}
                     fullWidth />
             </Grid>
-            {
-                formValues.user && (
-                    <Grid item xs={12} sm={12} alignItems="center">
-                        <Paper variant='elevation' elevation={1} sx={{ width: "60%", p: 2, margin: "auto" }}>
+            <Grid item xs={12} sm={12} alignItems="center" sx={{ mt: 2 }}>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <FormControlLabel
+                        sx={{ mb: 3 }}
+                        control={<Checkbox
+                            name="associateUser"
+                            checked={formValues.associateUser}
+                            onChange={(e, c) => {
+                                handleCheckboxChange(e, c);
+                                if (!c) {
+                                    // Si el checkbox se desmarca, limpiamos el email
+                                    setFormValues(prev => ({
+                                        ...prev,
+                                        emailToAssociate: ''
+                                    }));
+                                }
+                            }} />}
+                        label={<Typography fontWeight={400} variant="h5">Asociar a un usuario existente</Typography>} />
+                    {
+                        formValues.associateUser && (
+                            <TextField
+                                variant="outlined"
+                                sx={{ width: "50%", mt: 1 }}
+                                type='email'
+                                label="Email a asociar"
+                                name="emailToAssociate"
+                                color={
+                                    (regexEmail.test(formValues.emailToAssociate) && errorToEmailAssociation)
+                                        ? 'error'
+                                        : (regexEmail.test(formValues.emailToAssociate) && !errorToEmailAssociation) ? 'success' : 'secondary'
+                                }
+                                value={formValues.emailToAssociate}
+                                focused
+                                onBlur={onBlurEmailToAssociate}
+                                onChange={handleInputChange}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">@</InputAdornment>
+                                }} />
+                        )
+                    }
+                </Box>
+                {
+                    !formValues.associateUser && (
+                        <Paper variant='outlined' elevation={2} sx={{ width: "60%", p: 2, margin: "auto" }}>
                             <Typography variant='h6' textAlign="center" sx={{ mb: 2 }}>Licencia Admin</Typography>
                             <Grid container direction="column" spacing={1} >
                                 <Grid item xs={12}>
@@ -251,7 +311,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                         label="Nombre"
                                         size='small'
                                         name="username"
-                                        value={formValues.user.username}
+                                        value={formValues?.user?.username}
                                         onChange={onChangeUser}
                                         InputProps={{
                                             startAdornment: <InputAdornment position="start" />,
@@ -265,7 +325,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                         type='email'
                                         name="email"
                                         size='small'
-                                        value={formValues.user.email}
+                                        value={formValues.user?.email}
                                         onChange={onChangeUser}
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end">@</InputAdornment>
@@ -276,18 +336,18 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                     <TextField
                                         label="Password"
                                         variant="outlined"
-                                        type='password'
+                                        type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         size='small'
-                                        value={formValues.user.password}
+                                        value={formValues.user?.password}
                                         onChange={onChangeUser}
                                         InputProps={{
-                                            endAdornment: (
+                                            startAdornment: (
                                                 <InputAdornment position="end">
                                                     <Tooltip title={
                                                         <Alert severity="warning">
-                                                            <AlertTitle>La contraseña debe tener al menos:</AlertTitle>
-                                                            <strong>-Debe tener al menos 8 caracteres.</strong><br />
+                                                            <AlertTitle>La contraseña debe cumplir con los siguientes requisitos:</AlertTitle>
+                                                            <strong>-Mínimo 8 caracteres.</strong><br />
                                                             <strong>-Una mayúscula.</strong><br />
                                                             <strong>-Un número.</strong><br />
                                                             <strong>-Un carácter especial.</strong><br />
@@ -297,15 +357,24 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                                             <InfoIcon fontSize='small' />
                                                         </IconButton>
                                                     </Tooltip>
-                                                </InputAdornment>)
+                                                </InputAdornment>
+                                            ),
+                                            endAdornment: (
+                                                <InputAdornment position="start" > <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                >
+                                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                </IconButton></InputAdornment>
+                                            )
                                         }}
                                         fullWidth />
                                 </Grid>
                             </Grid>
                         </Paper>
-                    </Grid>
-                )
-            }
-        </Grid>
+                    )
+                }
+            </Grid>
+        </Grid >
     )
 }

@@ -54,6 +54,8 @@ const initialForm: Account = {
     website: "",
     // creationDate: getShortDate(),
     observation: "",
+    associateUser: false,
+    emailToAssociate: "",
 };
 
 const initialSteps = ["Licencia", "Compañia"];
