@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -10,15 +10,15 @@ import {
   Typography,
   TableContainer,
   Paper,
-} from '@mui/material'
+} from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   List as ListIcon,
-} from '@mui/icons-material'
-import { useAppDispatch, useForm, useMenuModules } from '../../hooks'
-import { setMenuModulesACtive } from '../../store/menumodules/menuModulesSlice'
+} from '@mui/icons-material';
+import { useAppDispatch, useForm, useMenuModules } from '../../hooks';
+import { setMenuModulesACtive } from '../../store/menumodules/menuModulesSlice';
 import {
   DataTable,
   ItemRow,
@@ -26,122 +26,110 @@ import {
   SearchButton,
   SearchInput,
   TableCellStyled,
-} from '../../components'
-import { ColumnProps, MenuModules } from '../../types'
+  DynamicIcon,
+} from '../../components';
+import { ColumnProps, MenuModules } from '../../types';
 
 const columns: ColumnProps[] = [
+  { text: 'Ícono', align: 'center' },
   { text: 'Modulo', align: 'left' },
   { text: 'System', align: 'center' },
   { text: 'ID', align: 'center' },
   { text: 'Menu', align: 'center' },
   { text: 'Orden', align: 'center' },
-]
+  { text: '', align: 'center' },
+];
 
 export const ListMenuModulesPage: React.FC = () => {
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const {
-    isLoading,
-    menuModules,
-    getMenuModules,
-    removeMenuModules,
-  } = useMenuModules()
-  const { filterText, handleInputChange } = useForm({ filterText: '' })
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoading, menuModules, getMenuModules, removeMenuModules } = useMenuModules();
+  const { filterText, handleInputChange } = useForm({ filterText: '' });
 
-  const filterMenuModules = (
-    menuModules: MenuModules[],
-    filterText: string,
-  ): MenuModules[] => {
+  const filterMenuModules = (menuModules: MenuModules[], filterText: string): MenuModules[] => {
     // Primero filtramos por el texto de búsqueda
-    const filteredBySearch = menuModules.filter((menuModules) =>
+    const filteredBySearch = menuModules.filter(menuModules =>
       matchesFilter(menuModules, filterText),
-    )
-    
+    );
+
     // Luego ordenamos por el campo order
     return filteredBySearch.sort((a, b) => {
       // Asumimos que order es un número. Si es undefined, lo tratamos como infinito
-      const orderA = typeof a.order === 'number' ? a.order : Infinity
-      const orderB = typeof b.order === 'number' ? b.order : Infinity
-      return orderA - orderB
-    })
-  }
+      const orderA = typeof a.order === 'number' ? a.order : Infinity;
+      const orderB = typeof b.order === 'number' ? b.order : Infinity;
+      return orderA - orderB;
+    });
+  };
 
   const normalizeText = (text: string) => {
     return text
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-  }
+      .toLowerCase();
+  };
 
   const matchesFilter = (menuModules: MenuModules, filter: string) => {
-    const normalizedFilter = normalizeText(filter)
+    const normalizedFilter = normalizeText(filter);
     const searchableFields = [
       menuModules.systemType,
       menuModules.module,
       menuModules.menuOption,
       String(menuModules.id),
-    ]
+    ];
 
-    return searchableFields.some((field) =>
-      normalizeText(String(field)).includes(normalizedFilter),
-    )
-  }
+    return searchableFields.some(field => normalizeText(String(field)).includes(normalizedFilter));
+  };
 
   const onClickSearch = () => {
     if (filterText === '') {
-      getMenuModules()
-      return
+      getMenuModules();
+      return;
     }
-  }
+  };
 
   const onClickUpdateMenuModules = (item: MenuModules) => {
-    console.log('Item ID:', item._id)
-    dispatch(setMenuModulesACtive(item))
-    navigate(`/menus-modules/${item._id}`)
-  }
+    console.log('Item ID:', item._id);
+    dispatch(setMenuModulesACtive(item));
+    navigate(`/menus-modules/${item._id}`);
+  };
 
   const handleDeleteMenuModules = (item: MenuModules) => {
     if (item._id && item._rev) {
-      removeMenuModules(item._id, item._rev)
-      getMenuModules()
+      removeMenuModules(item._id, item._rev);
+      getMenuModules();
     }
-  }
+  };
 
   useEffect(() => {
-    getMenuModules()
+    getMenuModules();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
+      <Container maxWidth='md' sx={{ ml: 0 }}>
+        <Box component='div' display='flex' alignItems='center' sx={{ ml: { sm: 2 }, pt: 2 }}>
           <ListIcon />
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
+          <Typography component='h4' variant='h4' sx={{ ml: { sm: 2 } }}>
             Menus y Modulos
           </Typography>
         </Box>
-        <Box component="div" sx={{ mt: 7 }}>
+        <Box component='div' sx={{ mt: 7 }}>
           <Grid
             container
             spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
             sx={{ p: 2, mt: { sm: 2 } }}
           >
             <Grid item xs={6} sm={2}>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 component={RouterLink}
-                to="/menus-modules/new"
+                to='/menus-modules/new'
                 startIcon={<AddIcon />}
                 sx={{ mb: 2 }}
               >
@@ -149,23 +137,23 @@ export const ListMenuModulesPage: React.FC = () => {
               </Button>
             </Grid>
             <Grid item xs={12} sm={10}>
-              <Grid container justifyContent="flex-end">
+              <Grid container justifyContent='flex-end'>
                 <Grid item xs={8} sm={5}>
                   <SearchInput
                     value={filterText}
-                    placeholder="Menu / Modulo"
+                    placeholder='Menu / Modulo'
                     handleInputChange={handleInputChange}
                   />
                 </Grid>
                 <Grid item xs={4} sm={3}>
-                  <SearchButton text="Buscar" onClick={() => onClickSearch()} />
+                  <SearchButton text='Buscar' onClick={() => onClickSearch()} />
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Box component="div" sx={{ p: 1 }}>
+          <Box component='div' sx={{ p: 1 }}>
             <TableContainer
-              key="table-licences"
+              key='table-licences'
               sx={{
                 minHeight: '120px',
                 maxHeight: '540px',
@@ -174,40 +162,35 @@ export const ListMenuModulesPage: React.FC = () => {
               }}
               component={Paper}
             >
-              <DataTable
-                key="datatable-licences"
-                columns={columns}
-                isLoading={isLoading}
-              >
-                {filterMenuModules(menuModules, filterText).map((row) => (
+              <DataTable key='datatable-licences' columns={columns} isLoading={isLoading}>
+                {filterMenuModules(menuModules, filterText).map(row => (
                   <ItemRow key={row._id} hover>
-                    <TableCellStyled align="left">{row.module}</TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.systemType}
+                    <TableCellStyled align='center'>
+                      {row.icon && <DynamicIcon iconName={row.icon} />}
                     </TableCellStyled>
-                    <TableCellStyled align="center">{row.id}</TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.menuOption}
-                    </TableCellStyled>
-                    <TableCellStyled align="center">
-                      {row.order}
-                    </TableCellStyled>
-                    <TableCellStyled align="right">
-                      <Tooltip title="Editar">
+                    <TableCellStyled align='left'>{row.module}</TableCellStyled>
+                    <TableCellStyled align='center'>{row.systemType}</TableCellStyled>
+                    <TableCellStyled align='center'>{row.id}</TableCellStyled>
+                    <TableCellStyled align='center'>{row.menuOption}</TableCellStyled>
+                    <TableCellStyled align='center'>{row.order}</TableCellStyled>
+                    <TableCellStyled align='right'>
+                      <Tooltip title='Editar'>
                         <IconButton
-                          aria-label="Editar"
+                          aria-label='Editar'
                           onClick={() => onClickUpdateMenuModules(row)}
                         >
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar">
+                    </TableCellStyled>
+                    <TableCellStyled align='left'>
+                      <Tooltip title='Eliminar'>
                         <IconButton
                           onClick={() => handleDeleteMenuModules(row)}
                           style={{ fontSize: '1rem' }}
-                          color="default"
+                          color='default'
                         >
-                          <DeleteIcon name="trash alternate" />
+                          <DeleteIcon name='trash alternate' />
                         </IconButton>
                       </Tooltip>
                     </TableCellStyled>
@@ -219,5 +202,5 @@ export const ListMenuModulesPage: React.FC = () => {
         </Box>
       </Container>
     </>
-  )
-}
+  );
+};
