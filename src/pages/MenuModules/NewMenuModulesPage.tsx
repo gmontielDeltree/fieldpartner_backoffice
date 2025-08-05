@@ -1,11 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Loading,
-  AutoCompleteSelect,
-  OptionType,
-  NumericTextField,
-  IconSelector,
-} from '../../components';
+import { Loading, AutoCompleteSelect, OptionType, NumericTextField } from '../../components';
 import {
   Autocomplete,
   Box,
@@ -39,7 +33,6 @@ const initialForm: MenuModules = {
   full: 'X',
   light: 'X',
   menuType: '',
-  icon: '',
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -202,18 +195,6 @@ export const NewMenuModulesPage: React.FC = () => {
                   startAdornment: <InputAdornment position='start' />,
                 }}
                 fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <IconSelector
-                value={formValues.icon}
-                onChange={newValue => {
-                  setFormValues(prev => ({
-                    ...prev,
-                    icon: newValue,
-                  }));
-                }}
-                label='Ícono del Menú'
               />
             </Grid>
 
