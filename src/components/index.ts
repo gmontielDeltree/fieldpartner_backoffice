@@ -11,5 +11,8 @@ export * from './SearchButton';
 export * from './SearchInput';
 export * from './AutoCompleteSelect/AutoCompleteSelect';
 export * from './NumericTextField/NumericTextField';
+export * from './IconSelector/IconSelector';
+export * from './DynamicIcon/DynamicIcon';
+export * from './IconSelectorModal/IconSelectorModal';
 
 export { DataTable, ItemRow, TableCellStyled };
