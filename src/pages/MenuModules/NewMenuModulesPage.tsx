@@ -22,14 +22,30 @@ import {
 } from '@mui/material';
 import { List as ListIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector, useForm, useMenuModules, useSystem } from '../../hooks';
-import { MenuModules, MenuOptionType } from '../../types';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useForm,
+  useMenuModules,
+  useSystem,
+  useModules,
+} from '../../hooks';
+import { MenuModules, MenuOptionType, Modules } from '../../types';
 import { removeMenuModulesActive } from '../../store/menumodules/menuModulesSlice';
 import Swal from 'sweetalert2';
+import type { ModuleOption } from '../../hooks/useModules';
+import { DynamicIcon } from '../../components/DynamicIcon/DynamicIcon';
+
+const blankModule: Modules = {
+  moduleNameEs: '',
+  moduleNameEn: '',
+  moduleNamePt: '',
+  icon: '',
+};
 
 const initialForm: MenuModules = {
   id: 0,
-  module: '',
+  module: blankModule,
   menuOption: '',
   systemType: '',
   details: '',
@@ -45,14 +61,17 @@ const initialForm: MenuModules = {
 export const NewMenuModulesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  // Usa UNA sola instancia del hook
+  const { options, getModules, isLoading: isLoadingModules } = useModules();
   const { isLoading, createMenuModules, updateMenuModules, menuModules, getMenuModules } =
     useMenuModules();
   const { menuModulesActive } = useAppSelector(state => state.menuModules);
   const { system, getSystem } = useSystem();
 
+  // Eliminado: segunda instancia duplicada de useModules
+
   const {
     id,
-    module,
     menuOption: menuOptionEs,
     menuOptionPt,
     menuOptionEn,
@@ -160,9 +179,19 @@ export const NewMenuModulesPage: React.FC = () => {
     }));
   };
 
+  // Normaliza por si viene un array desde datos viejos
+  const selectedModule = (
+    Array.isArray(formValues.module) ? formValues.module[0] : formValues.module
+  ) as Modules | undefined;
+
+  useEffect(() => {
+    getModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
-      <Loading key='loading-new-customer' loading={isLoading} />
+      <Loading key='loading-new-customer' loading={isLoading || isLoadingModules} />
       <Container maxWidth='md' sx={{ mb: 4 }}>
         <Box component='div' display='flex' alignItems='center' sx={{ ml: { sm: 2 }, pt: 2 }}>
           <ListIcon />
@@ -190,17 +219,39 @@ export const NewMenuModulesPage: React.FC = () => {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <TextField
-                label='Modulo'
-                variant='outlined'
-                type='text'
-                name='module'
-                value={module}
-                onChange={handleInputChange}
-                inputProps={{ maxLength: 30 }}
-                InputProps={{
-                  startAdornment: <InputAdornment position='start' />,
+              <Autocomplete<ModuleOption, false, false, false>
+                options={options}
+                getOptionLabel={opt => opt?.label ?? ''}
+                loading={isLoadingModules}
+                noOptionsText={isLoadingModules ? 'Cargando...' : 'Sin módulos'}
+                value={
+                  options.find(o => o.value._id && o.value._id === selectedModule?._id) ??
+                  options.find(o => o.label === selectedModule?.moduleNameEs) ??
+                  null
+                }
+                onChange={(_, opt) => {
+                  setFormValues(prev => ({
+                    ...prev,
+                    module: opt?.value ?? blankModule,
+                    icon: prev.icon || (opt?.value?.icon ?? ''),
+                  }));
                 }}
+                isOptionEqualToValue={(opt, val) =>
+                  (opt.id && val.id && opt.id === val.id) ||
+                  (opt.value._id && val.value._id && opt.value._id === val.value._id) ||
+                  opt.label === val.label
+                }
+                renderOption={(props, option) => (
+                  <li
+                    {...props}
+                    key={option.id}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                  >
+                    {option.value.icon && <DynamicIcon iconName={option.value.icon} />}
+                    <span>{option.label}</span>
+                  </li>
+                )}
+                renderInput={params => <TextField {...params} label='Módulo' />}
                 fullWidth
               />
             </Grid>
