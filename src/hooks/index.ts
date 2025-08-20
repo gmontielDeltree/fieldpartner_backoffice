@@ -14,3 +14,4 @@ export * from './useLicences';
 export * from './useMenuModules';
 export * from './useTypeDevices';
 //export * from './useDebounce';
+export * from './useModules';

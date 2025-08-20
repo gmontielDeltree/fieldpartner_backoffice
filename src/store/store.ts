@@ -13,23 +13,25 @@ import { systemSlice } from './system';
 import { licencesSlice } from './licences';
 import { menuModulesSlice } from './menumodules/menuModulesSlice';
 import { typeDevicesSlice } from './typedevices';
+import { modulesSlice } from './modules/modulesSlice';
 
 export const store = configureStore({
-    reducer: {
-        ui: uiSlice.reducer,
-        auth: authSlice.reducer,
-        account: accountSlice.reducer,
-        user: userSlice.reducer,
-        category: categorySlice.reducer,
-        movement: movementSlice.reducer,
-        supplie: supplieSlice.reducer,
-        crop: cropsSlice.reducer,
-        country: countrySlice.reducer,
-        system: systemSlice.reducer,
-        licences:licencesSlice.reducer,
-        menuModules:menuModulesSlice.reducer,
-        typeDevices:typeDevicesSlice.reducer,
-    },
+  reducer: {
+    ui: uiSlice.reducer,
+    auth: authSlice.reducer,
+    account: accountSlice.reducer,
+    user: userSlice.reducer,
+    category: categorySlice.reducer,
+    movement: movementSlice.reducer,
+    supplie: supplieSlice.reducer,
+    crop: cropsSlice.reducer,
+    country: countrySlice.reducer,
+    system: systemSlice.reducer,
+    licences: licencesSlice.reducer,
+    menuModules: menuModulesSlice.reducer,
+    typeDevices: typeDevicesSlice.reducer,
+    modules: modulesSlice.reducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

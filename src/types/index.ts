@@ -110,11 +110,11 @@ export interface Licences extends Document {
 
 export interface MenuModules extends Document {
   id: number;
-  module: string;
+  module: Modules; // <- antes: Modules[]
   order: string;
-  menuOption: string; // NOMBRE DEL MENU EN ESPAÑOL
-  menuOptionEn: string; // NOMBRE DEL MENU EN INGLES
-  menuOptionPt: string; // NOMBRE DEL MENU EN PORTUGUES
+  menuOption: string;
+  menuOptionEn: string;
+  menuOptionPt: string;
   systemType: string;
   menuType: string;
   details: string;
@@ -126,6 +126,13 @@ export interface MenuModules extends Document {
 //     menuModulesActive: MenuModules| null;
 //     menuModules: MenuModules[];
 // }
+
+export interface Modules extends Document {
+  moduleNameEs: string; // NOMBRE DEL MENU EN ESPAÑOL
+  moduleNameEn: string; // NOMBRE DEL MENU EN INGLES
+  moduleNamePt: string; // NOMBRE DEL MENU EN PORTUGUES
+  icon: string;
+}
 
 export interface TypeDevices extends Document {
   model: string;
