@@ -16,8 +16,14 @@ export * from './Country/LisCountryPage';
 export * from './Country/NewCountryPage';
 export * from './System/ListSystemPage';
 export * from './System/NewSystemPage';
-export * from './Licences/ListLicencesPage';
-export * from './Licences/NewLicencesPage';
+// Módulo de Licencias Legacy (deprecado)
+// export * from './Licences/ListLicencesPage';
+// export * from './Licences/NewLicencesPage';
+
+// Nuevo módulo de Licencias (español + backend integrado)
+export * from './Licencias/ListaLicenciasPage';
+export * from './Licencias/FormularioLicenciaPage';
+export * from './Licencias/MigracionLicenciasPage';
 export * from './MenuModules/ListMenuModulesPage';
 export * from './MenuModules/NewMenuModulesPage';
 export * from './Accounts/AccountPage';

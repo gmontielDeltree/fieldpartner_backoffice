@@ -1,3 +1,9 @@
+// ==========================================
+// EXPORTS DE TIPOS DE AUTENTICACIÓN
+// ==========================================
+export * from './auth.types';
+
+// Tipos legacy para compatibilidad
 export interface ColumnProps {
   text: string;
   align: 'inherit' | 'left' | 'center' | 'right' | 'justify';

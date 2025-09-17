@@ -26,7 +26,7 @@ const initialForm: UserDto = {
 export const UserPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth); // sesion del usuario
+  const { usuario } = useAppSelector((state) => state.auth); // sesion del usuario
   const { userActive } = useAppSelector((state) => state.user);// Alta de usuario
 
   const { formValues, setFormValues, handleInputChange, reset } =
@@ -91,7 +91,7 @@ export const UserPage: React.FC = () => {
           <Typography component="h1" variant="h4" align="center" sx={{ my: 3 }}>
             {userActive ? "Editar" : "Nuevo"} usuairo
           </Typography>
-          {user?.isAdmin && (
+          {usuario?.esAdmin && (
             <FormControlLabel
               sx={{
                 display: "flex",

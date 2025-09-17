@@ -10,7 +10,8 @@ export * from './useSupplies';
 export * from './useCrops';
 export * from './useCountry';
 export * from './useSystem';
-export * from './useLicences';
+export * from './useLicences'; // Legacy (deprecado)
+export * from './useLicencias'; // Nuevo hook integrado con backend
 export * from './useMenuModules';
 export * from './useTypeDevices';
 

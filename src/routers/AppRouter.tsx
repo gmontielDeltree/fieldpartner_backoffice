@@ -6,11 +6,17 @@ import { Loading } from '../components'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 export const AppRouter: React.FC = () => {
-  const { status, checkAuthToken } = useAuthStore()
+  const { status, verificarTokenAuth, checkAuthToken } = useAuthStore()
   // const authStatus = 'not-authenticated'; // 'authenticated'; // 'not-authenticated';
 
   useEffect(() => {
-    checkAuthToken()
+    // Usar el nuevo método con renovación automática
+    // Si hay problemas, fallback al método legacy
+    if (verificarTokenAuth) {
+      verificarTokenAuth()
+    } else {
+      checkAuthToken()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

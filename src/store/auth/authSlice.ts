@@ -1,17 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../types';
-
+import { UsuarioDto } from '../../types/auth.types';
 
 export interface AuthState {
     status: 'checking' | 'authenticated' | 'not-authenticated';
-    user: User | null;
+    usuario: UsuarioDto | null; // Cambio: usuario en español
     errorMessage: string;
     isLoading: boolean;
 }
 
 const initialState: AuthState = {
     status: 'not-authenticated', // 'authenticated','not-authenticated',
-    user: null,
+    usuario: null, // Cambio: usuario en español
     errorMessage: '',
     isLoading: false,
 }
@@ -22,17 +21,17 @@ export const authSlice = createSlice({
     reducers: {
         onChecking: (state) => {
             state.status = 'checking';
-            state.user = null;
+            state.usuario = null;
             state.errorMessage = '';
         },
-        onLogin: (state, action: PayloadAction<User>) => {
+        onLogin: (state, action: PayloadAction<UsuarioDto>) => {
             state.status = 'authenticated';
-            state.user = action.payload;
+            state.usuario = action.payload;
             state.errorMessage = '';
         },
         onLogout: (state, action: PayloadAction<string>) => {
             state.status = 'not-authenticated';
-            state.user = null;
+            state.usuario = null;
             state.errorMessage = action.payload;
         },
         clearErrorMessage: (state) => {
@@ -43,6 +42,34 @@ export const authSlice = createSlice({
         },
         finishLoading: (state) => {
             state.isLoading = false;
+        },
+
+        // ==========================================
+        // ACTIONS EN ESPAÑOL (NUEVAS)
+        // ==========================================
+        verificandoAuth: (state) => {
+            state.status = 'checking';
+            state.usuario = null;
+            state.errorMessage = '';
+        },
+        iniciarSesionExitosa: (state, action: PayloadAction<UsuarioDto>) => {
+            state.status = 'authenticated';
+            state.usuario = action.payload;
+            state.errorMessage = '';
+        },
+        cerrarSesion: (state, action: PayloadAction<string>) => {
+            state.status = 'not-authenticated';
+            state.usuario = null;
+            state.errorMessage = action.payload;
+        },
+        limpiarErrores: (state) => {
+            state.errorMessage = '';
+        },
+        iniciarCarga: (state) => {
+            state.isLoading = true;
+        },
+        finalizarCarga: (state) => {
+            state.isLoading = false;
         }
     }
 });
@@ -50,10 +77,19 @@ export const authSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+    // Legacy actions (compatibilidad)
     onChecking,
     onLogin,
     onLogout,
     clearErrorMessage,
     startLoading,
     finishLoading,
+
+    // Nuevas actions en español
+    verificandoAuth,
+    iniciarSesionExitosa,
+    cerrarSesion,
+    limpiarErrores,
+    iniciarCarga,
+    finalizarCarga,
 } = authSlice.actions;

@@ -11,6 +11,7 @@ import { cropsSlice } from './crops';
 import { countrySlice } from './country';
 import { systemSlice } from './system';
 import { licencesSlice } from './licences';
+import { licenciasReducer } from './licencias'; // Nuevo módulo de licencias
 import { menuModulesSlice } from './menumodules/menuModulesSlice';
 import { typeDevicesSlice } from './typedevices';
 
@@ -26,7 +27,8 @@ export const store = configureStore({
         crop: cropsSlice.reducer,
         country: countrySlice.reducer,
         system: systemSlice.reducer,
-        licences:licencesSlice.reducer,
+        licences:licencesSlice.reducer, // Legacy (deprecado)
+        licencias: licenciasReducer, // Nuevo módulo integrado con backend
         menuModules:menuModulesSlice.reducer,
         typeDevices:typeDevicesSlice.reducer,
     },

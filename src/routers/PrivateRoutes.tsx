@@ -18,8 +18,10 @@ import {
   NewCountryPage,
   ListSystemPage,
   NewSystemPage,
-  ListLicencesPage,
-  NewLicencesPage,
+  // Nuevo módulo de Licencias
+  ListaLicenciasPage,
+  FormularioLicenciaPage,
+  MigracionLicenciasPage,
   ListMenuModulesPage,
   NewMenuModulesPage,
   AccountPage,
@@ -63,9 +65,17 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/system" element={<ListSystemPage />} />
         <Route path="/system/new" element={<NewSystemPage />} />
         <Route path="/system/:id" element={<NewSystemPage />} />
-        <Route path="/licences" element={<ListLicencesPage />} />
-        <Route path="/licences/new" element={<NewLicencesPage />} />
-        <Route path="/licences/:id" element={<NewLicencesPage />} />
+        {/* Rutas del nuevo módulo de Licencias */}
+        <Route path="/licencias" element={<ListaLicenciasPage />} />
+        <Route path="/licencias/nueva" element={<FormularioLicenciaPage />} />
+        <Route path="/licencias/editar/:id" element={<FormularioLicenciaPage />} />
+        <Route path="/licencias/asignar/:id" element={<FormularioLicenciaPage />} />
+        <Route path="/licencias/migracion" element={<MigracionLicenciasPage />} />
+
+        {/* Rutas legacy (deprecadas) - redirect a nuevas rutas */}
+        <Route path="/licences" element={<Navigate to="/licencias" replace />} />
+        <Route path="/licences/new" element={<Navigate to="/licencias/nueva" replace />} />
+        <Route path="/licences/:id" element={<Navigate to="/licencias" replace />} />
         <Route path="/menus-modules" element={<ListMenuModulesPage />} />
         <Route path="/menus-modules/new" element={<NewMenuModulesPage />} />
         <Route path="/menus-modules/:id" element={<NewMenuModulesPage />} />

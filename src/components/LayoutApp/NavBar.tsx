@@ -20,7 +20,7 @@ export interface NavBarProps {
 
 export const NavBar: React.FC = () => {
   const { startLogout } = useAuthStore();
-  const { user } = useAppSelector((state) => state.auth);
+  const { usuario } = useAppSelector((state) => state.auth);
 
   const onClickLogout = () => startLogout();
 
@@ -53,7 +53,7 @@ export const NavBar: React.FC = () => {
 
           <Box display="flex" alignItems="center">
             <Typography variant="body1" noWrap component="h5">
-              {user && capitalizeText(user.username)}
+              {usuario && capitalizeText(usuario.nombreUsuario)}
             </Typography>
             <IconButton color="inherit" onClick={() => onClickLogout()}>
               <LogoutOutlined />
