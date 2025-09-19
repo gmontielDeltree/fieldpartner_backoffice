@@ -121,6 +121,7 @@ export interface MenuModules extends Document {
   full: string;
   light: string;
   icon: string;
+  route: string;
 }
 // export interface MenuModuleState {
 //     menuModulesActive: MenuModules| null;
