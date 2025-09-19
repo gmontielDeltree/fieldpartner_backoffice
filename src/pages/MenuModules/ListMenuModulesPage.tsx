@@ -41,6 +41,7 @@ const columns: ColumnProps[] = [
   { text: 'ID', align: 'center' },
   { text: 'Menu', align: 'center' },
   { text: 'Orden', align: 'center' },
+  { text: 'Ruta', align: 'center' },
   { text: '', align: 'center' },
 ];
 
@@ -237,16 +238,16 @@ export const ListMenuModulesPage: React.FC = () => {
 
             <Box component='div' sx={{ p: 1 }}>
               <TableContainer
-                key='table-licences'
+                key='table-menu-modules'
                 sx={{
                   minHeight: '120px',
                   maxHeight: '540px',
-                  overflow: 'scroll',
+                  overflow: 'auto',
                   mb: 5,
                 }}
                 component={Paper}
               >
-                <DataTable key='datatable-licences' columns={columns} isLoading={isLoading}>
+                <DataTable key='datatable-menu-modules' columns={columns} isLoading={isLoading}>
                   {filterMenuModules(menuModules, filterText).map(row => (
                     <ItemRow key={row._id} hover>
                       <TableCellStyled align='center'>
@@ -259,6 +260,7 @@ export const ListMenuModulesPage: React.FC = () => {
                       <TableCellStyled align='center'>{row.id}</TableCellStyled>
                       <TableCellStyled align='center'>{row.menuOption}</TableCellStyled>
                       <TableCellStyled align='center'>{row.order}</TableCellStyled>
+                      <TableCellStyled align='center'>{row.route}</TableCellStyled>
                       <TableCellStyled align='right'>
                         <Tooltip title='Editar'>
                           <IconButton

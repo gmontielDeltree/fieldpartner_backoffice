@@ -56,6 +56,7 @@ const initialForm: MenuModules = {
   light: 'X',
   menuType: '',
   icon: '',
+  route: '',
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -77,6 +78,7 @@ export const NewMenuModulesPage: React.FC = () => {
     menuOptionEn,
     order,
     details,
+    route,
     full,
     light,
     formValues,
@@ -349,6 +351,22 @@ export const NewMenuModulesPage: React.FC = () => {
                 type='text'
                 name='menuOptionPt'
                 value={menuOptionPt}
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: <InputAdornment position='start' />,
+                }}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={7}>
+              <TextField
+                label='Ruta / path'
+                variant='outlined'
+                placeholder='/init/overview/menus-modules'
+                type='text'
+                name='route'
+                value={route}
                 onChange={handleInputChange}
                 InputProps={{
                   startAdornment: <InputAdornment position='start' />,
