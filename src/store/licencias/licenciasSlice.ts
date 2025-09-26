@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {
   Licencia,
-  LicenciaPorCliente,
+  // LicenciaPorCliente,
   LicenciasState,
   CrearLicenciaDto,
   ActualizarLicenciaDto,

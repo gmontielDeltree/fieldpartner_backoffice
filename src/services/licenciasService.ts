@@ -3,8 +3,10 @@
 
 import {
   Licencia,
+  LicenciaPorCuenta,
   LicenciaPorCliente,
   CrearLicenciaDto,
+  AsignarLicenciaCuentaDto,
   AsignarLicenciaClienteDto,
   ActualizarLicenciaDto,
   ApiResponse
@@ -84,34 +86,79 @@ class LicenciasService {
     });
   }
 
-  // 🔗 ASIGNAR LICENCIA A CLIENTE
-  async asignarLicenciaACliente(
-    datos: AsignarLicenciaClienteDto
-  ): Promise<LicenciaPorCliente> {
-    return this.request<LicenciaPorCliente>('/asignar', {
+  // 🔗 ASIGNAR LICENCIA A CUENTA
+  async asignarLicenciaACuenta(
+    datos: AsignarLicenciaCuentaDto
+  ): Promise<LicenciaPorCuenta> {
+    return this.request<LicenciaPorCuenta>('/asignar', {
       method: 'POST',
       body: JSON.stringify(datos),
     });
   }
 
-  // 👥 OBTENER LICENCIAS DE UN CLIENTE
+  // 🔗 ASIGNAR LICENCIA A CLIENTE (COMPATIBILIDAD)
+  async asignarLicenciaACliente(
+    datos: AsignarLicenciaClienteDto
+  ): Promise<LicenciaPorCliente> {
+    const datosConvertidos: AsignarLicenciaCuentaDto = {
+      ...datos,
+      cuentaId: datos.clienteId
+    };
+    const resultado = await this.asignarLicenciaACuenta(datosConvertidos);
+    return {
+      ...resultado,
+      clienteId: resultado.cuentaId
+    };
+  }
+
+  // 👥 OBTENER LICENCIAS DE UNA CUENTA
+  async obtenerLicenciasDeCuenta(cuentaId: string): Promise<LicenciaPorCuenta[]> {
+    return this.request<LicenciaPorCuenta[]>(`/cuenta/${cuentaId}`);
+  }
+
+  // 👥 OBTENER LICENCIAS DE UN CLIENTE (COMPATIBILIDAD)
   async obtenerLicenciasDeCliente(clienteId: string): Promise<LicenciaPorCliente[]> {
-    return this.request<LicenciaPorCliente[]>(`/cliente/${clienteId}`);
+    const cuentas = await this.obtenerLicenciasDeCuenta(clienteId);
+    return cuentas.map(cuenta => ({
+      ...cuenta,
+      clienteId: cuenta.cuentaId
+    }));
   }
 
-  // 🏢 OBTENER CLIENTES CON LICENCIA
+  // 🏢 OBTENER CUENTAS CON LICENCIA
+  async obtenerCuentasConLicencia(licenciaId: string): Promise<LicenciaPorCuenta[]> {
+    return this.request<LicenciaPorCuenta[]>(`/cuentas-con/${licenciaId}`);
+  }
+
+  // 🏢 OBTENER CLIENTES CON LICENCIA (COMPATIBILIDAD)
   async obtenerClientesConLicencia(licenciaId: string): Promise<LicenciaPorCliente[]> {
-    return this.request<LicenciaPorCliente[]>(`/clientes-con/${licenciaId}`);
+    const cuentas = await this.obtenerCuentasConLicencia(licenciaId);
+    return cuentas.map(cuenta => ({
+      ...cuenta,
+      clienteId: cuenta.cuentaId
+    }));
   }
 
-  // ❌ DESACTIVAR LICENCIA DE CLIENTE
+  // ❌ DESACTIVAR LICENCIA DE CUENTA
+  async desactivarLicenciaDeCuenta(
+    cuentaId: string,
+    licenciaId: string
+  ): Promise<LicenciaPorCuenta> {
+    return this.request<LicenciaPorCuenta>(`/desactivar/${cuentaId}/${licenciaId}`, {
+      method: 'PUT',
+    });
+  }
+
+  // ❌ DESACTIVAR LICENCIA DE CLIENTE (COMPATIBILIDAD)
   async desactivarLicenciaDeCliente(
     clienteId: string,
     licenciaId: string
   ): Promise<LicenciaPorCliente> {
-    return this.request<LicenciaPorCliente>(`/desactivar/${clienteId}/${licenciaId}`, {
-      method: 'PUT',
-    });
+    const resultado = await this.desactivarLicenciaDeCuenta(clienteId, licenciaId);
+    return {
+      ...resultado,
+      clienteId: resultado.cuentaId
+    };
   }
 
   // 🔍 BUSCAR LICENCIAS (con filtros)

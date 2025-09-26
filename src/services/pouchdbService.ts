@@ -38,21 +38,21 @@ export const dbContext = Object.freeze({
     typeDevices: new PouchDB<TypeDevices>(dbNames.typeDevices)
 });
 
-dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`, { live: true, retry: true, });
+// dbContext.categories.sync(`${remoteCouchDBUrl}${dbNames.categories}`);
 
-dbContext.movementsType.sync(`${remoteCouchDBUrl}${dbNames.movementsType}`, { live: true, retry: true, });
+// dbContext.movementsType.sync(`${remoteCouchDBUrl}${dbNames.movementsType}`);
 
-dbContext.supply_type.sync(`${remoteCouchDBUrl}${dbNames.supply_type}`, { live: true, retry: true, });
+// dbContext.supply_type.sync(`${remoteCouchDBUrl}${dbNames.supply_type}`);
 
-dbContext.crops.sync(`${remoteCouchDBUrl}${dbNames.crops}`, { live: true, retry: true, });
+// dbContext.crops.sync(`${remoteCouchDBUrl}${dbNames.crops}`);
 
-dbContext.countries.sync(`${remoteCouchDBUrl}${dbNames.countries}`, { live: true, retry: true, });
+// dbContext.countries.sync(`${remoteCouchDBUrl}${dbNames.countries}`);
 
-dbContext.system.sync(`${remoteCouchDBUrl}${dbNames.system}`, { live: true, retry: true, });
+// dbContext.system.sync(`${remoteCouchDBUrl}${dbNames.system}`);
 
-dbContext.licences.sync(`${remoteCouchDBUrl}${dbNames.licences}`, { live: true, retry: true, });
+// dbContext.licences.sync(`${remoteCouchDBUrl}${dbNames.licences}`);
 
-dbContext.menuModules.sync(`${remoteCouchDBUrl}${dbNames.menuModules}`, { live: true, retry: true, });
+// dbContext.menuModules.sync(`${remoteCouchDBUrl}${dbNames.menuModules}`);
 
-dbContext.typeDevices.sync(`${remoteCouchDBUrl}${dbNames.typeDevices}`,{live: true, retry: true,});
+// dbContext.typeDevices.sync(`${remoteCouchDBUrl}${dbNames.typeDevices}`);
 

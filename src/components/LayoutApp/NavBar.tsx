@@ -19,10 +19,10 @@ export interface NavBarProps {
 }
 
 export const NavBar: React.FC = () => {
-  const { startLogout } = useAuthStore();
+  const { cerrarSesion } = useAuthStore();
   const { usuario } = useAppSelector((state) => state.auth);
 
-  const onClickLogout = () => startLogout();
+  const onClickLogout = () => cerrarSesion();
 
   return (
     <AppBar

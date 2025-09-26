@@ -31,10 +31,10 @@ export interface Licencia {
   fechaActualizacion: Date;
 }
 
-// Interfaz para LicenciaPorCliente
-export interface LicenciaPorCliente {
+// Interfaz para LicenciaPorCuenta
+export interface LicenciaPorCuenta {
   id: string;
-  clienteId: string;
+  cuentaId: string;
   licenciaId: string;
   cantidadLicenciasPermitidas: number;
   codigoPais: string;
@@ -43,6 +43,11 @@ export interface LicenciaPorCliente {
   estado: EstadoLicencia;
   fechaCreacion: Date;
   fechaActualizacion: Date;
+}
+
+// Compatibilidad hacia atrás
+export interface LicenciaPorCliente extends LicenciaPorCuenta {
+  clienteId: string;
 }
 
 // DTOs para requests
@@ -55,13 +60,18 @@ export interface CrearLicenciaDto {
   esLicenciaMultiPais?: boolean;
 }
 
-export interface AsignarLicenciaClienteDto {
-  clienteId: string;
+export interface AsignarLicenciaCuentaDto {
+  cuentaId: string;
   licenciaId: string;
   cantidadLicenciasPermitidas: number;
   codigoPais: string;
   fechaInicioLicencia: string;
   fechaFinLicencia: string;
+}
+
+// Compatibilidad hacia atrás
+export interface AsignarLicenciaClienteDto extends AsignarLicenciaCuentaDto {
+  clienteId: string;
 }
 
 export interface ActualizarLicenciaDto {
@@ -77,7 +87,8 @@ export interface ActualizarLicenciaDto {
 export interface LicenciasState {
   licencias: Licencia[];
   licenciaActiva: Licencia | null;
-  licenciasPorCliente: LicenciaPorCliente[];
+  licenciasPorCuenta: LicenciaPorCuenta[];
+  licenciasPorCliente: LicenciaPorCliente[]; // Compatibilidad
   isLoading: boolean;
   error: string | null;
 }

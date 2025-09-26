@@ -15,3 +15,6 @@ export * from './useLicencias'; // Nuevo hook integrado con backend
 export * from './useMenuModules';
 export * from './useTypeDevices';
 
+// Nuevo módulo de países (español + backend integrado) - Arquitectura organizada
+export * from '../paises/hooks';
+

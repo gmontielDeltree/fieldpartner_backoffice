@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import {
   Settings as SettingsIcon,
-  // Group as GroupIcon,
   Person as PersonIcon,
   Category as CategoryIcon,
   SyncAlt as SyncAltIcon,
@@ -23,9 +22,23 @@ import {
   DisplaySettings as DisplaySettingsIcon,
   List as ListIcon,
   SettingsInputAntenna as SettingsInputAntennaIcon,
+  Business as BusinessIcon,
 } from "@mui/icons-material";
 import 'semantic-ui-css/semantic.min.css';
-import { Icon } from "semantic-ui-react";
+import {
+  RUTAS_USUARIOS,
+  RUTAS_PAISES,
+  RUTAS_LICENCIAS,
+  RUTAS_CATEGORIAS,
+  RUTAS_BASE,
+  RUTAS_TIPOS_DISPOSITIVOS,
+  RUTAS_TIPOS_MOVIMIENTOS,
+  RUTAS_TIPOS_INSUMOS,
+  RUTAS_CULTIVOS,
+  RUTAS_SISTEMAS,
+  RUTAS_MENUS_MODULOS,
+  RUTAS_CUENTAS
+} from "../../shared/constants";
 
 
 export interface SideBarProps {
@@ -67,7 +80,7 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
           <ListItem key="users-backoffice" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/list-user"
+              to={RUTAS_USUARIOS.LISTA}
               selected={pathname.includes("list-user")}
             >
               <ListItemIcon>
@@ -76,22 +89,46 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Usuarios Backoffice" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="accounts" disablePadding>
+          <ListItem key="clientes" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/accounts"
-              selected={pathname.includes("acccounts")}
+              to={RUTAS_CUENTAS.LISTA}
+              selected={pathname.includes("cuentas")}
             >
               <ListItemIcon>
-                <Icon name="id card" size="large" />
+                <BusinessIcon />
               </ListItemIcon>
               <ListItemText primary="Cuentas" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="paises" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={RUTAS_PAISES.LISTA}
+              selected={pathname.includes("paises")}
+            >
+              <ListItemIcon>
+                <PublicIcon />
+              </ListItemIcon>
+              <ListItemText primary="Países" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="licencias" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={RUTAS_LICENCIAS.LISTA}
+              selected={pathname.includes("licencias")}
+            >
+              <ListItemIcon>
+                <DisplaySettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="Licencias" />
             </ListItemButton>
           </ListItem>
           <ListItem key="categories" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/categories"
+              to={RUTAS_CATEGORIAS.LISTA}
               selected={pathname.includes("categories")}
             >
               <ListItemIcon>
@@ -100,11 +137,11 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Categorías" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="type of devices" disablePadding>
+          <ListItem key="type-of-devices" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/type-of-devices"
-              selected={pathname.includes("type of devices")}
+              to={RUTAS_TIPOS_DISPOSITIVOS.LISTA}
+              selected={pathname.includes("type-of-devices")}
             >
               <ListItemIcon>
                 <SettingsInputAntennaIcon />
@@ -112,10 +149,10 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Tipo de Dispositivos" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="Tipos Movimientos" disablePadding>
+          <ListItem key="type-movement" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/type-movement"
+              to={RUTAS_TIPOS_MOVIMIENTOS.LISTA}
               selected={pathname.includes("type-movement")}
             >
               <ListItemIcon>
@@ -124,10 +161,10 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Tipos Movimientos" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="Tipos Insumos" disablePadding>
+          <ListItem key="type-supplies" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/type-supplies"
+              to={RUTAS_TIPOS_INSUMOS.LISTA}
               selected={pathname.includes("type-supplies")}
             >
               <ListItemIcon>
@@ -136,10 +173,10 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Tipos Insumos" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="Cultivos" disablePadding>
+          <ListItem key="cultivos" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/crops"
+              to={RUTAS_CULTIVOS.LISTA}
               selected={pathname.includes("crops")}
             >
               <ListItemIcon>
@@ -148,64 +185,40 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
               <ListItemText primary="Cultivos" />
             </ListItemButton>
           </ListItem>
-          <ListItem key="country" disablePadding>
+          <ListItem key="sistemas" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/country"
-              selected={pathname.includes("country")}
-            >
-              <ListItemIcon>
-                <PublicIcon />
-              </ListItemIcon>
-              <ListItemText primary="Paises" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem key="system" disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to="/system"
+              to={RUTAS_SISTEMAS.LISTA}
               selected={pathname.includes("system")}
             >
               <ListItemIcon>
                 <ComputerIcon />
               </ListItemIcon>
-              <ListItemText primary="System" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem key="licences" disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to="/licences"
-              selected={pathname.includes("lecences")}
-            >
-              <ListItemIcon>
-                <DisplaySettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Licences" />
+              <ListItemText primary="Sistemas" />
             </ListItemButton>
           </ListItem>
           <ListItem key="menus-modules" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/menus-modules"
+              to={RUTAS_MENUS_MODULOS.LISTA}
               selected={pathname.includes("menus-modules")}
             >
               <ListItemIcon>
                 <ListIcon />
               </ListItemIcon>
-              <ListItemText primary="Menus y Modulos" />
+              <ListItemText primary="Menús y Módulos" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>
             <ListItemButton
               component={RouterLink}
-              to="/settings"
+              to={RUTAS_BASE.SETTINGS}
               selected={pathname.includes("settings")}
             >
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
-              <ListItemText primary="Configuracion" />
+              <ListItemText primary="Configuración" />
             </ListItemButton>
           </ListItem>
         </List>

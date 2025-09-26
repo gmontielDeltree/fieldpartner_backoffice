@@ -19,30 +19,30 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState: initialState,
     reducers: {
-        onChecking: (state) => {
-            state.status = 'checking';
-            state.usuario = null;
-            state.errorMessage = '';
-        },
-        onLogin: (state, action: PayloadAction<UsuarioDto>) => {
-            state.status = 'authenticated';
-            state.usuario = action.payload;
-            state.errorMessage = '';
-        },
-        onLogout: (state, action: PayloadAction<string>) => {
-            state.status = 'not-authenticated';
-            state.usuario = null;
-            state.errorMessage = action.payload;
-        },
-        clearErrorMessage: (state) => {
-            state.errorMessage = '';
-        },
-        startLoading: (state) => {
-            state.isLoading = true;
-        },
-        finishLoading: (state) => {
-            state.isLoading = false;
-        },
+        // onChecking: (state) => {
+        //     state.status = 'checking';
+        //     state.usuario = null;
+        //     state.errorMessage = '';
+        // },
+        // onLogin: (state, action: PayloadAction<UsuarioDto>) => {
+        //     state.status = 'authenticated';
+        //     state.usuario = action.payload;
+        //     state.errorMessage = '';
+        // },
+        // onLogout: (state, action: PayloadAction<string>) => {
+        //     state.status = 'not-authenticated';
+        //     state.usuario = null;
+        //     state.errorMessage = action.payload;
+        // },
+        // clearErrorMessage: (state) => {
+        //     state.errorMessage = '';
+        // },
+        // startLoading: (state) => {
+        //     state.isLoading = true;
+        // },
+        // finishLoading: (state) => {
+        //     state.isLoading = false;
+        // },
 
         // ==========================================
         // ACTIONS EN ESPAÑOL (NUEVAS)
@@ -78,12 +78,12 @@ export const authSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
     // Legacy actions (compatibilidad)
-    onChecking,
-    onLogin,
-    onLogout,
-    clearErrorMessage,
-    startLoading,
-    finishLoading,
+    // onChecking,
+    // onLogin,
+    // onLogout,
+    // clearErrorMessage,
+    // startLoading,
+    // finishLoading,
 
     // Nuevas actions en español
     verificandoAuth,

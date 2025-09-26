@@ -99,7 +99,7 @@ export class AuthService {
         ENDPOINTS_AUTH.REFRESH_TOKEN,
         { refreshToken }
       );
-
+      
       return response.data;
     } catch (error: any) {
       if (error.response?.data) {
@@ -147,6 +147,7 @@ export class AuthService {
    */
   tokenHaExpirado(): boolean {
     const expiracion = localStorage.getItem(CLAVES_LOCALSTORAGE.EXPIRACION_TOKEN);
+    
     if (!expiracion) return true;
 
     return new Date().getTime() > Number(expiracion);

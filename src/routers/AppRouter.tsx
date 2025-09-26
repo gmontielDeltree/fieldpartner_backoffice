@@ -6,7 +6,7 @@ import { Loading } from '../components'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 export const AppRouter: React.FC = () => {
-  const { status, verificarTokenAuth, checkAuthToken } = useAuthStore()
+  const { status, verificarTokenAuth } = useAuthStore()
   // const authStatus = 'not-authenticated'; // 'authenticated'; // 'not-authenticated';
 
   useEffect(() => {
@@ -14,8 +14,6 @@ export const AppRouter: React.FC = () => {
     // Si hay problemas, fallback al método legacy
     if (verificarTokenAuth) {
       verificarTokenAuth()
-    } else {
-      checkAuthToken()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

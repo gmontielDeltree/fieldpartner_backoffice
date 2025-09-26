@@ -30,7 +30,7 @@ export interface ConfirmarEmailDto {
 export interface UsuarioDto {
   id: string;
   nombreUsuario: string;
-  clienteId: string;
+  cuentaId: string;
   esAdmin?: boolean;
   licenciaId: string;
   paisId: string;
@@ -112,7 +112,7 @@ export interface ResponseAuthLogin extends RespuestaLoginDto {}
 export const mapearUsuarioALegacy = (usuario: UsuarioDto): User => ({
   ...usuario,
   username: usuario.nombreUsuario,
-  accountId: usuario.clienteId,
+  accountId: usuario.cuentaId,
   countryId: usuario.paisId,
   isAdmin: usuario.esAdmin || false,
 });

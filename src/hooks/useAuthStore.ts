@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import {
     // Legacy actions
     // clearErrorMessage,
-    finishLoading,
-    onChecking,
-    onLogin,
-    onLogout,
-    startLoading,
+    // finishLoading,
+    // onChecking,
+    // onLogin,
+    // onLogout,
+    // startLoading,
     // Nuevas actions en español
     verificandoAuth,
     iniciarSesionExitosa,
@@ -63,8 +63,8 @@ export const useAuthStore = () => {
             dispatch(finalizarCarga());
             dispatch(limpiarErrores());
 
-        } catch (error: any) {
-            const mensajeError = error.message || 'Usuario o contraseña incorrectos';
+        } catch (error: unknown) {
+            const mensajeError = error instanceof Error ? error.message : 'Usuario o contraseña incorrectos';
             dispatch(cerrarSesion(mensajeError));
             dispatch(finalizarCarga());
         }
@@ -81,7 +81,7 @@ export const useAuthStore = () => {
      * Registra un nuevo usuario usando backend español
      */
     const registrarUsuario = async (datosRegistro: UsuarioRegistroDto) => {
-        dispatch(startLoading());
+        dispatch(iniciarCarga());
         try {
             await authService.registrar(datosRegistro);
 
@@ -89,14 +89,14 @@ export const useAuthStore = () => {
             localStorage.setItem('username_temp', datosRegistro.email);
 
             // Redirigir a página de confirmación
-            dispatch(onLogout('Confirma tu cuenta'));
+            dispatch(cerrarSesion('Confirma tu cuenta'));
             navigate('/init/auth/confirm');
-            dispatch(finishLoading());
+            dispatch(finalizarCarga());
 
         } catch (error: any) {
             const mensajeError = error.message || 'Error en el registro';
-            dispatch(onLogout(mensajeError));
-            dispatch(finishLoading());
+            dispatch(cerrarSesion(mensajeError));
+            dispatch(finalizarCarga());
         }
     };
 
@@ -111,11 +111,11 @@ export const useAuthStore = () => {
      * Confirma el email del usuario usando backend español
      */
     const confirmarEmail = async (codigoConfirmacion: string) => {
-        dispatch(startLoading());
+        dispatch(iniciarCarga());
         try {
             const email = localStorage.getItem('username_temp');
             if (!email) {
-                dispatch(onLogout(''));
+                dispatch(cerrarSesion(''));
                 return;
             }
 
@@ -126,15 +126,15 @@ export const useAuthStore = () => {
 
             // Limpiar email temporal y redirigir al login
             localStorage.removeItem('username_temp');
-            dispatch(onLogout('Email confirmado exitosamente'));
+            dispatch(cerrarSesion('Email confirmado exitosamente'));
             navigate('/init/auth/login');
-            dispatch(finishLoading());
+            dispatch(finalizarCarga());
 
         } catch (error: any) {
             const mensajeError = error.message || 'Por favor volvé a intentar en unos minutos';
-            dispatch(onLogout(mensajeError));
+            dispatch(cerrarSesion(mensajeError));
             localStorage.removeItem('username_temp');
-            dispatch(finishLoading());
+            dispatch(finalizarCarga());
         }
     };
 
@@ -151,14 +151,13 @@ export const useAuthStore = () => {
     const verificarTokenAuth = async () => {
         const sesion = authService.recuperarSesion();
         const { tokenAcceso, tokenRefresh, usuario } = sesion;
-
+        
         // Verificar que existan los datos mínimos
         if (!tokenAcceso || !tokenRefresh || !usuario) {
             return dispatch(cerrarSesion(''));
         }
 
         dispatch(verificandoAuth());
-
         try {
             // Verificar si el token ha expirado
             if (authService.tokenHaExpirado()) {
@@ -196,36 +195,36 @@ export const useAuthStore = () => {
      * Método legacy para compatibilidad (SIN renovación automática)
      * Esta versión básica solo verifica expiración local hasta que se implemente refresh-token
      */
-    const checkAuthToken = async () => {
-        const sesion = authService.recuperarSesion();
-        const { tokenAcceso, tokenRefresh, usuario } = sesion;
+    // const checkAuthToken = async () => {
+    //     const sesion = authService.recuperarSesion();
+    //     const { tokenAcceso, tokenRefresh, usuario } = sesion;
 
-        if (!tokenAcceso || !tokenRefresh || !usuario) {
-            return dispatch(onLogout(''));
-        }
+    //     if (!tokenAcceso || !tokenRefresh || !usuario) {
+    //         return dispatch(onLogout(''));
+    //     }
 
-        dispatch(onChecking());
+    //     dispatch(onChecking());
 
-        try {
-            // Solo verificar expiración local (sin renovación automática)
-            if (authService.tokenHaExpirado()) {
-                authService.limpiarSesion();
-                return dispatch(onLogout('Sesión expirada'));
-            }
+    //     try {
+    //         // Solo verificar expiración local (sin renovación automática)
+    //         if (authService.tokenHaExpirado()) {
+    //             authService.limpiarSesion();
+    //             return dispatch(onLogout('Sesión expirada'));
+    //         }
 
-            // Restaurar sesión
-            const ultimaRuta = authService.obtenerUltimaRuta();
-            navigate(ultimaRuta, { replace: true });
+    //         // Restaurar sesión
+    //         const ultimaRuta = authService.obtenerUltimaRuta();
+    //         navigate(ultimaRuta, { replace: true });
 
-            const datosUsuario = JSON.parse(usuario);
-            const usuarioLegacy = mapearUsuarioALegacy(datosUsuario);
-            dispatch(onLogin(usuarioLegacy));
+    //         const datosUsuario = JSON.parse(usuario);
+    //         const usuarioLegacy = mapearUsuarioALegacy(datosUsuario);
+    //         dispatch(onLogin(usuarioLegacy));
 
-        } catch (error) {
-            authService.limpiarSesion();
-            dispatch(onLogout(''));
-        }
-    };
+    //     } catch (error) {
+    //         authService.limpiarSesion();
+    //         dispatch(onLogout(''));
+    //     }
+    // };
 
     /**
      * Cierra la sesión del usuario
@@ -238,9 +237,9 @@ export const useAuthStore = () => {
     /**
      * Método legacy para compatibilidad
      */
-    const startLogout = () => {
-        return cerrarSesionUsuario();
-    };
+    // const startLogout = () => {
+    //     return cerrarSesionUsuario();
+    // };
 
     return {
         //* Propiedades
@@ -258,11 +257,11 @@ export const useAuthStore = () => {
 
         //* Métodos legacy (compatibilidad)
         user: usuario ? mapearUsuarioALegacy(usuario) : null, // Solo mapeo para legacy
-        checkAuthToken,
-        startLogin,
-        startLogout,
-        startRegister,
-        startConfirm
+        // checkAuthToken,
+        // startLogin,
+        // startLogout,
+        // startRegister,
+        // startConfirm
     }
 
 }

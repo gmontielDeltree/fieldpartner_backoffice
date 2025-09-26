@@ -3,9 +3,6 @@ import { useEffect, useState } from 'react';
 import {
     Grid,
     TextField,
-    FormControl,
-    InputLabel,
-    Input,
     InputAdornment,
     IconButton,
     Button,
@@ -16,8 +13,8 @@ import {
 import { VisibilityOff, Visibility, Login as LoginIcon } from '@mui/icons-material';
 import { AuthLayout, Loading } from '../components';
 import { useAppDispatch, useAuthStore, useFormValid } from '../hooks';
-import { clearErrorMessage } from '../store';
-import { UsuarioLoginDto, validarEmail, validarPassword } from '../types';
+import { limpiarErrores } from '../store';
+import { UsuarioLoginDto, validarEmail } from '../types';
 
 const datosIniciales: UsuarioLoginDto = {
     email: '',
@@ -33,13 +30,13 @@ export const LoginPage: React.FC = () => {
 
     const dispatch = useAppDispatch();
     const [mostrarPassword, setMostrarPassword] = useState<boolean>(false);
-    const [erroresValidacion, setErroresValidacion] = useState(erroresIniciales);
+    // const [erroresValidacion, setErroresValidacion] = useState(erroresIniciales);
 
     const {
         errorMessage,
         isLoading,
         iniciarSesion,
-        startLogin // Mantener para compatibilidad
+        // startLogin // Mantener para compatibilidad
     } = useAuthStore();
 
     const {
@@ -73,7 +70,7 @@ export const LoginPage: React.FC = () => {
             errores.password = 'La contraseña debe tener al menos 6 caracteres';
         }
 
-        setErroresValidacion(errores);
+        // setErroresValidacion(errores);
         setFormErrors(errores);
 
         return !errores.email && !errores.password;
@@ -103,20 +100,20 @@ export const LoginPage: React.FC = () => {
     /**
      * Método legacy para compatibilidad
      */
-    const handleLogin = () => {
-        return manejarLogin();
-    };
+    // const handleLogin = () => {
+    //     return manejarLogin();
+    // };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        handleLogin();
-    };
+    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     handleLogin();
+    // };
 
     useEffect(() => {
         // Limpiar errores al desmontar el componente
         return () => {
-            dispatch(clearErrorMessage());
-            setErroresValidacion(erroresIniciales);
+            dispatch(limpiarErrores());
+            // setErroresValidacion(erroresIniciales);
         };
     }, [dispatch]);
 
@@ -125,7 +122,7 @@ export const LoginPage: React.FC = () => {
             {isLoading && <Loading key="loading-auth" loading={true} />}
 
             <Box sx={{ mb: 3, textAlign: 'center' }}>
-                <LoginIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                {/* <LoginIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} /> */}
                 <Typography variant="h4" component="h1" gutterBottom>
                     Iniciar Sesión
                 </Typography>
@@ -192,7 +189,7 @@ export const LoginPage: React.FC = () => {
                         <Grid item xs={12}>
                             <Alert
                                 severity="error"
-                                onClose={() => dispatch(clearErrorMessage())}
+                                onClose={() => dispatch(limpiarErrores())}
                                 sx={{ mt: 1 }}
                             >
                                 {errorMessage}
