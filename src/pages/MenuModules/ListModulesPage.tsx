@@ -28,6 +28,7 @@ import { ModuleFormDialog } from '../../components/Modules/ModuleFormDialog';
 
 const columns: ColumnProps[] = [
   { text: 'Icono', align: 'left' },
+  { text: 'Orden', align: 'center' },
   { text: 'Módulo (ES)', align: 'center' },
   { text: 'Módulo (EN)', align: 'center' },
   { text: 'Módulo (PT)', align: 'center' },
@@ -63,8 +64,16 @@ export const ListModulesPage: React.FC = () => {
   };
 
   const filterModules = (modules: Modules[], filterText: string): Modules[] => {
-    const filteredBySearch = modules.filter(modules => matchesFilter(modules, filterText));
-    return filteredBySearch;
+    const filteredBySearch = modules.filter(mod => matchesFilter(mod, filterText));
+
+    // Orden numérico ascendente por campo `orden`. Si no es número, lo colocamos al final.
+    return filteredBySearch.sort((a, b) => {
+      const aVal = Number(a.orden);
+      const bVal = Number(b.orden);
+      const aNum = Number.isFinite(aVal) ? aVal : Infinity;
+      const bNum = Number.isFinite(bVal) ? bVal : Infinity;
+      return aNum - bNum;
+    });
   };
 
   const normalizeText = (text: string) => {
@@ -182,6 +191,7 @@ export const ListModulesPage: React.FC = () => {
                     <TableCellStyled align='center'>
                       {row.icon && <DynamicIcon iconName={row.icon} />}
                     </TableCellStyled>
+                    <TableCellStyled align='center'>{row.orden}</TableCellStyled>
                     <TableCellStyled align='center'>{row.moduleNameEs}</TableCellStyled>
                     <TableCellStyled align='center'>{row.moduleNameEn}</TableCellStyled>
                     <TableCellStyled align='center'>{row.moduleNamePt}</TableCellStyled>

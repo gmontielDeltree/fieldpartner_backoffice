@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
 import { useModules } from '../../hooks/useModules';
 import { IconSelector } from '../../components/IconSelector/IconSelector';
+import { NumericTextField } from '../../components';
 
 type ModuleForm = {
   moduleNameEs: string;
   moduleNameEn: string;
   moduleNamePt: string;
+  orden: number;
   icon: string;
 };
 
@@ -16,6 +18,7 @@ export const NewModulePage: React.FC = () => {
     moduleNameEs: '',
     moduleNameEn: '',
     moduleNamePt: '',
+    orden: 0,
     icon: '',
   });
 
@@ -24,13 +27,17 @@ export const NewModulePage: React.FC = () => {
       setForm(prev => ({ ...prev, [field]: event.target.value }));
     };
 
+  const handleOrdenChange = (newValue: number | null) => {
+    setForm(prev => ({ ...prev, orden: newValue === null ? 0 : Number(newValue) }));
+  };
+
   const handleIconSelect = (iconName: string) => {
     setForm(prev => ({ ...prev, icon: iconName }));
   };
 
   const handleSubmit = async () => {
     await createModules(form);
-    setForm({ moduleNameEs: '', moduleNameEn: '', moduleNamePt: '', icon: '' });
+    setForm({ moduleNameEs: '', moduleNameEn: '', moduleNamePt: '', orden: 0, icon: '' });
   };
 
   return (
@@ -60,6 +67,15 @@ export const NewModulePage: React.FC = () => {
               label='Nome (PT)'
               value={form.moduleNamePt}
               onChange={handleChange('moduleNamePt')}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <NumericTextField
+              fullWidth={true}
+              variant='outlined'
+              label='Orden'
+              value={form.orden}
+              onChange={handleOrdenChange}
             />
           </Grid>
           <Grid item xs={12}>

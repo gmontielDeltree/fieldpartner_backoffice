@@ -22,6 +22,7 @@ import {
 import { Modules } from '../../types';
 import { IconSelector } from '../IconSelector/IconSelector';
 import { DynamicIcon } from '../DynamicIcon/DynamicIcon';
+import { NumericTextField } from '../NumericTextField/NumericTextField'; // o from '../../components' según tu index.ts
 
 type Props = {
   open: boolean;
@@ -30,7 +31,13 @@ type Props = {
   onSave: (payload: Omit<Modules, '_id' | '_rev'> | Modules) => Promise<void>;
 };
 
-const blank: Modules = { moduleNameEs: '', moduleNameEn: '', moduleNamePt: '', icon: '' };
+const blank: Modules = {
+  moduleNameEs: '',
+  moduleNameEn: '',
+  moduleNamePt: '',
+  icon: '',
+  orden: 0,
+};
 
 export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSave }) => {
   const [form, setForm] = useState<Modules>(blank);
@@ -43,11 +50,18 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
   const handleChange = (field: keyof Modules) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(prev => ({ ...prev, [field]: e.target.value }));
 
+  const handleOrderChange = (newValue: number | null) => {
+    // Guardar correctamente en el campo "orden" (number)
+    setForm(prev => ({ ...prev, orden: newValue === null ? 0 : Number(newValue) }));
+  };
+
   const handleSubmit = async () => {
     if (!form.moduleNameEs.trim()) return;
     try {
       setSaving(true);
-      await onSave(form._id ? form : { ...form });
+      // Asegurarse que 'orden' sea number al enviar
+      const payload = { ...form, orden: Number(form.orden ?? 0) } as Modules;
+      await onSave(form._id ? payload : payload);
       onClose();
     } finally {
       setSaving(false);
@@ -105,7 +119,15 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
               onChange={handleChange('moduleNamePt')}
             />
           </Grid>
-
+          <Grid item xs={12} sm={6}>
+            <NumericTextField
+              fullWidth
+              variant='outlined'
+              label='Orden'
+              value={form.orden ?? 0}
+              onChange={handleOrderChange}
+            />
+          </Grid>
           <Grid item xs={12} sm={8}>
             <IconSelector
               value={form.icon}
