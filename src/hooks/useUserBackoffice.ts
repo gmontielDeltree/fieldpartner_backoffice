@@ -18,6 +18,9 @@ export const useUser = () => {
         setIsLoading(true);
 
         try {
+            const token = localStorage.getItem('t_bo');
+            const base = (backofficeApi.defaults && backofficeApi.defaults.baseURL) || 'unknown-base-url';
+            console.log('[useUser] Fetching users', { baseURL: base, hasToken: !!token });
             const response = await backofficeApi.get<UserDto[]>(`/${controller}`);
 
             setIsLoading(false);
@@ -28,8 +31,17 @@ export const useUser = () => {
                 setUsers([]);
 
         } catch (error) {
-            console.log(error)
-            Swal.fire('Error', 'No hay registro de usuarios.', 'error');
+            // Extra logs for diagnostics
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const err: any = error;
+            console.warn('[useUser] getUsers failed', {
+                status: err?.response?.status,
+                data: err?.response?.data,
+                message: err?.message
+            });
+            if (err?.response?.status !== 401) {
+                Swal.fire('Error', 'No hay registro de usuarios.', 'error');
+            }
             setIsLoading(false);
             if (error) setError(error);
         }

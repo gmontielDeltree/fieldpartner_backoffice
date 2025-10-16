@@ -17,14 +17,14 @@ export const AppRouter: React.FC = () => {
   if (status === 'checking') {
     return <Loading key="loading-checking-routers" loading />
   }
-
   return (
     <Routes>
-       {status === 'authenticated' ? (
-         <Route path="/*" element={<PrivateRoutes />} />
-       ) : (
-         <Route path="/auth/*" element={<PublicRoutes />} />
-       )}
+
+      {status === 'authenticated' ? (
+        <Route path="/*" element={<PrivateRoutes />} />
+      ) : (
+        <Route path="/auth/*" element={<PublicRoutes />} />
+      )}
       <Route path="/*" element={<Navigate to="/auth/login" />} />
     </Routes>
   )

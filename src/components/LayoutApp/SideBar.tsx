@@ -23,6 +23,7 @@ import {
   DisplaySettings as DisplaySettingsIcon,
   List as ListIcon,
   SettingsInputAntenna as SettingsInputAntennaIcon,
+  DirectionsRun as DirectionsRunIcon,
 } from "@mui/icons-material";
 import 'semantic-ui-css/semantic.min.css';
 import { Icon } from "semantic-ui-react";
@@ -194,6 +195,18 @@ export const SideBar: React.FC<SideBarProps> = ({ drawerWidth }) => {
                 <ListIcon />
               </ListItemIcon>
               <ListItemText primary="Menus y Modulos" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="activities" disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/activities"
+              selected={pathname.includes("activities")}
+            >
+              <ListItemIcon>
+                <DirectionsRunIcon />
+              </ListItemIcon>
+              <ListItemText primary="Actividades" />
             </ListItemButton>
           </ListItem>
           <ListItem key="settings" disablePadding>

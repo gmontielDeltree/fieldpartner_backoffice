@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { getEnvVariables } from '../helpers/getEnvVariables';
 
-const baseUrl = getEnvVariables().VITE_AUTH_API;
+const fallbackApi = 'https://fieldpartner-deltree-eabc2f88.koyeb.app';
+const envApi = getEnvVariables().VITE_AUTH_API as string | undefined;
+const baseUrl = !envApi || envApi.includes('localhost') ? fallbackApi : envApi;
 export const baseUrlImg = getEnvVariables().VITE_IMAGES_URL;
 
 export const urlImg = `${baseUrlImg}/general/files/`;
@@ -18,12 +20,11 @@ export const backofficeApi = axios.create({
 
 // Todo: configurar interceptores
 backofficeApi.interceptors.request.use((config) => {
-
-    // config.headers = {
-    //     ...config.headers,
-    //     'x-token': localStorage.getItem('token')
-    // }
     config.headers.set('channel', 'backoffice', false);
-    config.headers.set('Authorization', localStorage.getItem('t_bo'));
+    const accessToken = localStorage.getItem('t_bo') || '';
+    const authHeader = accessToken
+        ? (accessToken.startsWith('Bearer ') ? accessToken : `Bearer ${accessToken}`)
+        : '';
+    if (authHeader) config.headers.set('Authorization', authHeader);
     return config;
 })

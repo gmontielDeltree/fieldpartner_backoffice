@@ -27,6 +27,9 @@ import {
   ListTypeDevicesPage,
   NewTypeDevicesPage,
 } from "../pages";
+import ActivityManager from "../components/activities/ActivityManager";
+import DebugDatabase from "../components/activities/DebugDatabase";
+import DatabaseExplorer from "../components/activities/DatabaseExplorer";
 
 
 
@@ -78,6 +81,9 @@ export const PrivateRoutes: React.FC = () => {
         <Route path="/type-of-devices/new" element={<NewTypeDevicesPage />} />
         <Route path="/type-of-devices/:id" element={<NewTypeDevicesPage />} />        
 
+        <Route path="/activities" element={<ActivityManager />} />
+        <Route path="/debug-db" element={<DebugDatabase />} />
+        <Route path="/db-explorer" element={<DatabaseExplorer />} />
 
         <Route path="/*" element={<Navigate to="/home" />} />
       </Routes>
