@@ -78,67 +78,122 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
 
       <Divider />
 
-      <DialogContent dividers sx={{ pt: 2 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label='Nombre (ES)'
-              value={form.moduleNameEs}
-              onChange={handleChange('moduleNameEs')}
-              required
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Name (EN)'
-              value={form.moduleNameEn}
-              onChange={handleChange('moduleNameEn')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label='Nome (PT)'
-              value={form.moduleNamePt}
-              onChange={handleChange('moduleNamePt')}
-            />
-          </Grid>
+      <DialogContent dividers sx={{ pt: 3, pb: 3 }}>
+        {/* SECCIÓN 1: Nombres Multilenguaje */}
+        <Box sx={{ mb: 3 }}>
+          <Typography
+            variant='subtitle2'
+            sx={{
+              mb: 2,
+              color: 'primary.main',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            🌐 Nombres del Módulo
+          </Typography>
 
-          <Grid item xs={12} sm={8}>
-            <IconSelector
-              value={form.icon}
-              onChange={val => setForm(prev => ({ ...prev, icon: val }))}
-              label='Ícono del Módulo'
-            />
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Español (ES) *'
+                value={form.moduleNameEs}
+                onChange={handleChange('moduleNameEs')}
+                required
+                placeholder='Ej: Configuración'
+                error={!form.moduleNameEs.trim()}
+                helperText={!form.moduleNameEs.trim() ? 'Campo obligatorio' : ''}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label='Inglés (EN)'
+                value={form.moduleNameEn}
+                onChange={handleChange('moduleNameEn')}
+                placeholder='Ej: Settings'
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label='Portugués (PT)'
+                value={form.moduleNamePt}
+                onChange={handleChange('moduleNamePt')}
+                placeholder='Ej: Configurações'
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                height: '100%',
-                border: theme => `1px dashed ${theme.palette.divider}`,
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'background.paper',
-              }}
-            >
-              {form.icon ? (
-                <DynamicIcon iconName={form.icon} />
-              ) : (
-                <Typography variant='body2' color='text.secondary'>
-                  Sin ícono
-                </Typography>
-              )}
-            </Box>
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
+
+        {/* SECCIÓN 2: Ícono */}
+        <Box>
+          <Typography
+            variant='subtitle2'
+            sx={{
+              mb: 2,
+              color: 'primary.main',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            🎨 Ícono del Módulo
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={8}>
+              <IconSelector
+                value={form.icon}
+                onChange={val => setForm(prev => ({ ...prev, icon: val }))}
+                label='Seleccionar Ícono *'
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Box
+                sx={{
+                  height: '56px',
+                  border: theme => `2px dashed ${theme.palette.divider}`,
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'background.default',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    bgcolor: 'action.hover',
+                  },
+                }}
+              >
+                {form.icon ? (
+                  <Box sx={{ transform: 'scale(1.3)' }}>
+                    <DynamicIcon iconName={form.icon} />
+                  </Box>
+                ) : (
+                  <Typography variant='caption' color='text.secondary' sx={{ fontSize: '0.7rem' }}>
+                    Vista previa
+                  </Typography>
+                )}
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
-        <Button variant='outlined' onClick={onClose} disabled={saving}>
+      <DialogActions sx={{ p: 2, gap: 1 }}>
+        <Button
+          variant='outlined'
+          onClick={onClose}
+          disabled={saving}
+          sx={{ minWidth: '100px' }}
+        >
           Cancelar
         </Button>
         <Button
@@ -147,8 +202,16 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
           startIcon={saving ? undefined : <SaveIcon />}
           onClick={handleSubmit}
           disabled={!form.moduleNameEs.trim() || saving}
+          sx={{
+            minWidth: '120px',
+            fontWeight: 600,
+            boxShadow: 2,
+            '&:hover': {
+              boxShadow: 4,
+            },
+          }}
         >
-          {saving ? <CircularProgress color='inherit' size={20} /> : 'Guardar'}
+          {saving ? <CircularProgress color='inherit' size={20} /> : 'Guardar Módulo'}
         </Button>
       </DialogActions>
     </Dialog>

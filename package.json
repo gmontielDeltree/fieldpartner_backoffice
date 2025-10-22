@@ -42,7 +42,8 @@
     "styled-components": "^6.0.5",
     "svgo": "^4.0.0",
     "sweetalert2": "^11.7.20",
-    "uuid4": "^2.0.3"
+    "uuid4": "^2.0.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/potrace": "^2.1.5",
@@ -50,6 +51,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/uuid4": "^2.0.3",
+    "@types/xlsx": "^0.0.35",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",

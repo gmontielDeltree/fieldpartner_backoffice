@@ -8,6 +8,8 @@ import {
   Tooltip,
   TableContainer,
   Paper,
+  Typography,
+  Chip,
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useForm, useModules } from '../../hooks';
@@ -27,10 +29,11 @@ import { ModuleFormDialog } from '../../components/Modules/ModuleFormDialog';
 //import { setModulesActive } from '../../store/modules/modulesSlice';
 
 const columns: ColumnProps[] = [
-  { text: 'Icono', align: 'left' },
-  { text: 'Módulo (ES)', align: 'center' },
-  { text: 'Módulo (EN)', align: 'center' },
-  { text: 'Módulo (PT)', align: 'center' },
+  { text: 'Icono', align: 'center' },
+  { text: 'Módulo (ES)', align: 'left' },
+  { text: 'Módulo (EN)', align: 'left' },
+  { text: 'Módulo (PT)', align: 'left' },
+  { text: 'Acciones', align: 'center' },
 ];
 
 export const ListModulesPage: React.FC = () => {
@@ -124,82 +127,176 @@ export const ListModulesPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth='md' sx={{ ml: 0 }}>
-        <Box component='div' sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction='row'
-            alignItems='center'
-            justifyContent='space-between'
-            sx={{ p: 2, mt: { sm: 2 } }}
+      <Container maxWidth='lg' sx={{ ml: 0 }}>
+        <Box component='div' sx={{ mt: 5 }}>
+          {/* Header mejorado */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              mb: 3,
+              bgcolor: 'background.default',
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 2,
+            }}
           >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={handleOpenNew}
-                startIcon={<AddIcon />}
-                sx={{ mb: 2 }}
-              >
-                Nuevo
-              </Button>
-              <Box
-                display='flex'
-                alignItems='left'
-                sx={{ ml: 2, mt: 2, position: 'relative' }}
-              ></Box>
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent='flex-end'>
-                <Grid item xs={8} sm={5}>
-                  <SearchInput
-                    value={filterText}
-                    placeholder='Modulo'
-                    handleInputChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <SearchButton text='Buscar' onClick={() => onClickSearch()} />
+            <Grid
+              container
+              spacing={2}
+              direction='row'
+              alignItems='center'
+              justifyContent='space-between'
+            >
+              <Grid item xs={12} sm={3}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={handleOpenNew}
+                  startIcon={<AddIcon />}
+                  fullWidth
+                  sx={{
+                    py: 1.2,
+                    fontWeight: 600,
+                    boxShadow: 2,
+                    '&:hover': {
+                      boxShadow: 4,
+                    },
+                  }}
+                >
+                  Nuevo Módulo
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} sm={9}>
+                <Grid container spacing={1} justifyContent='flex-end'>
+                  <Grid item xs={12} sm={7}>
+                    <SearchInput
+                      value={filterText}
+                      placeholder='Buscar por nombre del módulo...'
+                      handleInputChange={handleInputChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <SearchButton text='Buscar' onClick={() => onClickSearch()} />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+
+            {/* Stats rápidos */}
+            <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <Chip
+                label={`Total de módulos: ${modules.length}`}
+                color='primary'
+                variant='outlined'
+                size='small'
+              />
+            </Box>
+          </Paper>
+
+          {/* Tabla mejorada */}
           <Box component='div' sx={{ p: 1 }}>
             <TableContainer
               key='table-modules'
               sx={{
                 minHeight: '120px',
-                maxHeight: '540px',
-                overflow: 'scroll',
+                maxHeight: '650px',
+                overflow: 'auto',
                 mb: 5,
+                boxShadow: 2,
+                borderRadius: 1,
               }}
               component={Paper}
             >
               <DataTable key='datatable-modules' columns={columns} isLoading={isLoading}>
                 {filterModules(modules, filterText).map(row => (
-                  <ItemRow key={row._id} hover>
-                    <TableCellStyled align='center'>
-                      {row.icon && <DynamicIcon iconName={row.icon} />}
-                    </TableCellStyled>
-                    <TableCellStyled align='center'>{row.moduleNameEs}</TableCellStyled>
-                    <TableCellStyled align='center'>{row.moduleNameEn}</TableCellStyled>
-                    <TableCellStyled align='center'>{row.moduleNamePt}</TableCellStyled>
-                    <TableCellStyled align='right'>
-                      <Tooltip title='Editar'>
-                        <IconButton aria-label='Editar' onClick={() => handleOpenEdit(row)}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title='Eliminar'>
-                        <IconButton
-                          onClick={() => handleDeleteModules(row)}
-                          style={{ fontSize: '1rem' }}
-                          color='default'
+                  <ItemRow
+                    key={row._id}
+                    hover
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
+                  >
+                    {/* Ícono */}
+                    <TableCellStyled align='center' sx={{ width: '80px' }}>
+                      {row.icon ? (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            p: 0.5,
+                          }}
                         >
-                          <DeleteIcon name='trash alternate' />
-                        </IconButton>
-                      </Tooltip>
+                          <DynamicIcon iconName={row.icon} />
+                        </Box>
+                      ) : (
+                        <Typography variant='caption' color='text.secondary'>
+                          -
+                        </Typography>
+                      )}
+                    </TableCellStyled>
+
+                    {/* Módulo ES */}
+                    <TableCellStyled align='left' sx={{ fontWeight: 500, minWidth: '200px' }}>
+                      <Typography variant='body2' sx={{ fontSize: '0.9rem' }}>
+                        {row.moduleNameEs || '-'}
+                      </Typography>
+                    </TableCellStyled>
+
+                    {/* Módulo EN */}
+                    <TableCellStyled align='left' sx={{ minWidth: '200px' }}>
+                      <Typography variant='body2' sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+                        {row.moduleNameEn || '-'}
+                      </Typography>
+                    </TableCellStyled>
+
+                    {/* Módulo PT */}
+                    <TableCellStyled align='left' sx={{ minWidth: '200px' }}>
+                      <Typography variant='body2' sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+                        {row.moduleNamePt || '-'}
+                      </Typography>
+                    </TableCellStyled>
+
+                    {/* Acciones */}
+                    <TableCellStyled align='center' sx={{ width: '120px' }}>
+                      <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                        <Tooltip title='Editar módulo' arrow>
+                          <IconButton
+                            aria-label='Editar'
+                            onClick={() => handleOpenEdit(row)}
+                            size='small'
+                            color='primary'
+                            sx={{
+                              '&:hover': {
+                                backgroundColor: 'primary.light',
+                                color: 'white',
+                              },
+                            }}
+                          >
+                            <EditIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title='Eliminar módulo' arrow>
+                          <IconButton
+                            onClick={() => handleDeleteModules(row)}
+                            size='small'
+                            color='error'
+                            sx={{
+                              '&:hover': {
+                                backgroundColor: 'error.light',
+                                color: 'white',
+                              },
+                            }}
+                          >
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </TableCellStyled>
                   </ItemRow>
                 ))}
@@ -208,6 +305,7 @@ export const ListModulesPage: React.FC = () => {
           </Box>
         </Box>
       </Container>
+
       <ModuleFormDialog
         open={open}
         initial={editing}
