@@ -30,7 +30,13 @@ type Props = {
   onSave: (payload: Omit<Modules, '_id' | '_rev'> | Modules) => Promise<void>;
 };
 
-const blank: Modules = { moduleNameEs: '', moduleNameEn: '', moduleNamePt: '', icon: '' };
+const blank: Modules = {
+  moduleNameEs: '',
+  moduleNameEn: '',
+  moduleNamePt: '',
+  icon: '',
+  orden: 0,
+};
 
 export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSave }) => {
   const [form, setForm] = useState<Modules>(blank);
@@ -43,11 +49,14 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
   const handleChange = (field: keyof Modules) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(prev => ({ ...prev, [field]: e.target.value }));
 
+
   const handleSubmit = async () => {
     if (!form.moduleNameEs.trim()) return;
     try {
       setSaving(true);
-      await onSave(form._id ? form : { ...form });
+      // Asegurarse que 'orden' sea number al enviar
+      const payload = { ...form, orden: Number(form.orden ?? 0) } as Modules;
+      await onSave(form._id ? payload : payload);
       onClose();
     } finally {
       setSaving(false);

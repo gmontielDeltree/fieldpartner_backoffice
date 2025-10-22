@@ -133,6 +133,7 @@ export interface Modules extends Document {
   moduleNameEn: string; // NOMBRE DEL MENU EN INGLES
   moduleNamePt: string; // NOMBRE DEL MENU EN PORTUGUES
   icon: string;
+  orden: number;
 }
 
 export interface TypeDevices extends Document {

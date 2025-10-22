@@ -66,8 +66,16 @@ export const ListModulesPage: React.FC = () => {
   };
 
   const filterModules = (modules: Modules[], filterText: string): Modules[] => {
-    const filteredBySearch = modules.filter(modules => matchesFilter(modules, filterText));
-    return filteredBySearch;
+    const filteredBySearch = modules.filter(mod => matchesFilter(mod, filterText));
+
+    // Orden numérico ascendente por campo `orden`. Si no es número, lo colocamos al final.
+    return filteredBySearch.sort((a, b) => {
+      const aVal = Number(a.orden);
+      const bVal = Number(b.orden);
+      const aNum = Number.isFinite(aVal) ? aVal : Infinity;
+      const bNum = Number.isFinite(bVal) ? bVal : Infinity;
+      return aNum - bNum;
+    });
   };
 
   const normalizeText = (text: string) => {

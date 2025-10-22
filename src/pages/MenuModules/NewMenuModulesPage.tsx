@@ -41,6 +41,7 @@ const blankModule: Modules = {
   moduleNameEn: '',
   moduleNamePt: '',
   icon: '',
+  orden: 0,
 };
 
 const initialForm: MenuModules = {
