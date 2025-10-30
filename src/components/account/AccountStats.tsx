@@ -81,7 +81,7 @@ export const AccountStats: React.FC<AccountStatsProps> = ({ accounts }) => {
   }).length;
 
   // Calcular totales
-  const totalFields = accounts.reduce((sum, acc) => sum + (acc.countCampos || 0), 0);
+  // const totalFields = accounts.reduce((sum, acc) => sum + (acc.countCampos || 0), 0);
   const totalHectares = accounts.reduce((sum, acc) => sum + (acc.countHectareas || 0), 0);
 
   const stats = [

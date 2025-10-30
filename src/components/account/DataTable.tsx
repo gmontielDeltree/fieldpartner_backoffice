@@ -12,7 +12,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { ColumnProps, EnumStatusAccount } from '../../types';
 import { Box, Skeleton, Tooltip, IconButton, Chip, Typography } from '@mui/material';
-import { Edit as EditIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
+import { Edit as EditIcon } from '@mui/icons-material';
 import { setAccountActive } from '../../store/account';
 import { useAppDispatch } from '../../hooks';
 import { Account } from '../../interfaces/account';
@@ -77,10 +77,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     return 0;
 }
 
-function getComparator<Key extends keyof any>(
+function getComparator<Key extends keyof Account>(
     order: Order,
     orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+): (a: Account, b: Account) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);

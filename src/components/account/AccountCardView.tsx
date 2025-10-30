@@ -17,7 +17,6 @@ import {
 import {
   Edit as EditIcon,
   Business as BusinessIcon,
-  Landscape as LandscapeIcon,
   Description as DescriptionIcon,
   Public as PublicIcon,
 } from '@mui/icons-material';

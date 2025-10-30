@@ -8,7 +8,6 @@ import {
     CardContent,
     Checkbox,
     Chip,
-    Divider,
     FormControlLabel,
     Grid,
     IconButton,
