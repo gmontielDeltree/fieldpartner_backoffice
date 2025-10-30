@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { useNavigate, Link as RouterLink, useParams } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {
     Box,
     Breadcrumbs,
@@ -48,7 +48,7 @@ const getCategoryLabel = (code: string): string => {
 };
 
 export const EditAccountPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    // const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { updateAccount } = useAccount();
@@ -101,7 +101,7 @@ export const EditAccountPage: React.FC = () => {
         setFormValues((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    const handleChangeCheckbox = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setFormValues((prev) => ({ ...prev, isLicenceMultipleCountry: checked }));
     };
 
