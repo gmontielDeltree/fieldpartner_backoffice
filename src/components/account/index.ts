@@ -5,3 +5,5 @@ export * from './AccountStats';
 export * from './AccountCardView';
 export * from './GeneralInfoForm';
 export * from './CategoryLicenceForm';
+export * from './AccountInfoDisplay';
+export * from './EditAccountForm';

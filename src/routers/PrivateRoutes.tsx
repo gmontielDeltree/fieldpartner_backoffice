@@ -24,6 +24,7 @@ import {
   NewMenuModulesPage,
   AccountPage,
   ListAccountPage,
+  EditAccountPage,
   ListTypeDevicesPage,
   NewTypeDevicesPage,
 } from '../pages';
@@ -69,7 +70,7 @@ export const PrivateRoutes: React.FC = () => {
 
         <Route path='/accounts' element={<ListAccountPage />} />
         <Route path='/accounts/new' element={<AccountPage />} />
-        <Route path='/accounts/:id' element={<AccountPage />} />
+        <Route path='/accounts/:id' element={<EditAccountPage />} />
 
         <Route path='/type-of-devices' element={<ListTypeDevicesPage />} />
         <Route path='/type-of-devices/new' element={<NewTypeDevicesPage />} />

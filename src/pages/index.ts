@@ -21,6 +21,7 @@ export * from './Licences/NewLicencesPage';
 export * from './MenuModules/ListMenuModulesPage';
 export * from './MenuModules/NewMenuModulesPage';
 export * from './Accounts/AccountPage';
+export * from './Accounts/EditAccountPage';
 export * from './Accounts/ListAccountsPage';
 export * from './TypeOfDevices/ListTypeDevicesPage';
 export * from './TypeOfDevices/NewTypeDevicesPage';

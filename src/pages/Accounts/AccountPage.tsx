@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { useAccount, useAppDispatch, useAppSelector, useCountry, useForm, useLicences } from "../../hooks";
-import { removeUserActive } from "../../store/user";
+import { useAccount, useAppDispatch, useCountry, useForm, useLicences } from "../../hooks";
 import {
     Button,
     Container,
@@ -28,7 +27,6 @@ import { EnumCategoryAccount, EnumCategoryCod, EnumClaveTributaria, EnumLicenceT
 import { Loading } from '../../components/Loading';
 import { getShortDate } from "../../helpers/dates";
 import { uploadFile } from "../../helpers/fileUpload";
-import { removeAccountActive } from "../../store";
 
 const initialForm: Account = {
     accountReference: "",
@@ -67,16 +65,14 @@ const initialForm: Account = {
 export const AccountPage: React.FC = () => {
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const { createAccount, updateAccount } = useAccount();
-    const { accountActive } = useAppSelector((state) => state.account);
+    // const dispatch = useAppDispatch();
+    const { createAccount } = useAccount();
     const [indexStep, setIndexStep] = useState(0);
     const { country, isLoading, getCountry } = useCountry();
     const { licences, isLoading: loadingLic, getLicences } = useLicences();
     const [logoFile, setLogoFile] = useState<File | null>(null);
 
     const {
-        category,
         formValues,
         setFormValues,
         handleInputChange,
@@ -165,7 +161,7 @@ export const AccountPage: React.FC = () => {
                     formValues.country !== '' &&
                     formValues.status !== ''
                 );
-            case 1: // Categoría y Licencia
+            case 1: { // Categoría y Licencia
                 const hasCategory = formValues.category !== '';
                 const hasLicence = formValues.licenceType !== '' && formValues.licence !== '';
 
@@ -186,6 +182,7 @@ export const AccountPage: React.FC = () => {
                     }
                 }
                 return hasCategory && hasLicence;
+            }
             default:
                 return true;
         }
@@ -209,45 +206,15 @@ export const AccountPage: React.FC = () => {
 
     const onClickAdd = () => initAddAcount();
 
-    const initUpdateAccount = async () => {
-        if (formValues.accountId) {
-            const { isLicenceMultipleCountry, startDateLicence, endDateLicence, status } = formValues;
-            if (await updateAccount(formValues.accountId,
-                {
-                    isLicenceMultipleCountry, startDateLicence, endDateLicence, status
-                })) {
-                navigate('/accounts');
-                reset();
-            }
-        }
-    }
-
-    const onClickUpdate = () => initUpdateAccount();
-
     const onClickCancel = () => {
-        dispatch(removeUserActive());
         navigate("/accounts");
     };
-
-    useEffect(() => {
-        if (accountActive)
-            setFormValues({ ...accountActive });
-        else
-            setFormValues(initialForm);
-    }, [accountActive, setFormValues]);
 
     useEffect(() => {
         getCountry();
         getLicences();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-
-    useEffect(() => {
-        return () => {
-            dispatch(removeAccountActive());
-        };
-    }, [dispatch]);
+    }, []);
 
     return (
         <>
@@ -271,7 +238,7 @@ export const AccountPage: React.FC = () => {
                         Cuentas
                     </Link>
                     <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
-                        {accountActive ? 'Editar Cuenta' : 'Nueva Cuenta'}
+                        Nueva Cuenta
                     </Typography>
                 </Breadcrumbs>
 
@@ -281,22 +248,18 @@ export const AccountPage: React.FC = () => {
                         <BusinessCenterIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
                         <Box>
                             <Typography variant="h4" fontWeight="600">
-                                {accountActive ? "Editar Cuenta" : "Nueva Cuenta"}
+                                Nueva Cuenta
                             </Typography>
-                            {accountActive && (
-                                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                                    {accountActive.denomination} ({accountActive.accountReference})
-                                </Typography>
-                            )}
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                Crea una nueva cuenta cliente en el sistema
+                            </Typography>
                         </Box>
                     </Box>
-                    {accountActive && (
-                        <Chip
-                            label={accountActive ? "Modo Edición" : "Modo Creación"}
-                            color="primary"
-                            variant="outlined"
-                        />
-                    )}
+                    <Chip
+                        label="Modo Creación"
+                        color="success"
+                        variant="outlined"
+                    />
                 </Box>
 
                 <Paper
@@ -304,7 +267,7 @@ export const AccountPage: React.FC = () => {
                     sx={{ my: { xs: 3, md: 3 }, p: { xs: 3, md: 4 } }}
                 >
                     {
-                        !accountActive && steps.length > 0 && (
+                        steps.length > 0 && (
                             <Box sx={{ mb: 4 }}>
                                 <Stepper
                                     activeStep={indexStep}
@@ -374,7 +337,7 @@ export const AccountPage: React.FC = () => {
                         </Button>
 
                         <Box sx={{ display: 'flex', gap: 2 }}>
-                            {!(indexStep === steps.length - 1 || !!accountActive) && (
+                            {indexStep < steps.length - 1 && (
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -385,14 +348,14 @@ export const AccountPage: React.FC = () => {
                                     Siguiente
                                 </Button>
                             )}
-                            {(indexStep === steps.length - 1 || !!accountActive || steps.length === 0) && (
+                            {indexStep === steps.length - 1 && (
                                 <Button
                                     variant="contained"
                                     color="success"
-                                    onClick={accountActive ? onClickUpdate : onClickAdd}
+                                    onClick={onClickAdd}
                                     size="large"
                                 >
-                                    {!accountActive ? "Guardar Cuenta" : "Actualizar Cuenta"}
+                                    Guardar Cuenta
                                 </Button>
                             )}
                         </Box>
