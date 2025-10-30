@@ -123,10 +123,6 @@ export interface MenuModules extends Document {
   icon: string;
   route: string;
 }
-// export interface MenuModuleState {
-//     menuModulesActive: MenuModules| null;
-//     menuModules: MenuModules[];
-// }
 
 export interface Modules extends Document {
   moduleNameEs: string; // NOMBRE DEL MENU EN ESPAÑOL

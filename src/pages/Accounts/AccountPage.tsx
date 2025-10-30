@@ -1,22 +1,28 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useAccount, useAppDispatch, useAppSelector, useCountry, useForm, useLicences } from "../../hooks";
 import { removeUserActive } from "../../store/user";
 import {
     Button,
     Container,
-    Grid,
     Paper,
     Typography,
     Box,
     Stepper,
     Step,
     StepLabel,
+    Breadcrumbs,
+    Link,
+    Chip,
 } from "@mui/material";
-// import { AccountBox as AccountBoxIcon } from "@mui/icons-material";
-import 'semantic-ui-css/semantic.min.css';
-import { Icon } from "semantic-ui-react";
-import { CompanyForm, LicenceForm } from "../../components/account";
+import {
+    BusinessCenter as BusinessCenterIcon,
+    NavigateNext as NavigateNextIcon,
+    AssignmentTurnedIn as AssignmentTurnedInIcon,
+    Business as BusinessIcon,
+    Badge as BadgeIcon,
+} from "@mui/icons-material";
+import { CompanyForm, GeneralInfoForm, CategoryLicenceForm } from "../../components/account";
 import { Account } from "../../interfaces/account";
 import { EnumCategoryAccount, EnumCategoryCod, EnumClaveTributaria, EnumLicenceType } from "../../types";
 import { Loading } from '../../components/Loading';
@@ -58,7 +64,6 @@ const initialForm: Account = {
     emailToAssociate: "",
 };
 
-const initialSteps = ["Licencia", "Compañia"];
 export const AccountPage: React.FC = () => {
 
     const navigate = useNavigate();
@@ -66,7 +71,6 @@ export const AccountPage: React.FC = () => {
     const { createAccount, updateAccount } = useAccount();
     const { accountActive } = useAppSelector((state) => state.account);
     const [indexStep, setIndexStep] = useState(0);
-    const [steps, setSteps] = useState(initialSteps);
     const { country, isLoading, getCountry } = useCountry();
     const { licences, isLoading: loadingLic, getLicences } = useLicences();
     const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -79,25 +83,54 @@ export const AccountPage: React.FC = () => {
         handleCheckboxChange,
         reset
     } = useForm<Account>(initialForm);
-    const disabledCompany = (formValues.category !== Object.keys(EnumCategoryAccount)[0]);
+
+    // Determinar si el paso 3 (Compañía) debe mostrarse
+    const isCategoryA = formValues.category === EnumCategoryCod.A;
+
+    // Definir steps dinámicamente
+    const steps = useMemo(() => {
+        const baseSteps = [
+            { label: 'Información General', icon: BadgeIcon, description: 'Datos básicos de identificación' },
+            { label: 'Categoría y Licencia', icon: AssignmentTurnedInIcon, description: 'Tipo de cuenta y configuración' },
+        ];
+
+        // Solo agregar paso de compañía si es categoría A
+        if (isCategoryA) {
+            baseSteps.push({
+                label: 'Datos de Compañía',
+                icon: BusinessIcon,
+                description: 'Información corporativa',
+            });
+        }
+
+        return baseSteps;
+    }, [isCategoryA]);
 
     const getStepContent = useMemo(
         () => (step: number) => {
             switch (step) {
                 case 0:
                     return (
-                        <LicenceForm
-                            key="info-licence"
+                        <GeneralInfoForm
+                            key="general-info"
                             countries={country}
+                            formValues={formValues}
+                            setFormValues={setFormValues}
+                            handleInputChange={handleInputChange}
+                        />
+                    );
+                case 1:
+                    return (
+                        <CategoryLicenceForm
+                            key="category-licence"
                             licences={licences}
                             formValues={formValues}
                             setFormValues={setFormValues}
                             handleInputChange={handleInputChange}
-                            // handleSelectChange={handleSelectChange}
                             handleCheckboxChange={handleCheckboxChange}
                         />
                     );
-                case 1:
+                case 2:
                     return (
                         <CompanyForm
                             key="info-company"
@@ -121,6 +154,42 @@ export const AccountPage: React.FC = () => {
             handleCheckboxChange
         ]
     );
+
+    // Función para validar si se puede avanzar al siguiente paso
+    const canGoNext = () => {
+        switch (indexStep) {
+            case 0: // Información General
+                return (
+                    formValues.accountReference.trim() !== '' &&
+                    formValues.denomination.trim() !== '' &&
+                    formValues.country !== '' &&
+                    formValues.status !== ''
+                );
+            case 1: // Categoría y Licencia
+                const hasCategory = formValues.category !== '';
+                const hasLicence = formValues.licenceType !== '' && formValues.licence !== '';
+
+                // Si es categoría A, validar usuario
+                if (isCategoryA) {
+                    if (formValues.associateUser) {
+                        // Validar email de asociación
+                        return hasCategory && hasLicence && formValues.emailToAssociate.trim() !== '';
+                    } else {
+                        // Validar nuevo usuario
+                        return (
+                            hasCategory &&
+                            hasLicence &&
+                            formValues.user?.username?.trim() !== '' &&
+                            formValues.user?.email?.trim() !== '' &&
+                            formValues.user?.password?.trim() !== ''
+                        );
+                    }
+                }
+                return hasCategory && hasLicence;
+            default:
+                return true;
+        }
+    };
 
     const handleNext = () => {
         setIndexStep(indexStep + 1);
@@ -168,14 +237,6 @@ export const AccountPage: React.FC = () => {
     }, [accountActive, setFormValues]);
 
     useEffect(() => {
-        if (category !== EnumCategoryCod.A) {
-            setSteps([]);
-        } else
-            setSteps(initialSteps);
-    }, [category])
-
-
-    useEffect(() => {
         getCountry();
         getLicences();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,99 +251,152 @@ export const AccountPage: React.FC = () => {
 
     return (
         <>
-            <Container maxWidth="lg" sx={{ mb: 4 }}>
+            <Container maxWidth="lg" sx={{ py: 3 }}>
                 <Loading key="loading-new-customer" loading={isLoading || loadingLic} />
-                <Box
-                    component="div"
-                    display="flex"
-                    alignItems="center"
-                    sx={{ ml: { sm: 2 }, pt: 2 }}
+
+                {/* Breadcrumbs */}
+                <Breadcrumbs
+                    separator={<NavigateNextIcon fontSize="small" />}
+                    aria-label="breadcrumb"
+                    sx={{ mb: 2 }}
                 >
-                    <Icon name="id card" size="huge" />
-                    <Typography variant="h4" sx={{ ml: { sm: 2 } }}>
+                    <Link
+                        component={RouterLink}
+                        underline="hover"
+                        color="inherit"
+                        to="/accounts"
+                        sx={{ display: 'flex', alignItems: 'center' }}
+                    >
+                        <BusinessCenterIcon sx={{ mr: 0.5 }} fontSize="small" />
                         Cuentas
+                    </Link>
+                    <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
+                        {accountActive ? 'Editar Cuenta' : 'Nueva Cuenta'}
                     </Typography>
+                </Breadcrumbs>
+
+                {/* Header */}
+                <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
+                    <Box display="flex" alignItems="center">
+                        <BusinessCenterIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
+                        <Box>
+                            <Typography variant="h4" fontWeight="600">
+                                {accountActive ? "Editar Cuenta" : "Nueva Cuenta"}
+                            </Typography>
+                            {accountActive && (
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                    {accountActive.denomination} ({accountActive.accountReference})
+                                </Typography>
+                            )}
+                        </Box>
+                    </Box>
+                    {accountActive && (
+                        <Chip
+                            label={accountActive ? "Modo Edición" : "Modo Creación"}
+                            color="primary"
+                            variant="outlined"
+                        />
+                    )}
                 </Box>
 
                 <Paper
-                    variant="outlined"
-                    sx={{ my: { xs: 3, md: 3 }, p: { xs: 2, md: 3 } }}
+                    elevation={3}
+                    sx={{ my: { xs: 3, md: 3 }, p: { xs: 3, md: 4 } }}
                 >
-                    <Box
-                        sx={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                            backgroundImage: "url(/assets/new-customer.jpg)",
-                            backgroundRepeat: "no-repeat",
-                            backgroundColor: (t) =>
-                                t.palette.mode === "light"
-                                    ? t.palette.grey[50]
-                                    : t.palette.grey[900],
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            margin: "auto",
-                        }}
-                    />
-                    <Typography component="h1" variant="h4" align="center" sx={{ my: 2 }}>
-                        {accountActive ? "Editar" : "Nueva"} Cuenta Cliente
-                    </Typography>
                     {
-                        !accountActive && (
-                            <Stepper activeStep={indexStep} sx={{
-                                pt: 3,
-                                pb: 3,
-                                mb: 2,
-                                width: "60%",
-                                margin: "auto"
-                            }}>
-                                {steps.map((label, i) => (
-                                    <Step key={label} disabled={i === 1}>
-                                        <StepLabel>{label}</StepLabel>
-                                    </Step>
-                                ))}
-                            </Stepper>
+                        !accountActive && steps.length > 0 && (
+                            <Box sx={{ mb: 4 }}>
+                                <Stepper
+                                    activeStep={indexStep}
+                                    alternativeLabel
+                                    sx={{ width: "100%", margin: "auto" }}
+                                >
+                                    {steps.map((step, index) => {
+                                        const StepIconComponent = step.icon;
+                                        return (
+                                            <Step key={step.label}>
+                                                <StepLabel
+                                                    StepIconComponent={() => (
+                                                        <Box
+                                                            sx={{
+                                                                width: 40,
+                                                                height: 40,
+                                                                borderRadius: '50%',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                bgcolor: indexStep >= index ? 'primary.main' : 'grey.300',
+                                                                color: 'white',
+                                                                transition: 'all 0.3s',
+                                                            }}
+                                                        >
+                                                            <StepIconComponent />
+                                                        </Box>
+                                                    )}
+                                                >
+                                                    <Typography
+                                                        variant="subtitle1"
+                                                        fontWeight={indexStep === index ? 600 : 400}
+                                                    >
+                                                        {step.label}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        {step.description}
+                                                    </Typography>
+                                                </StepLabel>
+                                            </Step>
+                                        );
+                                    })}
+                                </Stepper>
+                            </Box>
                         )
                     }
                     {getStepContent(indexStep)}
-                    <Grid
-                        container
-                        spacing={1}
-                        alignItems="center"
-                        justifyContent="space-around"
-                        sx={{ mt: { sm: 5 } }}
+
+                    {/* Botones de acción */}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mt: 4,
+                            pt: 3,
+                            borderTop: '1px solid',
+                            borderColor: 'divider',
+                        }}
                     >
-                        <Grid item xs={12} sm={3} key="grid-back">
-                            <Button onClick={indexStep !== 0 ? handleBack : onClickCancel}>
-                                {indexStep !== 0 ? "Volver" : "Cancelar"}
-                            </Button>
-                        </Grid>
-                        <Grid item xs={12} sm={3} key="grid-next">
+                        <Button
+                            variant="outlined"
+                            onClick={indexStep !== 0 ? handleBack : onClickCancel}
+                            size="large"
+                        >
+                            {indexStep !== 0 ? "Volver" : "Cancelar"}
+                        </Button>
+
+                        <Box sx={{ display: 'flex', gap: 2 }}>
                             {!(indexStep === steps.length - 1 || !!accountActive) && (
                                 <Button
                                     variant="contained"
-                                    color="secondary"
+                                    color="primary"
                                     onClick={handleNext}
-                                    disabled={disabledCompany}
-                                // fullWidth
+                                    disabled={!canGoNext()}
+                                    size="large"
                                 >
                                     Siguiente
                                 </Button>
                             )}
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={
-                                    accountActive ? onClickUpdate : onClickAdd
-                                }
-                            // fullWidth
-                            >
-                                {!accountActive ? "Guardar" : "Actualizar"}
-                            </Button>
-                        </Grid>
-                    </Grid>
+                            {(indexStep === steps.length - 1 || !!accountActive || steps.length === 0) && (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={accountActive ? onClickUpdate : onClickAdd}
+                                    size="large"
+                                >
+                                    {!accountActive ? "Guardar Cuenta" : "Actualizar Cuenta"}
+                                </Button>
+                            )}
+                        </Box>
+                    </Box>
                 </Paper>
             </Container>
         </>

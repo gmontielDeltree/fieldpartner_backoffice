@@ -1,15 +1,16 @@
 import { Link as RouterLink } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Loading } from '../../components';
-import { DataTable as DataTableAccount } from '../../components/account';
-import { Box, Typography, Grid, Button, TextField, InputAdornment, Container } from '@mui/material';
+import { DataTable as DataTableAccount, AccountStats, AccountCardView } from '../../components/account';
+import { Box, Typography, Grid, Button, TextField, InputAdornment, Container, IconButton, ToggleButtonGroup, ToggleButton, Tooltip } from '@mui/material';
 import {
   Add as AddIcon,
   Search as SearchIcon,
-  // PeopleAlt as PeopleAltIcon,
+  Clear as ClearIcon,
+  BusinessCenter as BusinessCenterIcon,
+  ViewList as ViewListIcon,
+  ViewModule as ViewModuleIcon,
 } from '@mui/icons-material';
-import 'semantic-ui-css/semantic.min.css';
-import { Icon } from "semantic-ui-react";
 import { ColumnProps } from '../../types';
 import { useAccount, useForm } from '../../hooks';
 
@@ -39,111 +40,161 @@ export const ListAccountPage: React.FC = () => {
   const {
     filterText,
     handleInputChange,
+    reset,
   } = useForm({ filterText: '' });
 
-  const onClickSearch = (): void => {
-    if (filterText === '') {
-      getAccounts();
+  const [allAccounts, setAllAccounts] = useState(accounts);
+  const [debouncedFilterText, setDebouncedFilterText] = useState(filterText);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+
+  // Debounce effect para el filtro de búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilterText(filterText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterText]);
+
+  // Efecto para filtrar cuando cambia el texto debounced
+  useEffect(() => {
+    if (debouncedFilterText === '') {
+      setAccounts(allAccounts);
       return;
     }
-    const filteredCustomers = accounts.filter(
-      ({ denomination, country }) =>
-        (denomination && denomination.toLowerCase().includes(filterText.toLowerCase())) ||
-        (country && country.toLowerCase().includes(filterText.toLowerCase()))
+    const filteredCustomers = allAccounts.filter(
+      ({ denomination, country, accountReference }) =>
+        (denomination && denomination.toLowerCase().includes(debouncedFilterText.toLowerCase())) ||
+        (country && country.toLowerCase().includes(debouncedFilterText.toLowerCase())) ||
+        (accountReference && accountReference.toLowerCase().includes(debouncedFilterText.toLowerCase()))
     );
     setAccounts(filteredCustomers);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedFilterText, allAccounts]);
 
+  const handleClearSearch = useCallback(() => {
+    reset();
+    setAccounts(allAccounts);
+  }, [reset, allAccounts, setAccounts]);
 
   useEffect(() => {
-    getAccounts();
+    const loadAccounts = async () => {
+      await getAccounts();
+    };
+    loadAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Actualizar allAccounts cuando se cargan las cuentas
+  useEffect(() => {
+    if (accounts.length > 0) {
+      setAllAccounts(accounts);
+    }
+  }, [accounts]);
+
 
   return (
-    <Container maxWidth="lg" sx={{ pl: 0, m: 0 }}>
-      {
-        isLoading && (<Loading loading={true} />)
-      }
-      <Box
-        component="div"
-        display="flex"
-        alignItems="center"
-        sx={{ ml: { sm: 2 }, pt: 2 }}>
-        <Icon name="id card" size='huge' />
-        <Typography variant='h5' sx={{ ml: { sm: 2 } }} >
+    <Container maxWidth="xl" sx={{ py: 3 }}>
+      {isLoading && <Loading loading={true} />}
+
+      {/* Header */}
+      <Box display="flex" alignItems="center" sx={{ mb: 3 }}>
+        <BusinessCenterIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
+        <Typography variant="h4" fontWeight="600">
           Cuentas
         </Typography>
       </Box>
-      <Box component="div" sx={{ mt: 7 }}>
-        <Grid
-          container
-          spacing={0}
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ p: 2, mt: { sm: 2 } }}
-        >
-          <Grid item xs={6} sm={2}>
+
+      {/* Estadísticas */}
+      <AccountStats accounts={allAccounts} />
+
+      {/* Barra de acciones y búsqueda */}
+      <Box sx={{ mb: 3 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={6} md={3}>
             <Button
               variant="contained"
-              color="secondary"
+              color="primary"
               component={RouterLink}
               to="/accounts/new"
               startIcon={<AddIcon />}
+              fullWidth
+              sx={{ height: 40 }}
             >
-              Nuevo
+              Nueva Cuenta
             </Button>
           </Grid>
-          <Grid item xs={12} sm={10}>
-            <Grid container justifyContent="flex-end" >
-              <Grid item xs={8} sm={4} >
-                <TextField
-                  variant="outlined"
-                  type='text'
-                  size='small'
-                  placeholder='Nombre/Razon Social'
-                  autoComplete='off'
-                  name="filterText"
-                  value={filterText}
-                  onChange={handleInputChange}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start" />,
-                  }}
-                  fullWidth />
-              </Grid>
-              <Grid item xs={4} sm={2}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="medium"
-                  fullWidth
-                  sx={{
-                    height: '98%',
-                    margin: 'auto',
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0
-                  }}
-                  onClick={() => onClickSearch()}
-                  startIcon={<SearchIcon />}>
-                  Buscar
-                </Button>
-              </Grid>
-            </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              variant="outlined"
+              type="text"
+              size="small"
+              placeholder="Buscar por ID, Denominación o País..."
+              autoComplete="off"
+              name="filterText"
+              value={filterText}
+              onChange={handleInputChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: filterText && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={handleClearSearch}
+                      edge="end"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={(_, newView) => newView && setViewMode(newView)}
+              size="small"
+              aria-label="view mode"
+            >
+              <ToggleButton value="table" aria-label="table view">
+                <Tooltip title="Vista de tabla">
+                  <ViewListIcon />
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton value="cards" aria-label="cards view">
+                <Tooltip title="Vista de tarjetas">
+                  <ViewModuleIcon />
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Grid>
         </Grid>
-        <Box
-          component="div"
-          sx={{ p: 1, mt: 2 }}>
+      </Box>
+
+      {/* Vista de datos */}
+      <Box>
+        {viewMode === 'table' ? (
           <DataTableAccount
             key="datatable-account"
             columns={columns}
             rows={accounts}
             isLoading={isLoading}
           />
-        </Box>
+        ) : (
+          <AccountCardView
+            key="cardview-account"
+            accounts={accounts}
+            isLoading={isLoading}
+          />
+        )}
       </Box>
     </Container>
-  )
-}
+  );
+};
