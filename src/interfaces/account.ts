@@ -2,6 +2,7 @@ import { Document, UserDto } from "../types";
 
 export interface Account extends Document {
     accountReference: string;
+    licenceNumber: string;
     accountId?: string;
     denomination: string;
     country: string;

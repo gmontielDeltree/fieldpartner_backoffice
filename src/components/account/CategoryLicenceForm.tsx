@@ -26,6 +26,7 @@ import {
     VisibilityOff as VisibilityOffIcon,
     Person as PersonIcon,
     Email as EmailIcon,
+    ConfirmationNumber as ConfirmationNumberIcon,
 } from '@mui/icons-material';
 import { Account } from '../../interfaces/account';
 import { EnumCategoryAccount, EnumCategoryCod, EnumLicenceType, Licences, UserDto } from '../../types';
@@ -262,6 +263,28 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                                 value={formValues.amountLicencesAllowed || 0}
                                 helperText="Calculado automáticamente"
                                 fullWidth
+                            />
+                        </Grid>
+
+                        {/* Número de Licencia */}
+                        <Grid item xs={12} sm={6} md={6}>
+                            <TextField
+                                variant="outlined"
+                                type="text"
+                                label="Número de Licencia"
+                                name="licenceNumber"
+                                value={formValues.licenceNumber}
+                                onChange={handleInputChange}
+                                placeholder="Ej: LIC-2024-001"
+                                helperText="Número identificador de la licencia"
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <ConfirmationNumberIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                }}
                             />
                         </Grid>
 

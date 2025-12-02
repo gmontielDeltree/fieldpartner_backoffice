@@ -30,6 +30,7 @@ import { uploadFile } from "../../helpers/fileUpload";
 
 const initialForm: Account = {
     accountReference: "",
+    licenceNumber: "",
     denomination: "",
     country: "",
     user: {
