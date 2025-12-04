@@ -275,8 +275,13 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                                 name="licenceNumber"
                                 value={formValues.licenceNumber}
                                 onChange={handleInputChange}
+                                disabled={!isCategoryA}
                                 placeholder="Ej: LIC-2024-001"
-                                helperText="Número identificador de la licencia"
+                                helperText={
+                                    isCategoryA
+                                        ? "Número identificador de la licencia"
+                                        : "Solo disponible para categoría A"
+                                }
                                 fullWidth
                                 InputProps={{
                                     startAdornment: (
