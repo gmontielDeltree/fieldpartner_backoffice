@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Account } from '../../interfaces/account';
+import { AccountDto } from '../../interfaces/account';
 
 export interface AccountState {
-    accountActive: Account | null;
+    accountActive: AccountDto | null;
 }
 
 const initialState: AccountState = {
@@ -13,7 +13,7 @@ export const accountSlice = createSlice({
     name: 'Accounts',
     initialState,
     reducers: {
-        setAccountActive: (state, action: PayloadAction<Account>) => {
+        setAccountActive: (state, action: PayloadAction<AccountDto>) => {
             state.accountActive = action.payload;
         },
         removeAccountActive: (state) => {

@@ -15,10 +15,10 @@ import { Box, Skeleton, Tooltip, IconButton, Chip, Typography } from '@mui/mater
 import { Edit as EditIcon } from '@mui/icons-material';
 import { setAccountActive } from '../../store/account';
 import { useAppDispatch } from '../../hooks';
-import { Account } from '../../interfaces/account';
+import { AccountDto } from '../../interfaces/account';
 
 type Order = 'asc' | 'desc';
-type OrderBy = keyof Account;
+type OrderBy = keyof AccountDto;
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -44,7 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export interface DataTableProps {
     columns: ColumnProps[];
-    rows: Account[];
+    rows: AccountDto[];
     isLoading: boolean;
 }
 
@@ -77,10 +77,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     return 0;
 }
 
-function getComparator<Key extends keyof Account>(
+function getComparator<Key extends keyof AccountDto>(
     order: Order,
     orderBy: Key,
-): (a: Account, b: Account) => number {
+): (a: AccountDto, b: AccountDto) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
@@ -114,7 +114,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         setPage(0);
     };
 
-    const onClickEditCustomer = (item: Account): void => {
+    const onClickEditCustomer = (item: AccountDto): void => {
         dispatch(setAccountActive(item));
         navigate(`/accounts/${item.accountId}`);
     };

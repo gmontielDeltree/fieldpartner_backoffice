@@ -7,11 +7,11 @@ import {
   Warning as WarningIcon,
   Landscape as LandscapeIcon,
 } from '@mui/icons-material';
-import { Account } from '../../interfaces/account';
+import { AccountDto } from '../../interfaces/account';
 import { EnumStatusAccount } from '../../types';
 
 interface AccountStatsProps {
-  accounts: Account[];
+  accounts: AccountDto[];
 }
 
 interface StatCardProps {

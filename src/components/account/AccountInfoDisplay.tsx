@@ -7,23 +7,18 @@ import {
     Divider,
     Grid,
     Typography,
-    Avatar,
 } from '@mui/material';
 import {
     Badge as BadgeIcon,
-    Business as BusinessIcon,
     AssignmentTurnedIn as AssignmentTurnedInIcon,
     TrendingUp as TrendingUpIcon,
     Public as PublicIcon,
-    Phone as PhoneIcon,
-    Language as LanguageIcon,
+    Email as EmailIcon,
 } from '@mui/icons-material';
-import { Account } from '../../interfaces/account';
-import { EnumCategoryCod } from '../../types';
-import { urlImg } from '../../config';
+import { AccountDto } from '../../interfaces/account';
 
 interface AccountInfoDisplayProps {
-    account: Account;
+    account: AccountDto;
 }
 
 const getCategoryColor = (code: string): 'success' | 'primary' | 'warning' => {
@@ -51,8 +46,6 @@ const InfoRow: React.FC<{ label: string; value: string | number | undefined }> =
 );
 
 export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account }) => {
-    const isCategoryA = account.category === EnumCategoryCod.A;
-
     return (
         <Box>
             <Typography variant="h6" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
@@ -73,6 +66,18 @@ export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account 
 
                             <InfoRow label="Cuenta ID" value={account.accountReference} />
                             <InfoRow label="Denominación" value={account.denomination} />
+
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                                    Email
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <EmailIcon fontSize="small" color="action" />
+                                    <Typography variant="body1" fontWeight={500}>
+                                        {account.email || 'N/A'}
+                                    </Typography>
+                                </Box>
+                            </Box>
 
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
@@ -130,65 +135,7 @@ export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account 
                     </Card>
                 </Grid>
 
-                {/* Card 3: Datos de Compañía (solo si categoría A) */}
-                {isCategoryA && (
-                    <Grid item xs={12} md={6} lg={3}>
-                        <Card variant="outlined" sx={{ height: '100%' }}>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                    <BusinessIcon sx={{ mr: 1, color: 'primary.main' }} />
-                                    <Typography variant="h6">Compañía</Typography>
-                                </Box>
-                                <Divider sx={{ mb: 2 }} />
-
-                                {/* Logo */}
-                                {account.companyLogo && (
-                                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                                        <Avatar
-                                            src={`${urlImg}/${account.companyLogo}`}
-                                            sx={{ width: 60, height: 60 }}
-                                            variant="rounded"
-                                        >
-                                            <BusinessIcon />
-                                        </Avatar>
-                                    </Box>
-                                )}
-
-                                <InfoRow label="Razón Social" value={account.socialReason} />
-                                <InfoRow label="Nombre Fantasía" value={account.fantasyName} />
-                                <InfoRow label="Clave Tributaria" value={account.trybutaryCode} />
-
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                        Teléfono
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <PhoneIcon fontSize="small" color="action" />
-                                        <Typography variant="body1" fontWeight={500}>
-                                            {account.phone || 'N/A'}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                {account.website && (
-                                    <Box>
-                                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                            Website
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <LanguageIcon fontSize="small" color="action" />
-                                            <Typography variant="body2" fontWeight={500}>
-                                                {account.website}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                )}
-
-                {/* Card 4: Métricas Operativas */}
+                {/* Card 3: Métricas Operativas */}
                 <Grid item xs={12} md={6} lg={3}>
                     <Card variant="outlined" sx={{ height: '100%', bgcolor: 'primary.lighter' }}>
                         <CardContent>

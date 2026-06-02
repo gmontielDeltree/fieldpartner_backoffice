@@ -20,14 +20,13 @@ import {
   Description as DescriptionIcon,
   Public as PublicIcon,
 } from '@mui/icons-material';
-import { Account } from '../../interfaces/account';
+import { AccountDto } from '../../interfaces/account';
 import { EnumStatusAccount } from '../../types';
 import { setAccountActive } from '../../store/account';
 import { useAppDispatch } from '../../hooks';
-import { urlImg } from '../../config';
 
 interface AccountCardViewProps {
-  accounts: Account[];
+  accounts: AccountDto[];
   isLoading: boolean;
 }
 
@@ -50,7 +49,7 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onClickEditAccount = (account: Account): void => {
+  const onClickEditAccount = (account: AccountDto): void => {
     dispatch(setAccountActive(account));
     navigate(`/accounts/${account.accountId}`);
   };
@@ -98,14 +97,13 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
                 {/* Logo y Estado */}
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                   <Avatar
-                    src={account.companyLogo ? `${urlImg}/${account.companyLogo}` : undefined}
                     sx={{
                       width: 56,
                       height: 56,
                       bgcolor: 'primary.light',
                     }}
                   >
-                    {!account.companyLogo && <BusinessIcon />}
+                    <BusinessIcon />
                   </Avatar>
                   <Chip
                     label={statusInfo.label}

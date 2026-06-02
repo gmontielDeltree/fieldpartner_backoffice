@@ -2,7 +2,7 @@ import { HttpStatusCode } from "axios";
 // import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react"
-import { Account, UpdateAccount } from "../interfaces/account";
+import { Account, AccountDto, UpdateAccount } from "../interfaces/account";
 import { backofficeApi } from "../config";
 // import { UserDto } from "../types";
 
@@ -15,7 +15,7 @@ export const useAccount = () => {
     const [status, setStatus] = useState<number>();
     const [error, setError] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [accounts, setAccounts] = useState<AccountDto[]>([]);
 
 
     const createAccount = async (newAccount: Account) => {
@@ -50,7 +50,7 @@ export const useAccount = () => {
     const getAccounts = async () => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.get<Account[]>(`/${urlAccount}`);
+            const response = await backofficeApi.get<AccountDto[]>(`/${urlAccount}`);
 
             setIsLoading(false);
 

@@ -1,5 +1,24 @@
 import { Document, UserDto } from "../types";
 
+export class AccountDto {
+    accountId: string = '';
+    accountReference: string = '';
+    denomination: string = '';
+    country: string = '';
+    isLicenceMultipleCountry: boolean = false;
+    status: string = '';
+    category: string = '';
+    startDateLicence: string = '';
+    endDateLicence: string = '';
+    licenceType: string = '';
+    licence: string = '';
+    amountLicencesAllowed: number = 0;
+    countCampos: number = 0;
+    countLicencias: number = 0;
+    countHectareas: number = 0;
+    email?: string;
+}
+
 export interface Account extends Document {
     accountReference: string;
     licenceNumber: string;
