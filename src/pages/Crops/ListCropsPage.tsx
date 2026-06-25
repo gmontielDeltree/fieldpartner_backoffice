@@ -22,10 +22,10 @@ import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled
 import { ColumnProps, Crops } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "Nombre", align: "left" },
-  { text: "Descripcion PT", align: "center" },
-  { text: "Descripcion EN", align: "center" },
-  { text: "Tipo", align: "center" },
+  { text: "Nombre", align: "left", field: "descriptionES", sortable: true },
+  { text: "Descripcion PT", align: "center", field: "descriptionPT", sortable: true },
+  { text: "Descripcion EN", align: "center", field: "descriptionEN", sortable: true },
+  { text: "Tipo", align: "center", field: "cropType", sortable: true },
 ];
 
 export const ListCropsPage: React.FC = () => {
@@ -38,26 +38,52 @@ export const ListCropsPage: React.FC = () => {
   const { filterText, handleInputChange } = useForm({ filterText: "" });
   const [showOptions, setShowOptions] = React.useState(false);
 
-  
+  const [sortField, setSortField] = React.useState<keyof Crops>("descriptionES");
+  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
 
-  const filterCrops = (crops: Crops[], filterText: string) => {
+  const handleSort = (field: string) => {
+    if (field === sortField) {
+      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field as keyof Crops);
+      setSortDirection("asc");
+    }
+  };
+
+  const compareValues = (a: Crops, b: Crops, field: keyof Crops) => {
+    const av = a[field];
+    const bv = b[field];
+    if (typeof av === "number" && typeof bv === "number") return av - bv;
+    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+  };
+
+  const filterCrops = (crops: Crops[], filterText: string): Crops[] => {
     const filteredBySearch = crops.filter(crop => matchesFilter(crop, filterText));
-    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
-    
+
     const filteredByType = filteredBySearch.filter(crop => {
       if (selectedType && crop.cropType !== selectedType) return false; // Filtrar por tipo seleccionado
       if (!showInactive && !crop.descriptionES) return false;
       return true;
     });
-    console.log("Cultivos filtrados por tipo:", filteredByType);
-    
-    return filteredByType;
-  };
-  
-  
 
-  const normalizeText = (text: string) => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return [...filteredByType].sort((a, b) => {
+      const primary = compareValues(a, b, sortField);
+      const result = sortDirection === "asc" ? primary : -primary;
+      // Desempate: dentro de un mismo valor, ordenar por descripcion ES por defecto
+      if (result === 0 && sortField !== "descriptionES") {
+        return compareValues(a, b, "descriptionES");
+      }
+      return result;
+    });
+  };
+
+
+
+  const normalizeText = (text?: string | number) => {
+    return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
   const matchesFilter = (crop: Crops, filter: string) => {
@@ -112,6 +138,8 @@ export const ListCropsPage: React.FC = () => {
   }, []);
 
 
+
+  const rows = filterCrops(crops, filterText);
 
   return (
     <>
@@ -182,6 +210,15 @@ export const ListCropsPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1, textAlign: "right" }}
+                  >
+                    {rows.length} {rows.length === 1 ? "cultivo" : "cultivos"}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -200,8 +237,18 @@ export const ListCropsPage: React.FC = () => {
                 key="datatable-crops"
                 columns={columns}
                 isLoading={isLoading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               >
-                {filterCrops(crops, filterText).map((row) => (
+                {!isLoading && rows.length === 0 && (
+                  <ItemRow>
+                    <TableCellStyled align="center" colSpan={5}>
+                      No se encontraron cultivos
+                    </TableCellStyled>
+                  </ItemRow>
+                )}
+                {rows.map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
                     <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
