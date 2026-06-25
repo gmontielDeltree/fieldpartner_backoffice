@@ -23,10 +23,10 @@ import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled
 import { ColumnProps, TypeDevices } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "Familia", align: "left", field: "family", sortable: true },
-  { text: "Subfamilia", align: "center", field: "subFamily", sortable: true },
-  { text: "Modelo", align: "center", field: "model", sortable: true },
-  { text: "Status", align: "center", field: "available", sortable: true },
+  { text: "Familia", align: "left" },
+  { text: "Subfamilia", align: "center" },
+  { text: "Modelo", align: "center" },
+  { text: "Status", align: "center" },
 ];
 
 export const ListTypeDevicesPage: React.FC = () => {
@@ -35,45 +35,17 @@ export const ListTypeDevicesPage: React.FC = () => {
   const { isLoading, typeDevices, getTypeDevices, removeTypeDevices} = useTypeDevices();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const [sortField, setSortField] = React.useState<keyof TypeDevices>("family");
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
+  
 
-  const handleSort = (field: string) => {
-    if (field === sortField) {
-      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field as keyof TypeDevices);
-      setSortDirection("asc");
-    }
-  };
-
-  const compareValues = (a: TypeDevices, b: TypeDevices, field: keyof TypeDevices) => {
-    const av = a[field];
-    const bv = b[field];
-    if (typeof av === "number" && typeof bv === "number") return av - bv;
-    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
-      numeric: true,
-      sensitivity: "base",
-    });
-  };
-
-  const filterTypeDevices = (typeDevices: TypeDevices[], filterText: string): TypeDevices[] => {
+  const filterDevices = (typeDevices: TypeDevices[], filterText: string): TypeDevices[] => {
     const filteredBySearch = typeDevices.filter(typeDevices => matchesFilter(typeDevices, filterText));
-    return [...filteredBySearch].sort((a, b) => {
-      const primary = compareValues(a, b, sortField);
-      const result = sortDirection === "asc" ? primary : -primary;
-      // Desempate: dentro de un mismo valor, ordenar por family por defecto
-      if (result === 0 && sortField !== "family") {
-        return compareValues(a, b, "family");
-      }
-      return result;
-    });
+    return filteredBySearch;
   };
+  
+  
 
-
-
-  const normalizeText = (text?: string | number) => {
-    return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const normalizeText = (text: string) => {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
   const matchesFilter = (typeDevices: TypeDevices, filter: string) => {
@@ -126,8 +98,8 @@ export const ListTypeDevicesPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const rows = filterTypeDevices(typeDevices, filterText);
-
+  
+    
   return (
     <>
       {isLoading && <Loading loading />}
@@ -176,15 +148,6 @@ export const ListTypeDevicesPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: "right" }}
-                  >
-                    {rows.length} {rows.length === 1 ? "dispositivo" : "dispositivos"}
-                  </Typography>
-                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -203,19 +166,9 @@ export const ListTypeDevicesPage: React.FC = () => {
                 key="datatable-type-devices"
                 columns={columns}
                 isLoading={isLoading}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
               >
-                {!isLoading && rows.length === 0 && (
-                  <ItemRow>
-                    <TableCellStyled align="center" colSpan={5}>
-                      No se encontraron dispositivos
-                    </TableCellStyled>
-                  </ItemRow>
-                )}
-                {rows.map((row) => (
-                  <ItemRow key={row._id} hover>
+                {filterDevices(typeDevices, filterText).map((row) => (
+                  <ItemRow key={row._id} hover> 
                   <TableCellStyled align="left">{row.family}</TableCellStyled>
                     <TableCellStyled align="center">{row.subFamily}</TableCellStyled>
                     <TableCellStyled align="center">{row.model}</TableCellStyled>

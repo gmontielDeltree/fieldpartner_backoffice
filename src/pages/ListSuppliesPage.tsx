@@ -30,10 +30,10 @@ import { setSupplieActive } from "../store/supplie";
 
 
 const columns: ColumnProps[] = [
-  { text: "Tipo", align: "left", field: "name", sortable: true },
-  { text: "Descripcion", align: "right", field: "description", sortable: true },
-  { text: "Cultivo", align: "center", field: "cultivo", sortable: true },
-  { text: "Fitosanitario", align: "right", field: "fitosanitario", sortable: true },
+  { text: "Tipo", align: "left" },
+  { text: "Descripcion", align: "right" },
+  { text: "Cultivo", align: "center" },
+  { text: "Fitosanitario", align: "right" },
 ];
 
 export const ListSuppliesPage: React.FC = () => {
@@ -49,42 +49,9 @@ export const ListSuppliesPage: React.FC = () => {
   } = useSupplies();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const [sortField, setSortField] = React.useState<keyof SupplyType>("name");
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
-
-  const handleSort = (field: string) => {
-    if (field === sortField) {
-      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field as keyof SupplyType);
-      setSortDirection("asc");
-    }
-  };
-
-  const compareValues = (a: SupplyType, b: SupplyType, field: keyof SupplyType) => {
-    const av = a[field];
-    const bv = b[field];
-    if (typeof av === "number" && typeof bv === "number") return av - bv;
-    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
-      numeric: true,
-      sensitivity: "base",
-    });
-  };
-
-  const sortSupplies = (list: SupplyType[]) => {
-    return [...list].sort((a, b) => {
-      const primary = compareValues(a, b, sortField);
-      const result = sortDirection === "asc" ? primary : -primary;
-      if (result === 0 && sortField !== "name") {
-        return compareValues(a, b, "name");
-      }
-      return result;
-    });
-  };
-
   const onClickSearch = () => {
     if (filterText === "") {
-      getSupplies();
+      alert("Por favor, ingrese un término de búsqueda");
       return;
     }
     searchSupplies(filterText);
@@ -107,8 +74,6 @@ export const ListSuppliesPage: React.FC = () => {
     getSupplies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const rows = sortSupplies(supplies);
 
   return (
     <>
@@ -172,15 +137,6 @@ export const ListSuppliesPage: React.FC = () => {
                       onClick={() => onClickSearch()}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 1, textAlign: "right" }}
-                    >
-                      {rows.length} {rows.length === 1 ? "insumo" : "insumos"}
-                    </Typography>
-                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -190,18 +146,8 @@ export const ListSuppliesPage: React.FC = () => {
               key="datatable-supplies"
               columns={columns}
               isLoading={isLoading}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              onSort={handleSort}
             >
-              {!isLoading && rows.length === 0 && (
-                <ItemRow>
-                  <TableCellStyled align="center" colSpan={5}>
-                    No se encontraron insumos
-                  </TableCellStyled>
-                </ItemRow>
-              )}
-              {rows.map((row) => (
+              {supplies.map((row) => (
                 <ItemRow key={row._id} hover>
                   <TableCellStyled align="left">
                     {row.name}

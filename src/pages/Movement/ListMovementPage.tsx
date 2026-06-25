@@ -30,10 +30,10 @@ import {
 import { setMovementACtive } from "../../store/movements";
 
 const columns: ColumnProps[] = [
-  { text: "Concepto", align: "left", field: "name", sortable: true },
-  { text: "Descripcion", align: "center", field: "description", sortable: true },
-  { text: "Tipo de Movimiento", align: "right", field: "manual", sortable: true },
-  { text: "Suma o Descuenta Stock", align: "right", field: "sumaStock", sortable: true },
+  { text: "Concepto", align: "left" },
+  { text: "Descripcion", align: "center" },
+  { text: "Tipo de Movimiento", align: "right" },
+  { text: "Suma o Descuenta Stock", align: "right" },
 ];
 
 export const ListMovementPage: React.FC = () => {
@@ -49,42 +49,9 @@ export const ListMovementPage: React.FC = () => {
   } = useMovements();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const [sortField, setSortField] = React.useState<keyof Movement>("name");
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
-
-  const handleSort = (field: string) => {
-    if (field === sortField) {
-      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field as keyof Movement);
-      setSortDirection("asc");
-    }
-  };
-
-  const compareValues = (a: Movement, b: Movement, field: keyof Movement) => {
-    const av = a[field];
-    const bv = b[field];
-    if (typeof av === "number" && typeof bv === "number") return av - bv;
-    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
-      numeric: true,
-      sensitivity: "base",
-    });
-  };
-
-  const sortMovements = (list: Movement[]) => {
-    return [...list].sort((a, b) => {
-      const primary = compareValues(a, b, sortField);
-      const result = sortDirection === "asc" ? primary : -primary;
-      if (result === 0 && sortField !== "name") {
-        return compareValues(a, b, "name");
-      }
-      return result;
-    });
-  };
-
   const onClickSearch = () => {
     if (filterText === "") {
-      getMovements();
+      alert("Por favor, ingrese un término de búsqueda");
       return;
     }
     searchMovements(filterText);
@@ -107,8 +74,6 @@ export const ListMovementPage: React.FC = () => {
     getMovements();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const rows = sortMovements(movements);
 
   return (
     <>
@@ -172,15 +137,6 @@ export const ListMovementPage: React.FC = () => {
                       onClick={() => onClickSearch()}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 1, textAlign: "right" }}
-                    >
-                      {rows.length} {rows.length === 1 ? "movimiento" : "movimientos"}
-                    </Typography>
-                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -190,18 +146,8 @@ export const ListMovementPage: React.FC = () => {
               key="datatable-movements"
               columns={columns}
               isLoading={isLoading}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              onSort={handleSort}
             >
-              {!isLoading && rows.length === 0 && (
-                <ItemRow>
-                  <TableCellStyled align="center" colSpan={5}>
-                    No se encontraron movimientos
-                  </TableCellStyled>
-                </ItemRow>
-              )}
-              {rows.map((row) => (
+              {movements.map((row) => (
                 <ItemRow key={row._id} hover>
                   <TableCellStyled align="left">{row.name}</TableCellStyled>
                   <TableCellStyled align="center">

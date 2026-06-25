@@ -30,11 +30,11 @@ import {
 import { ColumnProps, MenuModules } from '../../types'
 
 const columns: ColumnProps[] = [
-  { text: 'Modulo', align: 'left', field: 'module', sortable: true },
-  { text: 'System', align: 'center', field: 'systemType', sortable: true },
-  { text: 'ID', align: 'center', field: 'id', sortable: true },
-  { text: 'Menu', align: 'center', field: 'menuOption', sortable: true },
-  { text: 'Orden', align: 'center', field: 'order', sortable: true },
+  { text: 'Modulo', align: 'left' },
+  { text: 'System', align: 'center' },
+  { text: 'ID', align: 'center' },
+  { text: 'Menu', align: 'center' },
+  { text: 'Orden', align: 'center' },
 ]
 
 export const ListMenuModulesPage: React.FC = () => {
@@ -48,32 +48,6 @@ export const ListMenuModulesPage: React.FC = () => {
   } = useMenuModules()
   const { filterText, handleInputChange } = useForm({ filterText: '' })
 
-  const [sortField, setSortField] = React.useState<keyof MenuModules>('order')
-  const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>('asc')
-
-  const handleSort = (field: string) => {
-    if (field === sortField) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortField(field as keyof MenuModules)
-      setSortDirection('asc')
-    }
-  }
-
-  const compareValues = (
-    a: MenuModules,
-    b: MenuModules,
-    field: keyof MenuModules,
-  ) => {
-    const av = a[field]
-    const bv = b[field]
-    if (typeof av === 'number' && typeof bv === 'number') return av - bv
-    return String(av ?? '').localeCompare(String(bv ?? ''), undefined, {
-      numeric: true,
-      sensitivity: 'base',
-    })
-  }
-
   const filterMenuModules = (
     menuModules: MenuModules[],
     filterText: string,
@@ -82,21 +56,18 @@ export const ListMenuModulesPage: React.FC = () => {
     const filteredBySearch = menuModules.filter((menuModules) =>
       matchesFilter(menuModules, filterText),
     )
-
-    // Luego ordenamos segun el campo seleccionado (por defecto "order")
-    return [...filteredBySearch].sort((a, b) => {
-      const primary = compareValues(a, b, sortField)
-      const result = sortDirection === 'asc' ? primary : -primary
-      // Desempate: dentro de un mismo valor, ordenar por "order"
-      if (result === 0 && sortField !== 'order') {
-        return compareValues(a, b, 'order')
-      }
-      return result
+    
+    // Luego ordenamos por el campo order
+    return filteredBySearch.sort((a, b) => {
+      // Asumimos que order es un número. Si es undefined, lo tratamos como infinito
+      const orderA = typeof a.order === 'number' ? a.order : Infinity
+      const orderB = typeof b.order === 'number' ? b.order : Infinity
+      return orderA - orderB
     })
   }
 
-  const normalizeText = (text?: string | number) => {
-    return String(text ?? '')
+  const normalizeText = (text: string) => {
+    return text
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
@@ -140,8 +111,6 @@ export const ListMenuModulesPage: React.FC = () => {
     getMenuModules()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const rows = filterMenuModules(menuModules, filterText)
 
   return (
     <>
@@ -191,15 +160,6 @@ export const ListMenuModulesPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: 'right' }}
-                  >
-                    {rows.length} {rows.length === 1 ? 'módulo' : 'módulos'}
-                  </Typography>
-                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -218,18 +178,8 @@ export const ListMenuModulesPage: React.FC = () => {
                 key="datatable-licences"
                 columns={columns}
                 isLoading={isLoading}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
               >
-                {!isLoading && rows.length === 0 && (
-                  <ItemRow>
-                    <TableCellStyled align="center" colSpan={6}>
-                      No se encontraron módulos
-                    </TableCellStyled>
-                  </ItemRow>
-                )}
-                {rows.map((row) => (
+                {filterMenuModules(menuModules, filterText).map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.module}</TableCellStyled>
                     <TableCellStyled align="center">

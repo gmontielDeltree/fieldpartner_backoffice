@@ -205,8 +205,6 @@ export interface Vehiculo {
 export interface ColumnProps {
     text: string;
     align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
-    field?: string;
-    sortable?: boolean;
 }
 
 export interface RowData {
