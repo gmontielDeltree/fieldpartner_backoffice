@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   styled,
   tableCellClasses,
 } from "@mui/material";
@@ -35,12 +36,18 @@ export interface DataTableProps {
   isLoading: boolean;
   columns: ColumnProps[];
   children?: ReactNode | ReactNode[];
+  sortField?: string;
+  sortDirection?: "asc" | "desc";
+  onSort?: (field: string) => void;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   isLoading,
   columns,
   children,
+  sortField,
+  sortDirection = "asc",
+  onSort,
 }) => {
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 540 }}>
@@ -55,11 +62,29 @@ const DataTable: React.FC<DataTableProps> = ({
         <Table stickyHeader sx={{ minWidth: 500 }} aria-label="customized table">
           <TableHead>
             <TableRow sx={{ backgroundColor: "rgb(0 0 0 / 25%)" }}>
-              {columns.map(({ text, align }) => (
-                <TableCellStyled key={text} align={align}>
-                  {text}
-                </TableCellStyled>
-              ))}
+              {columns.map(({ text, align, field, sortable }) => {
+                const isSortable = Boolean(onSort && sortable && field);
+                const isActive = isSortable && sortField === field;
+                return (
+                  <TableCellStyled
+                    key={text}
+                    align={align}
+                    sortDirection={isActive ? sortDirection : false}
+                  >
+                    {isSortable ? (
+                      <TableSortLabel
+                        active={isActive}
+                        direction={isActive ? sortDirection : "asc"}
+                        onClick={() => onSort!(field!)}
+                      >
+                        {text}
+                      </TableSortLabel>
+                    ) : (
+                      text
+                    )}
+                  </TableCellStyled>
+                );
+              })}
               <TableCell />
             </TableRow>
           </TableHead>
