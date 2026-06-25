@@ -23,9 +23,9 @@ import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled
 import { ColumnProps, System } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "ID", align: "left" },
-  { text: "System", align: "center" },
-  { text: "Version", align: "center" },
+  { text: "ID", align: "left", field: "id", sortable: true },
+  { text: "System", align: "center", field: "system", sortable: true },
+  { text: "Version", align: "center", field: "version", sortable: true },
 ];
 
 export const ListSystemPage: React.FC = () => {
@@ -34,13 +34,43 @@ export const ListSystemPage: React.FC = () => {
   const { isLoading, system, getSystem, removeSystem} = useSystem();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const filterSystem = (system: System[], filterText: string): System[] => {
-    const filteredBySearch = system.filter(system => matchesFilter(system, filterText));
-    return filteredBySearch;
+  const [sortField, setSortField] = React.useState<keyof System>("system");
+  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
+
+  const handleSort = (field: string) => {
+    if (field === sortField) {
+      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field as keyof System);
+      setSortDirection("asc");
+    }
   };
 
-  const normalizeText = (text: string) => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const compareValues = (a: System, b: System, field: keyof System) => {
+    const av = a[field];
+    const bv = b[field];
+    if (typeof av === "number" && typeof bv === "number") return av - bv;
+    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+  };
+
+  const filterSystems = (list: System[], filterText: string): System[] => {
+    const filteredBySearch = list.filter(system => matchesFilter(system, filterText));
+    return [...filteredBySearch].sort((a, b) => {
+      const primary = compareValues(a, b, sortField);
+      const result = sortDirection === "asc" ? primary : -primary;
+      // Desempate: dentro de un mismo valor, ordenar por ID
+      if (result === 0 && sortField !== "id") {
+        return compareValues(a, b, "id");
+      }
+      return result;
+    });
+  };
+
+  const normalizeText = (text?: string | number) => {
+    return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
   const matchesFilter = (system: System, filter: string) => {
@@ -79,6 +109,8 @@ export const ListSystemPage: React.FC = () => {
   }, []);
 
 
+
+  const rows = filterSystems(system, filterText);
 
   return (
     <>
@@ -149,6 +181,15 @@ export const ListSystemPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1, textAlign: "right" }}
+                  >
+                    {rows.length} {rows.length === 1 ? "sistema" : "sistemas"}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -167,8 +208,18 @@ export const ListSystemPage: React.FC = () => {
                 key="datatable-system"
                 columns={columns}
                 isLoading={isLoading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               >
-                {filterSystem(system, filterText).map((row) => (
+                {!isLoading && rows.length === 0 && (
+                  <ItemRow>
+                    <TableCellStyled align="center" colSpan={4}>
+                      No se encontraron sistemas
+                    </TableCellStyled>
+                  </ItemRow>
+                )}
+                {rows.map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.id}</TableCellStyled>
                     <TableCellStyled align="center">{row.system}</TableCellStyled>

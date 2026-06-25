@@ -23,11 +23,11 @@ import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled
 import { ColumnProps, Licences } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "ID", align: "left" },
-  { text: "System", align: "center" },
-  { text: "Descripcion", align: "center" },
-  { text: "Tipo", align: "center" },
-  { text: "Max Und", align: "center" },
+  { text: "ID", align: "left", field: "id", sortable: true },
+  { text: "System", align: "center", field: "systemType", sortable: true },
+  { text: "Descripcion", align: "center", field: "description", sortable: true },
+  { text: "Tipo", align: "center", field: "licenceType", sortable: true },
+  { text: "Max Und", align: "center", field: "maximumUnitAllowed", sortable: true },
 ];
 
 export const ListLicencesPage: React.FC = () => {
@@ -36,27 +36,56 @@ export const ListLicencesPage: React.FC = () => {
   const { isLoading, licences, getLicences, removeLicences} = useLicences();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  
+  const [sortField, setSortField] = React.useState<keyof Licences>("systemType");
+  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
+
+  const handleSort = (field: string) => {
+    if (field === sortField) {
+      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field as keyof Licences);
+      setSortDirection("asc");
+    }
+  };
+
+  const compareValues = (a: Licences, b: Licences, field: keyof Licences) => {
+    const av = a[field];
+    const bv = b[field];
+    if (typeof av === "number" && typeof bv === "number") return av - bv;
+    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+  };
 
   const filterLicences = (licences: Licences[], filterText: string): Licences[] => {
     const filteredBySearch = licences.filter(licences => matchesFilter(licences, filterText));
-    return filteredBySearch;
+    return [...filteredBySearch].sort((a, b) => {
+      const primary = compareValues(a, b, sortField);
+      const result = sortDirection === "asc" ? primary : -primary;
+      // Desempate: dentro de un mismo valor, ordenar por ID (System + ID por defecto)
+      if (result === 0 && sortField !== "id") {
+        return compareValues(a, b, "id");
+      }
+      return result;
+    });
   };
-  
-  
 
-  const normalizeText = (text: string) => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+
+  const normalizeText = (text?: string | number) => {
+    return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
   const matchesFilter = (licences: Licences, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
       licences.id,
+      licences.systemType,
       licences.description,
       licences.licenceType,
     ];
-  
+
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
 
@@ -101,6 +130,8 @@ export const ListLicencesPage: React.FC = () => {
   }, []);
 
 
+
+  const rows = filterLicences(licences, filterText);
 
   return (
     <>
@@ -171,6 +202,15 @@ export const ListLicencesPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1, textAlign: "right" }}
+                  >
+                    {rows.length} {rows.length === 1 ? "licencia" : "licencias"}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -189,8 +229,18 @@ export const ListLicencesPage: React.FC = () => {
                 key="datatable-licences"
                 columns={columns}
                 isLoading={isLoading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               >
-                {filterLicences(licences, filterText).map((row) => (
+                {!isLoading && rows.length === 0 && (
+                  <ItemRow>
+                    <TableCellStyled align="center" colSpan={6}>
+                      No se encontraron licencias
+                    </TableCellStyled>
+                  </ItemRow>
+                )}
+                {rows.map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.id}</TableCellStyled>
                     <TableCellStyled align="center">{row.systemType}</TableCellStyled>
