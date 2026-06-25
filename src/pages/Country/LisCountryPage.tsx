@@ -17,10 +17,10 @@ import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled
 import { ColumnProps, Country } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "Codigo", align: "left" },
-  { text: "Descripcion ES", align: "center" },
-  { text: "Descripcion PT", align: "center" },
-  { text: "Descripcion EN", align: "center" },
+  { text: "Codigo", align: "left", field: "code", sortable: true },
+  { text: "Descripcion ES", align: "center", field: "descriptionES", sortable: true },
+  { text: "Descripcion PT", align: "center", field: "descriptionPT", sortable: true },
+  { text: "Descripcion EN", align: "center", field: "descriptionEN", sortable: true },
 ];
 
 export const ListCountryPage: React.FC = () => {
@@ -33,18 +33,45 @@ export const ListCountryPage: React.FC = () => {
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 //   const [showOptions, setShowOptions] = React.useState(false);
 
-  
+  const [sortField, setSortField] = React.useState<keyof Country>("code");
+  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
+
+  const handleSort = (field: string) => {
+    if (field === sortField) {
+      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field as keyof Country);
+      setSortDirection("asc");
+    }
+  };
+
+  const compareValues = (a: Country, b: Country, field: keyof Country) => {
+    const av = a[field];
+    const bv = b[field];
+    if (typeof av === "number" && typeof bv === "number") return av - bv;
+    return String(av ?? "").localeCompare(String(bv ?? ""), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+  };
 
   const filterCountry = (country: Country[], filterText: string): Country[] => {
     const filteredBySearch = country.filter(country => matchesFilter(country, filterText));
-    console.log("Cultivos filtrados por búsqueda:", filteredBySearch);
-    return filteredBySearch;
+    return [...filteredBySearch].sort((a, b) => {
+      const primary = compareValues(a, b, sortField);
+      const result = sortDirection === "asc" ? primary : -primary;
+      // Desempate: dentro de un mismo valor, ordenar por código
+      if (result === 0 && sortField !== "code") {
+        return compareValues(a, b, "code");
+      }
+      return result;
+    });
   };
-  
-  
 
-  const normalizeText = (text: string) => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+
+  const normalizeText = (text?: string | number) => {
+    return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
   const matchesFilter = (country: Country, filter: string) => {
@@ -99,6 +126,8 @@ export const ListCountryPage: React.FC = () => {
   }, []);
 
 
+
+  const rows = filterCountry(country, filterText);
 
   return (
     <>
@@ -169,6 +198,15 @@ export const ListCountryPage: React.FC = () => {
                 <Grid item xs={4} sm={3}>
                   <SearchButton text="Buscar" onClick={() => onClickSearch()} />
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1, textAlign: "right" }}
+                  >
+                    {rows.length} {rows.length === 1 ? "país" : "países"}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -187,8 +225,18 @@ export const ListCountryPage: React.FC = () => {
                 key="datatable-country"
                 columns={columns}
                 isLoading={isLoading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               >
-                {filterCountry(country, filterText).map((row) => (
+                {!isLoading && rows.length === 0 && (
+                  <ItemRow>
+                    <TableCellStyled align="center" colSpan={5}>
+                      No se encontraron países
+                    </TableCellStyled>
+                  </ItemRow>
+                )}
+                {rows.map((row) => (
                   <ItemRow key={row._id} hover>
                     <TableCellStyled align="left">{row.code}</TableCellStyled>
                     <TableCellStyled align="center">{row.descriptionES}</TableCellStyled>
