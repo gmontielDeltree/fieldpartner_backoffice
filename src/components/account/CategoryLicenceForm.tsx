@@ -51,12 +51,13 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
     const { getUserByEmail } = useAccount();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorToEmailAssociation, setErrorToEmailAssociation] = useState<boolean>(false);
+    const [allowedUsersCount, setAllowedUsersCount] = useState<number>(0);
 
     const categoryOptions = enumToArray(EnumCategoryAccount);
     const licenceTypeOptions = Object.values(EnumLicenceType).map(x => x as string);
     const licencesOptions = licences
         .filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
-        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed }));
+        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed, allowedUsersCount: x.allowedUsersCount ?? 0 }));
 
     const getCategoryColor = (code: string): 'success' | 'primary' | 'warning' => {
         switch (code) {
@@ -80,16 +81,18 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
     const onChangeLicenceType = (_event: SyntheticEvent, value: string | null) => {
         if (value) {
             setFormValues(prevState => ({ ...prevState, licenceType: value, licence: '', amountLicencesAllowed: 0 }));
+            setAllowedUsersCount(0);
         }
     };
 
-    const onChangeLicence = (_event: SyntheticEvent, value: { code: string; label: string; allowedUnit: number } | null) => {
+    const onChangeLicence = (_event: SyntheticEvent, value: { code: string; label: string; allowedUnit: number; allowedUsersCount: number } | null) => {
         if (value) {
             setFormValues(prevState => ({
                 ...prevState,
                 licence: value.code,
                 amountLicencesAllowed: Number(value.allowedUnit),
             }));
+            setAllowedUsersCount(value.allowedUsersCount);
         }
     };
 
@@ -262,6 +265,19 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                                 disabled
                                 value={formValues.amountLicencesAllowed || 0}
                                 helperText="Calculado automáticamente"
+                                fullWidth
+                            />
+                        </Grid>
+
+                        {/* Usuarios permitidos (informativo, proviene de la licencia) */}
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                variant="outlined"
+                                type="text"
+                                label="Usuarios permitidos"
+                                disabled
+                                value={allowedUsersCount || 0}
+                                helperText="Según la licencia seleccionada"
                                 fullWidth
                             />
                         </Grid>
