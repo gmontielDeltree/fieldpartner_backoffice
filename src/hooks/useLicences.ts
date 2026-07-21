@@ -8,7 +8,7 @@ import { dbContext } from "../services/pouchdbService";
 export const useLicences = () => {
 
     const navigate = useNavigate();
-    const [error, setError] = useState({});
+    const [error, setError] = useState<unknown>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [licences, setLicences] = useState<Licences[]>([]);
 
@@ -20,16 +20,15 @@ export const useLicences = () => {
 
             setIsLoading(false);
             if (response.ok)
-                Swal.fire('Licences', 'Nueva Licences agregado.', 'success');
+                Swal.fire('Licencia', 'Nueva licencia creada correctamente.', 'success');
             else
-                Swal.fire('Cliente', 'Verificar campos obligatorios.', 'error');
+                Swal.fire('Licencia', 'Verificar campos obligatorios.', 'error');
 
             navigate('/licences');
         } catch (error) {
-            console.log(error)
-            Swal.fire('Ups', 'Ocurrio un error inesperado ', 'error');
+            Swal.fire('Error', 'Ocurrió un error inesperado al crear la licencia.', 'error');
             setIsLoading(false);
-            if (error) setError(error);
+            setError(error);
         }
     }
 
@@ -43,15 +42,14 @@ export const useLicences = () => {
             if (response.rows.length) {
                 const documents: Licences[] = response.rows.map(row => row.doc as Licences);
                 setLicences(documents);
+            } else {
+                setLicences([]);
             }
-            else
-            setLicences([]);
 
         } catch (error) {
-            console.log(error)
-            Swal.fire('Error', 'No se encontraron licences.', 'error');
+            Swal.fire('Error', 'No se pudieron cargar las licencias.', 'error');
             setIsLoading(false);
-            if (error) setError(error);
+            setError(error);
         }
     }
 
@@ -63,14 +61,13 @@ export const useLicences = () => {
             setIsLoading(false);
 
             if (response.ok)
-                Swal.fire('Licences', 'Actualizado.', 'success');
+                Swal.fire('Licencia', 'Licencia actualizada correctamente.', 'success');
 
             navigate('/licences');
         } catch (error) {
-            console.log(error)
-            Swal.fire('Error', 'No se encontraron licenes.', 'error');
+            Swal.fire('Error', 'Ocurrió un error al actualizar la licencia.', 'error');
             setIsLoading(false);
-            if (error) setError(error);
+            setError(error);
         }
     }
 
@@ -82,14 +79,13 @@ export const useLicences = () => {
             setIsLoading(false);
 
             if (response.ok)
-                Swal.fire('Licences', 'Eliminado.', 'success');
+                Swal.fire('Licencia', 'Licencia eliminada correctamente.', 'success');
 
             navigate('/licences');
         } catch (error) {
-            console.log(error)
-            Swal.fire('Error', 'No se encontraron licenes.', 'error');
+            Swal.fire('Error', 'Ocurrió un error al eliminar la licencia.', 'error');
             setIsLoading(false);
-            if (error) setError(error);
+            setError(error);
         }
     }
 

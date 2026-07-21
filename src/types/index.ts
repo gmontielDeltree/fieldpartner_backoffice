@@ -106,6 +106,7 @@ export interface Licences extends Document {
   licenceType: string;
   systemType: string;
   maximumUnitAllowed: number;
+  allowedUsersCount: number;
 }
 
 export interface MenuModules extends Document {

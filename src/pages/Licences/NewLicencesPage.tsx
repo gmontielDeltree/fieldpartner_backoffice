@@ -1,13 +1,13 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { Loading } from "../../components";
 import {
   Autocomplete,
   Box,
   Button,
   Container,
+  Divider,
   FormControl,
   Grid,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -16,36 +16,39 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DisplaySettings as DisplaySettingsIcon } from "@mui/icons-material";
+import {
+  DisplaySettings as DisplaySettingsIcon,
+  ArrowBack as ArrowBackIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../../hooks";
-import { EnumLicenceType, Licences,System } from "../../types";
+import { NumericTextField } from "../../components/NumericTextField/NumericTextField";
+import { EnumLicenceType, Licences, System } from "../../types";
 import { removeLicencesActive } from "../../store/licences";
-
-
 
 const initialForm: Licences = {
   id: "",
   description: "",
   licenceType: EnumLicenceType.L,
   maximumUnitAllowed: 0,
-  systemType: ""
+  allowedUsersCount: 0,
+  systemType: "",
 };
-
 
 export const NewLicencesPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isLoading, createLicences, updateLicences } = useLicences();
-  const { licencesActive } = useAppSelector((state) => state.licences); 
+  const { licencesActive } = useAppSelector((state) => state.licences);
   const { system, getSystem } = useSystem();
 
   const {
     id,
     description,
     licenceType,
-    // systemType,
     maximumUnitAllowed,
+    allowedUsersCount,
     formValues,
     setFormValues,
     handleInputChange,
@@ -53,28 +56,27 @@ export const NewLicencesPage: React.FC = () => {
   } = useForm<Licences>(initialForm);
 
   const handleSystemChange = (_: React.ChangeEvent<object>, newValue: System | null) => {
-    if (newValue) {
-      setFormValues({ ...formValues, systemType: newValue.system });
-    } else {
-      setFormValues({ ...formValues, systemType: '' });
-    }
+    setFormValues({ ...formValues, systemType: newValue ? newValue.system : "" });
   };
-  useEffect(() => {
-    getSystem();
-  }, [getSystem]);
-  const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType);
 
-  
-  const licenceOptions = Object.values(EnumLicenceType);
+  const handleLicenceTypeChange = (event: SelectChangeEvent<string>) => {
+    setFormValues((prev) => ({ ...prev, licenceType: event.target.value }));
+  };
+
+  const handleMaximumUnitChange = (value: number | null) => {
+    setFormValues((prev) => ({ ...prev, maximumUnitAllowed: value ?? 0 }));
+  };
+
+  const handleAllowedUsersChange = (value: number | null) => {
+    setFormValues((prev) => ({ ...prev, allowedUsersCount: value ?? 0 }));
+  };
 
   const handleAddLicences = () => {
-    console.log("Datos a guardar:", formValues);
     createLicences(formValues);
     reset();
   };
 
   const handleUpdateLicences = () => {
-    console.log("Datos a actualizar:", formValues);
     if (!formValues._id) return;
     updateLicences(formValues);
   };
@@ -85,57 +87,57 @@ export const NewLicencesPage: React.FC = () => {
   };
 
   useEffect(() => {
+    getSystem();
+  }, [getSystem]);
+
+  useEffect(() => {
     if (licencesActive) {
-      setFormValues(licencesActive); 
+      setFormValues(licencesActive);
     } else {
       setFormValues(initialForm);
-      
     }
   }, [licencesActive, setFormValues]);
 
-  const handleLicenceTypeChange = (
-    event: SelectChangeEvent<string>,
-  ) => {
-    const value = event.target.value;
-    setFormValues(prevState => ({
-      ...prevState,
-      licenceType: value
-    }));
-  };
-  
-  
-
+  const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType) ?? null;
+  const licenceOptions = Object.values(EnumLicenceType);
+  const isEditing = Boolean(licencesActive);
 
   return (
     <>
-      <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <DisplaySettingsIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
-            Licences
+      <Loading key="loading-new-licence" loading={isLoading} />
+      <Container maxWidth="md" sx={{ mb: 6 }}>
+        {/* Header */}
+        <Box display="flex" alignItems="center" sx={{ pt: 3, pb: 1 }}>
+          <DisplaySettingsIcon color="primary" sx={{ mr: 1.5, fontSize: 28 }} />
+          <Typography variant="h5" fontWeight={600}>
+            Licencias
           </Typography>
         </Box>
-  
+
         <Paper
           variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+          sx={{
+            mt: 2,
+            p: { xs: 3, md: 4 },
+            borderRadius: 2,
+          }}
         >
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            sx={{ my: 3, mb: 5 }}
-          >
-            {licencesActive ? "Editar" : "Nueva"} Licencia uso
+          {/* Título del formulario */}
+          <Typography variant="h6" fontWeight={600} gutterBottom>
+            {isEditing ? "Editar licencia" : "Nueva licencia"}
           </Typography>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={2}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            {isEditing
+              ? "Modificá los datos de la licencia seleccionada."
+              : "Completá los campos para dar de alta una nueva licencia."}
+          </Typography>
+
+          <Divider sx={{ mb: 3 }} />
+
+          {/* Formulario */}
+          <Grid container spacing={3}>
+            {/* Fila 1: ID + Descripción */}
+            <Grid item xs={12} sm={3}>
               <TextField
                 label="ID"
                 variant="outlined"
@@ -143,103 +145,101 @@ export const NewLicencesPage: React.FC = () => {
                 name="id"
                 value={id}
                 onChange={handleInputChange}
-                inputProps={{ maxLength: 30 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
+                inputProps={{ maxLength: 30 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
-            <Grid item xs={12} sm={8}>
-                <Box sx={{ display: 'block', mt: 2 }}>
-                <TextField
-                    label="Descripción"
-                    variant="outlined"
-                    type="text"
-                    name="description"
-                    value={description}
-                    onChange={handleInputChange}
-                    inputProps={{ maxLength: 30 }} 
-                    InputProps={{
-                    startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth
-                />
-                </Box>
-            </Grid>
-            </Grid>
-            <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={3} sx={{ width: '200%' }}>
-            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-            <Autocomplete
-                options={system}
-                getOptionLabel={(system) => system.system}
-                fullWidth
-                renderInput={(params) => <TextField {...params} label="System" />}
-                value={systemSeleccionado || null} // Usa systemSeleccionado o null si no se encuentra
-                onChange={handleSystemChange}
-              />
-              </FormControl>
-            </Grid>
-            </Grid>
-            <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={3}>
-            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-          <InputLabel id="licence-type-label">Licence type</InputLabel>
-          <Select
-            labelId="licence-type-label"
-            id="licence-type"
-            value={licenceType}
-            onChange={handleLicenceTypeChange}
-            label="Licence type"
-            inputProps={{ maxLength: 20 }}
-          >
-            {licenceOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-            </Grid>
-            </Grid>
-            <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={2.6}>
+            <Grid item xs={12} sm={9}>
               <TextField
-                label="Unidad máxima permitida"
+                label="Descripción"
                 variant="outlined"
                 type="text"
-                name="maximumUnitAllowed"
-                value={maximumUnitAllowed}
+                name="description"
+                value={description}
                 onChange={handleInputChange}
-                inputProps={{ maxLength: 20 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
+                inputProps={{ maxLength: 100 }}
                 fullWidth
-                sx={{ mt: 2 }}
               />
             </Grid>
-            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ mt: { sm: 5 } }}>
-              <Grid item xs={12} sm={3}>
-                <Button onClick={onClickCancel}>Cancelar</Button>
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={licencesActive ? handleUpdateLicences : handleAddLicences}
+
+            {/* Fila 2: Sistema */}
+            <Grid item xs={12} sm={6}>
+              <Autocomplete
+                options={system}
+                getOptionLabel={(option) => option.system}
+                value={systemSeleccionado}
+                onChange={handleSystemChange}
+                renderInput={(params) => (
+                  <TextField {...params} label="Sistema" variant="outlined" />
+                )}
+                fullWidth
+              />
+            </Grid>
+
+            {/* Fila 2: Tipo de licencia */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="licence-type-label">Tipo de licencia</InputLabel>
+                <Select
+                  labelId="licence-type-label"
+                  id="licence-type"
+                  value={licenceType}
+                  onChange={handleLicenceTypeChange}
+                  label="Tipo de licencia"
                 >
-                  {!licencesActive ? "Guardar" : "Actualizar"}
-                </Button>
-              </Grid>
+                  {licenceOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Fila 3: Unidad máxima + Cantidad de usuarios permitidos */}
+            <Grid item xs={12} sm={6}>
+              <NumericTextField
+                label="Unidad máxima permitida"
+                variant="outlined"
+                value={maximumUnitAllowed || null}
+                onChange={handleMaximumUnitChange}
+                maxLength={10}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <NumericTextField
+                label="Cantidad de usuarios permitidos"
+                variant="outlined"
+                value={allowedUsersCount || null}
+                onChange={handleAllowedUsersChange}
+                maxLength={10}
+              />
             </Grid>
           </Grid>
+
+          <Divider sx={{ mt: 4, mb: 3 }} />
+
+          {/* Acciones */}
+          <Box display="flex" justifyContent="flex-end" gap={2}>
+            <Button
+              variant="outlined"
+              color="inherit"
+              startIcon={<ArrowBackIcon />}
+              onClick={onClickCancel}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<SaveIcon />}
+              onClick={isEditing ? handleUpdateLicences : handleAddLicences}
+            >
+              {isEditing ? "Actualizar" : "Guardar"}
+            </Button>
+          </Box>
         </Paper>
       </Container>
     </>
   );
-  
-  
 };
