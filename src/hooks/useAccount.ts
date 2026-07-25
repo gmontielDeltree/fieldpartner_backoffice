@@ -40,7 +40,8 @@ export const useAccount = () => {
 
         } catch (error) {
             console.log(error)
-            Swal.fire('Ups', 'Ocurrio un error inesperado ', 'error');
+            const message = error?.response?.data?.message || 'Ocurrio un error inesperado';
+            Swal.fire('Ups', message, 'error');
             setIsLoading(false);
             if (error) setError(error);
             return false;
@@ -82,6 +83,16 @@ export const useAccount = () => {
         }
     }
 
+    const checkEmailInCognito = async (email: string): Promise<boolean> => {
+        try {
+            const response = await backofficeApi.post('/auth/check-email', { email });
+            return response.data?.exists ?? false;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
     const updateAccount = async (accountId: string, updateAccount: UpdateAccount) => {
         setIsLoading(true);
 
@@ -118,6 +129,7 @@ export const useAccount = () => {
         getAccounts,
         setAccounts,
         updateAccount,
-        getUserByEmail
+        getUserByEmail,
+        checkEmailInCognito
     }
 }

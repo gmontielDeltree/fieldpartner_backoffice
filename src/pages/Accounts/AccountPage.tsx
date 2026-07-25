@@ -69,6 +69,7 @@ export const AccountPage: React.FC = () => {
     // const dispatch = useAppDispatch();
     const { createAccount } = useAccount();
     const [indexStep, setIndexStep] = useState(0);
+    const [isCheckingEmail, setIsCheckingEmail] = useState(false);
     const { country, isLoading, getCountry } = useCountry();
     const { licences, isLoading: loadingLic, getLicences } = useLicences();
     const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -125,6 +126,7 @@ export const AccountPage: React.FC = () => {
                             setFormValues={setFormValues}
                             handleInputChange={handleInputChange}
                             handleCheckboxChange={handleCheckboxChange}
+                            onCheckingEmail={setIsCheckingEmail}
                         />
                     );
                 case 2:
@@ -148,7 +150,8 @@ export const AccountPage: React.FC = () => {
             setLogoFile,
             setFormValues,
             handleInputChange,
-            handleCheckboxChange
+            handleCheckboxChange,
+            setIsCheckingEmail,
         ]
     );
 
@@ -178,7 +181,8 @@ export const AccountPage: React.FC = () => {
                             hasLicence &&
                             formValues.user?.username?.trim() !== '' &&
                             formValues.user?.email?.trim() !== '' &&
-                            formValues.user?.password?.trim() !== ''
+                            formValues.user?.password?.trim() !== '' &&
+                            !isCheckingEmail
                         );
                     }
                 }
@@ -220,7 +224,7 @@ export const AccountPage: React.FC = () => {
     return (
         <>
             <Container maxWidth="lg" sx={{ py: 3 }}>
-                <Loading key="loading-new-customer" loading={isLoading || loadingLic} />
+                <Loading key="loading-new-customer" loading={isLoading || loadingLic || isCheckingEmail} />
 
                 {/* Breadcrumbs */}
                 <Breadcrumbs

@@ -8,6 +8,7 @@ import {
     CardContent,
     Checkbox,
     Chip,
+    CircularProgress,
     FormControlLabel,
     Grid,
     IconButton,
@@ -39,6 +40,7 @@ interface CategoryLicenceFormProps {
     setFormValues: React.Dispatch<React.SetStateAction<Account>>;
     handleInputChange: ({ target }: ChangeEvent<HTMLInputElement>) => void;
     handleCheckboxChange: ({ target }: ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+    onCheckingEmail: (checking: boolean) => void;
 }
 
 export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
@@ -47,10 +49,13 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
     setFormValues,
     handleInputChange,
     handleCheckboxChange,
+    onCheckingEmail,
 }) => {
-    const { getUserByEmail } = useAccount();
+    const { getUserByEmail, checkEmailInCognito } = useAccount();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorToEmailAssociation, setErrorToEmailAssociation] = useState<boolean>(false);
+    const [errorEmailNewUser, setErrorEmailNewUser] = useState<boolean>(false);
+    const [isCheckingEmail, setIsCheckingEmail] = useState<boolean>(false);
     const [allowedUsersCount, setAllowedUsersCount] = useState<number>(0);
 
     const categoryOptions = enumToArray(EnumCategoryAccount);
@@ -110,6 +115,20 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
             const user = await getUserByEmail(email);
             if (user) setErrorToEmailAssociation(false);
             else setErrorToEmailAssociation(true);
+        }
+    };
+
+    const onBlurEmailNewUser = async () => {
+        const email = formValues.user?.email?.trim();
+        if (email && regexEmail.test(email)) {
+            setIsCheckingEmail(true);
+            onCheckingEmail(true);
+            const exists = await checkEmailInCognito(email);
+            setErrorEmailNewUser(exists);
+            setIsCheckingEmail(false);
+            onCheckingEmail(false);
+        } else {
+            setErrorEmailNewUser(false);
         }
     };
 
@@ -474,16 +493,39 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                                                 type="email"
                                                 name="email"
                                                 value={formValues.user?.email || ''}
-                                                onChange={onChangeUser}
+                                                onChange={(e) => {
+                                                    onChangeUser(e as React.ChangeEvent<HTMLInputElement>);
+                                                    setErrorEmailNewUser(false);
+                                                }}
+                                                onBlur={onBlurEmailNewUser}
                                                 placeholder="usuario@ejemplo.com"
                                                 required
                                                 fullWidth
+                                                error={errorEmailNewUser}
+                                                color={
+                                                    regexEmail.test(formValues.user?.email || '') && !errorEmailNewUser
+                                                        ? 'success'
+                                                        : undefined
+                                                }
+                                                focused={!!formValues.user?.email}
+                                                helperText={
+                                                    isCheckingEmail
+                                                        ? 'Verificando disponibilidad del email...'
+                                                        : errorEmailNewUser
+                                                        ? 'El email ya está registrado en el sistema'
+                                                        : 'Ingresa el email del nuevo administrador'
+                                                }
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
                                                             <EmailIcon fontSize="small" />
                                                         </InputAdornment>
                                                     ),
+                                                    endAdornment: isCheckingEmail ? (
+                                                        <InputAdornment position="end">
+                                                            <CircularProgress size={18} />
+                                                        </InputAdornment>
+                                                    ) : undefined,
                                                 }}
                                             />
                                         </Grid>
