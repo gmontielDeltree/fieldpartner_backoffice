@@ -38,7 +38,7 @@ export const useAccount = () => {
             }
 
 
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
             const message = error?.response?.data?.message || 'Ocurrio un error inesperado';
             Swal.fire('Ups', message, 'error');
