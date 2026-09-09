@@ -58,6 +58,7 @@ const initialForm: MenuModules = {
   menuType: '',
   icon: '',
   route: '',
+  parentId: null,
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -186,6 +187,25 @@ export const NewMenuModulesPage: React.FC = () => {
   const selectedModule = (
     Array.isArray(formValues.module) ? formValues.module[0] : formValues.module
   ) as Modules | undefined;
+
+  // Submenú padre: sólo menús SideBar del mismo módulo (o de cualquiera si
+  // todavía no se eligió módulo), excluyendo el propio menú.
+  type ParentOption = { id: number; label: string };
+  const parentOptions: ParentOption[] = menuModules
+    .filter(m => String(m.menuType) === MenuOptionType.SideBar)
+    .filter(m => Number(m.id) !== Number(formValues.id))
+    .filter(m => {
+      const mod = (Array.isArray(m.module) ? m.module[0] : m.module) as Modules | undefined;
+      return !selectedModule?._id || !mod?._id || mod._id === selectedModule._id;
+    })
+    .sort((a, b) => Number(a.order) - Number(b.order))
+    .map(m => ({
+      id: Number(m.id),
+      label: `${m.id} · ${m.menuOption}${m.route ? '' : ' (submenú)'}`,
+    }));
+  const selectedParent =
+    parentOptions.find(o => o.id === Number(formValues.parentId)) ?? null;
+  const isContainer = !formValues.route && !formValues.parentId;
 
   useEffect(() => {
     getModules();
@@ -318,6 +338,27 @@ export const NewMenuModulesPage: React.FC = () => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
+                <Autocomplete<ParentOption, false, false, false>
+                  options={parentOptions}
+                  getOptionLabel={opt => opt?.label ?? ''}
+                  value={selectedParent}
+                  onChange={(_, opt) => {
+                    setFormValues(prev => ({ ...prev, parentId: opt ? opt.id : null }));
+                  }}
+                  isOptionEqualToValue={(opt, val) => opt.id === val.id}
+                  noOptionsText='Sin menús de este módulo'
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label='Submenú padre (opcional)'
+                      helperText='Para anidar este menú debajo de otro. El padre es un menú SideBar sin ruta.'
+                    />
+                  )}
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
                 <IconSelector
                   value={formValues.icon}
                   onChange={newValue => {
@@ -381,7 +422,7 @@ export const NewMenuModulesPage: React.FC = () => {
 
               <Grid item xs={12}>
                 <TextField
-                  label='Ruta / Path *'
+                  label={isContainer ? 'Ruta / Path (vacía: es un submenú contenedor)' : 'Ruta / Path *'}
                   variant='outlined'
                   placeholder='/init/overview/menus-modules'
                   type='text'
@@ -389,6 +430,7 @@ export const NewMenuModulesPage: React.FC = () => {
                   value={route}
                   onChange={handleInputChange}
                   fullWidth
+                  helperText='Dejala vacía para crear un submenú que agrupe otros menús (por ejemplo "Reportes").'
                 />
               </Grid>
 

@@ -123,6 +123,11 @@ export interface MenuModules extends Document {
   light: string;
   icon: string;
   route: string;
+  /**
+   * Submenú: `id` de otro menú SideBar del mismo módulo que actúa de
+   * contenedor (un menú sin ruta). null/undefined = ítem de primer nivel.
+   */
+  parentId?: number | null;
 }
 
 export interface Modules extends Document {

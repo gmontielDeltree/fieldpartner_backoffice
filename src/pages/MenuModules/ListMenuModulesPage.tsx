@@ -466,6 +466,11 @@ export const ListMenuModulesPage: React.FC = () => {
                         <Typography variant='body2' sx={{ fontSize: '0.85rem' }}>
                           {row.menuOption || '-'}
                         </Typography>
+                        {row.parentId != null && row.parentId !== ('' as unknown as number) && (
+                          <Typography variant='caption' sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                            ↳ submenú de {row.parentId}
+                          </Typography>
+                        )}
                       </TableCellStyled>
 
                       {/* Orden */}
