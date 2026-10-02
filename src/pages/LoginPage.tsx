@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
 
 
     return (
-        <AuthLayout title='Fieldpartner - Backoffice'>
+        <AuthLayout title='Backoffice'>
             {
                 isLoading && <Loading key="loading-auth" loading={true} />
             }

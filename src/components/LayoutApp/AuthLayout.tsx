@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -36,6 +36,12 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title = "" }) 
                     pb: 6
                 }}
             >
+                <Box
+                    component="img"
+                    src="/assets/fieldpartner-logo.png"
+                    alt="FieldPartner"
+                    sx={{ display: 'block', width: 200, height: 'auto', mx: 'auto', mt: 1, mb: 1.5 }}
+                />
                 <Typography variant='h5' textAlign="center" sx={{ mb: 1 }}>{title}</Typography>
 
                 {children}
