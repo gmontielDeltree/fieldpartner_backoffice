@@ -86,9 +86,12 @@ export const NewLicencesPage: React.FC = () => {
     navigate("/licences");
   };
 
+  // Solo al montar: getSystem es una función nueva en cada render, con [getSystem]
+  // el efecto se re-disparaba con cada respuesta y pedía la lista en bucle.
   useEffect(() => {
     getSystem();
-  }, [getSystem]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (licencesActive) {
