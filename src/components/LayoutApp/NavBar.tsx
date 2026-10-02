@@ -36,17 +36,14 @@ export const NavBar: React.FC = () => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography
-            variant="h6"
-            color="white"
-            fontSize={25}
-            sx={{ textDecoration: "none" }}
-            to="/home"
-            noWrap
-            component={RouterLink}
-          >
-            Fieldpartner
-          </Typography>
+          <Box component={RouterLink} to="/home" sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              component="img"
+              src="/assets/fieldpartner-logo-white.png"
+              alt="FieldPartner"
+              sx={{ height: 34, width: "auto", display: "block" }}
+            />
+          </Box>
           <Typography variant="h6" noWrap component="h2">
             Backoffice
           </Typography>
