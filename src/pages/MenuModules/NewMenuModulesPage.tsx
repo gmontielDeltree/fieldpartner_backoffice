@@ -5,22 +5,28 @@ import {
   OptionType,
   NumericTextField,
   IconSelector,
+  FormActions,
+  FormCard,
+  PageContainer,
+  PageHeader,
 } from '../../components';
 import {
   Autocomplete,
   Box,
   Button,
-  Container,
   FormControl,
   Grid,
-  Paper,
   TextField,
-  Typography,
   Checkbox,
   FormControlLabel,
-  Divider,
 } from '@mui/material';
-import { List as ListIcon } from '@mui/icons-material';
+import {
+  ListAltOutlined,
+  TranslateOutlined,
+  TuneOutlined,
+  ViewModuleOutlined,
+  VisibilityOutlined,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import {
   useAppDispatch,
@@ -215,309 +221,286 @@ export const NewMenuModulesPage: React.FC = () => {
   return (
     <>
       <Loading key='loading-new-customer' loading={isLoading || isLoadingModules} />
-      <Container maxWidth='md' sx={{ mb: 4 }}>
-        <Box component='div' display='flex' alignItems='center' sx={{ ml: { sm: 2 }, pt: 2 }}>
-          <ListIcon />
-          <Typography variant='h5' sx={{ ml: { sm: 2 } }}>
-            Menus y Modulos
-          </Typography>
-        </Box>
+      <PageContainer maxWidth={1180}>
+        <PageHeader
+          icon={<ListAltOutlined />}
+          eyebrow='Menús y módulos · Menús'
+          title={menuModulesActive ? 'Editar menú' : 'Nuevo menú'}
+          onBack={onClickCancel}
+        />
 
-        <Paper variant='outlined' sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-          <Typography component='h1' variant='h4' align='center' sx={{ mb: 4 }}>
-            {menuModulesActive ? 'Editar' : 'Nuevo'} Menú / Módulo
-          </Typography>
-
-          {/* SECCIÓN 1: CONFIGURACIÓN BÁSICA */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant='h6' sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
-              📋 Configuración Básica
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={3}>
-                <NumericTextField
-                  label='ID *'
-                  name='id'
-                  value={id}
-                  onChange={newValue => {
-                    setFormValues(prev => ({
-                      ...prev,
-                      id: newValue === null ? 0 : newValue,
-                    }));
-                  }}
-                  onBlur={handleVerifyId}
-                  inputProps={{ maxLength: 30 }}
-                  fullWidth
-                  variant='outlined'
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  label='Orden *'
-                  variant='outlined'
-                  type='text'
-                  name='order'
-                  value={order}
-                  onChange={handleInputChange}
-                  fullWidth
-                  placeholder='1, 2, 3...'
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <AutoCompleteSelect
-                  options={menuTypeOptions}
-                  label='Tipo de Menú *'
-                  value={selectedMenuType}
-                  onChange={handleMenuTypeChange}
-                  fullWidth
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <FormControl fullWidth variant='outlined'>
-                  <Autocomplete
-                    options={system.map(sys => `${sys.system}: ${sys.version}`)}
-                    fullWidth
-                    renderInput={params => <TextField {...params} label='Sistema *' />}
-                    value={formValues.systemType}
-                    onChange={handleSystemChange}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* SECCIÓN 2: MÓDULO E ICONO */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant='h6' sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
-              🎨 Módulo e Icono
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Autocomplete<ModuleOption, false, false, false>
-                  options={options}
-                  getOptionLabel={opt => opt?.label ?? ''}
-                  loading={isLoadingModules}
-                  noOptionsText={isLoadingModules ? 'Cargando...' : 'Sin módulos'}
-                  value={
-                    options.find(o => o.value._id && o.value._id === selectedModule?._id) ??
-                    options.find(o => o.label === selectedModule?.moduleNameEs) ??
-                    null
-                  }
-                  onChange={(_, opt) => {
-                    setFormValues(prev => ({
-                      ...prev,
-                      module: opt?.value ?? blankModule,
-                      icon: prev.icon || (opt?.value?.icon ?? ''),
-                    }));
-                  }}
-                  isOptionEqualToValue={(opt, val) =>
-                    (opt.id && val.id && opt.id === val.id) ||
-                    (opt.value._id && val.value._id && opt.value._id === val.value._id) ||
-                    opt.label === val.label
-                  }
-                  renderOption={(props, option) => (
-                    <li
-                      {...props}
-                      key={option.id}
-                      style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-                    >
-                      {option.value.icon && <DynamicIcon iconName={option.value.icon} />}
-                      <span>{option.label}</span>
-                    </li>
-                  )}
-                  renderInput={params => <TextField {...params} label='Módulo *' />}
-                  fullWidth
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Autocomplete<ParentOption, false, false, false>
-                  options={parentOptions}
-                  getOptionLabel={opt => opt?.label ?? ''}
-                  value={selectedParent}
-                  onChange={(_, opt) => {
-                    setFormValues(prev => ({ ...prev, parentId: opt ? opt.id : null }));
-                  }}
-                  isOptionEqualToValue={(opt, val) => opt.id === val.id}
-                  noOptionsText='Sin menús de este módulo'
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      label='Submenú padre (opcional)'
-                      helperText='Para anidar este menú debajo de otro. El padre es un menú SideBar sin ruta.'
-                    />
-                  )}
-                  fullWidth
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <IconSelector
-                  value={formValues.icon}
-                  onChange={newValue => {
-                    setFormValues(prev => ({
-                      ...prev,
-                      icon: newValue,
-                    }));
-                  }}
-                  label='Ícono del Menú *'
-                />
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* SECCIÓN 3: TEXTOS MULTILENGUAJE */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant='h6' sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
-              🌐 Textos del Menú (Multilenguaje)
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label='Español (ES) *'
-                  variant='outlined'
-                  type='text'
-                  name='menuOption'
-                  value={menuOptionEs}
-                  onChange={handleInputChange}
-                  fullWidth
-                  placeholder='Ej: Menús y Módulos'
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label='Inglés (EN) *'
-                  variant='outlined'
-                  type='text'
-                  name='menuOptionEn'
-                  value={menuOptionEn}
-                  onChange={handleInputChange}
-                  fullWidth
-                  placeholder='Ej: Menus and Modules'
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label='Portugués (PT) *'
-                  variant='outlined'
-                  type='text'
-                  name='menuOptionPt'
-                  value={menuOptionPt}
-                  onChange={handleInputChange}
-                  fullWidth
-                  placeholder='Ej: Menus e Módulos'
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  label={isContainer ? 'Ruta / Path (vacía: es un submenú contenedor)' : 'Ruta / Path *'}
-                  variant='outlined'
-                  placeholder='/init/overview/menus-modules'
-                  type='text'
-                  name='route'
-                  value={route}
-                  onChange={handleInputChange}
-                  fullWidth
-                  helperText='Dejala vacía para crear un submenú que agrupe otros menús (por ejemplo "Reportes").'
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  label='Detalles / Descripción'
-                  variant='outlined'
-                  type='text'
-                  name='details'
-                  value={details}
-                  onChange={handleInputChange}
-                  fullWidth
-                  multiline
-                  rows={2}
-                  placeholder='Información adicional sobre este menú...'
-                />
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* SECCIÓN 4: CONFIGURACIÓN ADICIONAL */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant='h6' sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
-              ⚙️ Configuración Adicional
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={2} alignItems='center'>
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: 4,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    p: 2.5,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    bgcolor: 'background.default',
-                  }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={full === 'X'}
-                        onChange={handleCheckboxChange('full')}
-                        color='primary'
-                      />
-                    }
-                    label='Full'
-                  />
-
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={light === 'X'}
-                        onChange={handleCheckboxChange('light')}
-                        color='primary'
-                      />
-                    }
-                    label='Light'
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-
-          <Grid container spacing={2} justifyContent='center' alignItems='center' sx={{ mt: 2 }}>
-            <Grid item xs={12} sm={3}>
-              <Button onClick={onClickCancel} fullWidth variant='outlined'>
-                Cancelar
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant='contained'
-                color='primary'
+        {/* SECCIÓN 1: CONFIGURACIÓN BÁSICA */}
+        <FormCard
+          title='Configuración básica'
+          subtitle='El ID no se puede repetir.'
+          icon={<TuneOutlined />}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <NumericTextField
+                label='ID *'
+                name='id'
+                value={id}
+                onChange={newValue => {
+                  setFormValues(prev => ({
+                    ...prev,
+                    id: newValue === null ? 0 : newValue,
+                  }));
+                }}
+                onBlur={handleVerifyId}
+                inputProps={{ maxLength: 30 }}
                 fullWidth
-                onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
-              >
-                {!menuModulesActive ? 'Guardar' : 'Actualizar'}
-              </Button>
+                variant='outlined'
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                label='Orden *'
+                variant='outlined'
+                type='text'
+                name='order'
+                value={order}
+                onChange={handleInputChange}
+                fullWidth
+                placeholder='1, 2, 3...'
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <AutoCompleteSelect
+                options={menuTypeOptions}
+                label='Tipo de menú *'
+                value={selectedMenuType}
+                onChange={handleMenuTypeChange}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth variant='outlined'>
+                <Autocomplete
+                  options={system.map(sys => `${sys.system}: ${sys.version}`)}
+                  fullWidth
+                  renderInput={params => <TextField {...params} label='Sistema *' />}
+                  value={formValues.systemType}
+                  onChange={handleSystemChange}
+                />
+              </FormControl>
             </Grid>
           </Grid>
-        </Paper>
-      </Container>
+        </FormCard>
+
+        {/* SECCIÓN 2: MÓDULO E ÍCONO */}
+        <FormCard
+          title='Módulo e ícono'
+          icon={<ViewModuleOutlined />}
+          delay={100}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Autocomplete<ModuleOption, false, false, false>
+                options={options}
+                getOptionLabel={opt => opt?.label ?? ''}
+                loading={isLoadingModules}
+                noOptionsText={isLoadingModules ? 'Cargando...' : 'Sin módulos'}
+                value={
+                  options.find(o => o.value._id && o.value._id === selectedModule?._id) ??
+                  options.find(o => o.label === selectedModule?.moduleNameEs) ??
+                  null
+                }
+                onChange={(_, opt) => {
+                  setFormValues(prev => ({
+                    ...prev,
+                    module: opt?.value ?? blankModule,
+                    icon: prev.icon || (opt?.value?.icon ?? ''),
+                  }));
+                }}
+                isOptionEqualToValue={(opt, val) =>
+                  (opt.id && val.id && opt.id === val.id) ||
+                  (opt.value._id && val.value._id && opt.value._id === val.value._id) ||
+                  opt.label === val.label
+                }
+                renderOption={(props, option) => (
+                  <li
+                    {...props}
+                    key={option.id}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                  >
+                    {option.value.icon && (
+                      <Box
+                        component='span'
+                        sx={{
+                          display: 'inline-flex',
+                          color: 'var(--ink-2)',
+                          '& .MuiSvgIcon-root': { fontSize: 18 },
+                          '& > span': { width: 18, height: 18 },
+                        }}
+                      >
+                        <DynamicIcon iconName={option.value.icon} />
+                      </Box>
+                    )}
+                    <span>{option.label}</span>
+                  </li>
+                )}
+                renderInput={params => <TextField {...params} label='Módulo *' />}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Autocomplete<ParentOption, false, false, false>
+                options={parentOptions}
+                getOptionLabel={opt => opt?.label ?? ''}
+                value={selectedParent}
+                onChange={(_, opt) => {
+                  setFormValues(prev => ({ ...prev, parentId: opt ? opt.id : null }));
+                }}
+                isOptionEqualToValue={(opt, val) => opt.id === val.id}
+                noOptionsText='Sin menús de este módulo'
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label='Submenú padre (opcional)'
+                    helperText='Para anidar este menú debajo de otro. El padre es un menú SideBar sin ruta.'
+                  />
+                )}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <IconSelector
+                value={formValues.icon}
+                onChange={newValue => {
+                  setFormValues(prev => ({
+                    ...prev,
+                    icon: newValue,
+                  }));
+                }}
+                label='Ícono del menú *'
+              />
+            </Grid>
+          </Grid>
+        </FormCard>
+
+        {/* SECCIÓN 3: TEXTOS MULTILENGUAJE */}
+        <FormCard
+          title='Textos del menú'
+          icon={<TranslateOutlined />}
+          delay={140}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label='Español (ES) *'
+                variant='outlined'
+                type='text'
+                name='menuOption'
+                value={menuOptionEs}
+                onChange={handleInputChange}
+                fullWidth
+                placeholder='Ej: Menús y Módulos'
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label='Inglés (EN) *'
+                variant='outlined'
+                type='text'
+                name='menuOptionEn'
+                value={menuOptionEn}
+                onChange={handleInputChange}
+                fullWidth
+                placeholder='Ej: Menus and Modules'
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label='Portugués (PT) *'
+                variant='outlined'
+                type='text'
+                name='menuOptionPt'
+                value={menuOptionPt}
+                onChange={handleInputChange}
+                fullWidth
+                placeholder='Ej: Menus e Módulos'
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label={isContainer ? 'Ruta / Path (vacía: es un submenú contenedor)' : 'Ruta / Path *'}
+                variant='outlined'
+                placeholder='/init/overview/menus-modules'
+                type='text'
+                name='route'
+                value={route}
+                onChange={handleInputChange}
+                fullWidth
+                helperText='Dejala vacía para crear un submenú que agrupe otros menús (por ejemplo "Reportes").'
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                label='Detalles / Descripción'
+                variant='outlined'
+                type='text'
+                name='details'
+                value={details}
+                onChange={handleInputChange}
+                fullWidth
+                multiline
+                rows={2}
+                placeholder='Información adicional sobre este menú...'
+              />
+            </Grid>
+          </Grid>
+        </FormCard>
+
+        {/* SECCIÓN 4: CONFIGURACIÓN ADICIONAL */}
+        <FormCard title='Configuración adicional' icon={<VisibilityOutlined />} delay={180}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', columnGap: 3, rowGap: 1 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={full === 'X'}
+                  onChange={handleCheckboxChange('full')}
+                  color='primary'
+                />
+              }
+              label='Full'
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={light === 'X'}
+                  onChange={handleCheckboxChange('light')}
+                  color='primary'
+                />
+              }
+              label='Light'
+            />
+          </Box>
+        </FormCard>
+
+        <FormActions>
+          <Button onClick={onClickCancel} variant='outlined'>
+            Cancelar
+          </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={menuModulesActive ? handleUpdateMenuModules : handleAddMenuModules}
+          >
+            {!menuModulesActive ? 'Guardar' : 'Actualizar'}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
 };

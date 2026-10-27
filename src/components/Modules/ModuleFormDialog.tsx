@@ -9,19 +9,19 @@ import {
   Button,
   Box,
   IconButton,
-  Divider,
   Tooltip,
   CircularProgress,
-  Typography,
 } from '@mui/material';
 import {
-  DisplaySettingsRounded as DisplaySettingsIcon,
   CloseRounded as CloseIcon,
-  SaveRounded as SaveIcon,
+  InterestsOutlined,
+  TranslateOutlined,
+  ViewModuleOutlined,
 } from '@mui/icons-material';
 import { Modules } from '../../types';
 import { IconSelector } from '../IconSelector/IconSelector';
 import { DynamicIcon } from '../DynamicIcon/DynamicIcon';
+import { DialogHeading, FormSectionTitle } from '../ui';
 
 type Props = {
   open: boolean;
@@ -63,52 +63,35 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
     }
   };
 
-  const title = form._id ? 'Editar Módulo' : 'Nuevo Módulo';
+  const title = form._id ? 'Editar módulo' : 'Nuevo módulo';
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
-      <DialogTitle sx={{ p: 2 }}>
-        <Box display='flex' alignItems='center' justifyContent='space-between'>
-          <Box display='flex' alignItems='center' gap={1}>
-            <DisplaySettingsIcon color='primary' />
-            <Typography variant='h6' component='div'>
-              {title}
-            </Typography>
-          </Box>
+      <DialogTitle sx={{ pb: 2 }}>
+        <Box display='flex' alignItems='center' justifyContent='space-between' gap={1}>
+          <DialogHeading icon={<ViewModuleOutlined />}>{title}</DialogHeading>
           <Tooltip title='Cerrar'>
             <span>
-              <IconButton onClick={onClose} edge='end'>
-                <CloseIcon />
+              <IconButton aria-label='Cerrar' onClick={onClose} edge='end' size='small'>
+                <CloseIcon fontSize='small' />
               </IconButton>
             </span>
           </Tooltip>
         </Box>
       </DialogTitle>
 
-      <Divider />
-
-      <DialogContent dividers sx={{ pt: 3, pb: 3 }}>
+      <DialogContent dividers>
         {/* SECCIÓN 1: Nombres Multilenguaje */}
         <Box sx={{ mb: 3 }}>
-          <Typography
-            variant='subtitle2'
-            sx={{
-              mb: 2,
-              color: 'primary.main',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
-            🌐 Nombres del Módulo
-          </Typography>
+          <FormSectionTitle icon={<TranslateOutlined />} sx={{ mb: 2 }}>
+            Nombres del módulo
+          </FormSectionTitle>
 
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label='Español (ES) *'
+                label='Español (ES)'
                 value={form.moduleNameEs}
                 onChange={handleChange('moduleNameEs')}
                 required
@@ -138,57 +121,55 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
           </Grid>
         </Box>
 
-        <Divider sx={{ my: 3 }} />
-
         {/* SECCIÓN 2: Ícono */}
         <Box>
-          <Typography
-            variant='subtitle2'
-            sx={{
-              mb: 2,
-              color: 'primary.main',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
-            🎨 Ícono del Módulo
-          </Typography>
+          <FormSectionTitle icon={<InterestsOutlined />} sx={{ mb: 2 }}>
+            Ícono del módulo
+          </FormSectionTitle>
 
-          <Grid container spacing={2}>
+          <Grid container spacing={2} alignItems='flex-start'>
             <Grid item xs={12} sm={8}>
               <IconSelector
                 value={form.icon}
                 onChange={val => setForm(prev => ({ ...prev, icon: val }))}
-                label='Seleccionar Ícono *'
+                label='Seleccionar ícono *'
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <Box
                 sx={{
-                  height: '56px',
-                  border: theme => `2px dashed ${theme.palette.divider}`,
-                  borderRadius: 2,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  bgcolor: 'background.default',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: 'action.hover',
-                  },
+                  gap: 1,
+                  minHeight: 40,
+                  px: 1.5,
+                  borderRadius: '8px',
+                  background: 'var(--inset)',
+                  boxShadow: 'var(--shadow-hairline)',
                 }}
               >
                 {form.icon ? (
-                  <Box sx={{ transform: 'scale(1.3)' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 28,
+                      height: 28,
+                      borderRadius: '8px',
+                      background: 'var(--accent-tint)',
+                      color: 'var(--accent-ink)',
+                      '& .MuiSvgIcon-root': { fontSize: 18 },
+                      '& > span': { width: 18, height: 18 },
+                    }}
+                  >
                     <DynamicIcon iconName={form.icon} />
                   </Box>
                 ) : (
-                  <Typography variant='caption' color='text.secondary' sx={{ fontSize: '0.7rem' }}>
+                  <Box component='span' sx={{ fontSize: 12.5, color: 'var(--ink-3)' }}>
                     Vista previa
-                  </Typography>
+                  </Box>
                 )}
               </Box>
             </Grid>
@@ -196,31 +177,18 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2, gap: 1 }}>
-        <Button
-          variant='outlined'
-          onClick={onClose}
-          disabled={saving}
-          sx={{ minWidth: '100px' }}
-        >
+      <DialogActions>
+        <Button variant='outlined' onClick={onClose} disabled={saving}>
           Cancelar
         </Button>
         <Button
           variant='contained'
           color='primary'
-          startIcon={saving ? undefined : <SaveIcon />}
           onClick={handleSubmit}
           disabled={!form.moduleNameEs.trim() || saving}
-          sx={{
-            minWidth: '120px',
-            fontWeight: 600,
-            boxShadow: 2,
-            '&:hover': {
-              boxShadow: 4,
-            },
-          }}
+          sx={{ minWidth: 136 }}
         >
-          {saving ? <CircularProgress color='inherit' size={20} /> : 'Guardar Módulo'}
+          {saving ? <CircularProgress color='inherit' size={18} /> : 'Guardar módulo'}
         </Button>
       </DialogActions>
     </Dialog>

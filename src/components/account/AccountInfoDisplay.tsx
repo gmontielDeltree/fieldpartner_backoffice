@@ -1,21 +1,20 @@
 import React from 'react';
 import {
     Box,
-    Card,
-    CardContent,
     Chip,
-    Divider,
     Grid,
+    Stack,
     Typography,
 } from '@mui/material';
 import {
-    Badge as BadgeIcon,
-    AssignmentTurnedIn as AssignmentTurnedInIcon,
-    TrendingUp as TrendingUpIcon,
-    Public as PublicIcon,
-    Email as EmailIcon,
+    BadgeOutlined,
+    AssignmentTurnedInOutlined,
+    TrendingUpRounded,
+    PublicOutlined,
+    MailOutline,
 } from '@mui/icons-material';
 import { AccountDto } from '../../interfaces/account';
+import { FormCard, InfoItem, StatusPill } from '../ui';
 
 interface AccountInfoDisplayProps {
     account: AccountDto;
@@ -35,152 +34,108 @@ const getCategoryColor = (code: string): 'success' | 'primary' | 'warning' => {
 };
 
 const InfoRow: React.FC<{ label: string; value: string | number | undefined }> = ({ label, value }) => (
-    <Box sx={{ mb: 2 }}>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+    <InfoItem label={label}>
+        {value || 'N/A'}
+    </InfoItem>
+);
+
+/** Valor con ícono chico adelante (email, país). */
+const IconValue: React.FC<{ icon: React.ReactNode; children: React.ReactNode }> = ({ icon, children }) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, '& > svg': { fontSize: 16, color: 'var(--ink-3)', flexShrink: 0 } }}>
+        {icon}
+        <Box component="span" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{children}</Box>
+    </Box>
+);
+
+/** Métrica de la cuenta: número grande y rótulo, en ficha hundida. */
+const MetricTile: React.FC<{ value: React.ReactNode; label: string }> = ({ value, label }) => (
+    <Box
+        sx={{
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
+            gap: 1,
+            px: 1.5,
+            py: 1.25,
+            borderRadius: '8px',
+            background: 'var(--inset)',
+            boxShadow: 'var(--shadow-hairline)',
+        }}
+    >
+        <Typography component="span" sx={{ fontSize: 12.5, color: 'var(--ink-3)' }}>
             {label}
         </Typography>
-        <Typography variant="body1" fontWeight={500}>
-            {value || 'N/A'}
-        </Typography>
+        <Box component="span" sx={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
+            {value}
+        </Box>
     </Box>
 );
 
 export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account }) => {
     return (
-        <Box>
-            <Typography variant="h6" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-                <BadgeIcon sx={{ mr: 1, color: 'primary.main' }} />
-                Información de la Cuenta (Solo lectura)
+        <Box sx={{ mb: 1 }}>
+            <Typography component="h2" sx={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink-3)', mb: 1 }}>
+                Información de la cuenta (solo lectura)
             </Typography>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={2}>
                 {/* Card 1: Datos Básicos */}
-                <Grid item xs={12} md={6} lg={3}>
-                    <Card variant="outlined" sx={{ height: '100%' }}>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <BadgeIcon sx={{ mr: 1, color: 'primary.main' }} />
-                                <Typography variant="h6">Datos Básicos</Typography>
-                            </Box>
-                            <Divider sx={{ mb: 2 }} />
-
+                <Grid item xs={12} md={6} lg={4}>
+                    <FormCard title="Datos básicos" icon={<BadgeOutlined />} sx={{ height: '100%', mb: 0 }}>
+                        <Stack spacing={1.5}>
                             <InfoRow label="Cuenta ID" value={account.accountReference} />
                             <InfoRow label="Denominación" value={account.denomination} />
 
-                            <Box sx={{ mb: 2 }}>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    Email
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <EmailIcon fontSize="small" color="action" />
-                                    <Typography variant="body1" fontWeight={500}>
-                                        {account.email || 'N/A'}
-                                    </Typography>
-                                </Box>
-                            </Box>
+                            <InfoItem label="Email">
+                                <IconValue icon={<MailOutline />}>
+                                    {account.email || 'N/A'}
+                                </IconValue>
+                            </InfoItem>
 
-                            <Box sx={{ mb: 2 }}>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    País
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <PublicIcon fontSize="small" color="action" />
-                                    <Typography variant="body1" fontWeight={500}>
-                                        {account.country}
-                                    </Typography>
-                                </Box>
-                            </Box>
+                            <InfoItem label="País">
+                                <IconValue icon={<PublicOutlined />}>
+                                    {account.country}
+                                </IconValue>
+                            </InfoItem>
 
-                            <Box>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    Categoría
-                                </Typography>
+                            <InfoItem label="Categoría">
                                 <Chip
                                     label={`${account.category}`}
                                     color={getCategoryColor(account.category)}
                                     size="small"
-                                    sx={{ fontWeight: 'bold' }}
+                                    sx={{ fontWeight: 600 }}
                                 />
-                            </Box>
-                        </CardContent>
-                    </Card>
+                            </InfoItem>
+                        </Stack>
+                    </FormCard>
                 </Grid>
 
                 {/* Card 2: Información de Licencia */}
-                <Grid item xs={12} md={6} lg={3}>
-                    <Card variant="outlined" sx={{ height: '100%' }}>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <AssignmentTurnedInIcon sx={{ mr: 1, color: 'primary.main' }} />
-                                <Typography variant="h6">Licencia</Typography>
-                            </Box>
-                            <Divider sx={{ mb: 2 }} />
-
-                            <InfoRow label="Tipo de Licencia" value={account.licenceType} />
+                <Grid item xs={12} md={6} lg={4}>
+                    <FormCard title="Licencia" icon={<AssignmentTurnedInOutlined />} delay={100} sx={{ height: '100%', mb: 0 }}>
+                        <Stack spacing={1.5}>
+                            <InfoRow label="Tipo de licencia" value={account.licenceType} />
                             <InfoRow label="Licencia ID" value={account.licence} />
-                            <InfoRow label="Unidades Permitidas" value={account.amountLicencesAllowed} />
+                            <InfoRow label="Unidades permitidas" value={account.amountLicencesAllowed} />
 
-                            <Box>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                                    Multipaís
-                                </Typography>
-                                <Chip
-                                    label={account.isLicenceMultipleCountry ? 'Sí' : 'No'}
-                                    color={account.isLicenceMultipleCountry ? 'success' : 'default'}
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            </Box>
-                        </CardContent>
-                    </Card>
+                            <InfoItem label="Multipaís">
+                                <StatusPill status={account.isLicenceMultipleCountry ? 'done' : 'neutral'} size="sm">
+                                    {account.isLicenceMultipleCountry ? 'Sí' : 'No'}
+                                </StatusPill>
+                            </InfoItem>
+                        </Stack>
+                    </FormCard>
                 </Grid>
 
                 {/* Card 3: Métricas Operativas */}
-                <Grid item xs={12} md={6} lg={3}>
-                    <Card variant="outlined" sx={{ height: '100%', bgcolor: 'primary.lighter' }}>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <TrendingUpIcon sx={{ mr: 1, color: 'primary.main' }} />
-                                <Typography variant="h6">Métricas</Typography>
-                            </Box>
-                            <Divider sx={{ mb: 2 }} />
-
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <Card variant="outlined" sx={{ bgcolor: 'white' }}>
-                                    <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                        <Typography variant="h4" color="primary" fontWeight="bold">
-                                            {account.countCampos || 0}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Campos
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-
-                                <Card variant="outlined" sx={{ bgcolor: 'white' }}>
-                                    <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                        <Typography variant="h4" color="primary" fontWeight="bold">
-                                            {account.countLicencias || 0}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Licencias
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-
-                                <Card variant="outlined" sx={{ bgcolor: 'white' }}>
-                                    <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                        <Typography variant="h4" color="primary" fontWeight="bold">
-                                            {account.countHectareas?.toLocaleString() || 0}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Hectáreas
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-                            </Box>
-                        </CardContent>
-                    </Card>
+                <Grid item xs={12} md={6} lg={4}>
+                    <FormCard title="Métricas" icon={<TrendingUpRounded />} delay={140} sx={{ height: '100%', mb: 0 }}>
+                        <Stack spacing={1}>
+                            <MetricTile value={account.countCampos || 0} label="Campos" />
+                            <MetricTile value={account.countLicencias || 0} label="Licencias" />
+                            <MetricTile value={account.countHectareas?.toLocaleString() || 0} label="Hectáreas" />
+                        </Stack>
+                    </FormCard>
                 </Grid>
             </Grid>
         </Box>

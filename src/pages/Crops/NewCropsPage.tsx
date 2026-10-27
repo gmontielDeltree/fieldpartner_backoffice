@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Loading } from "../../components";
+import { FormActions, FormCard, Loading, PageContainer, PageHeader } from "../../components";
 import {
   Autocomplete,
   Box,
   Button,
   Checkbox,
-  Container,
+  FormControlLabel,
   // FormControl,
   Grid,
-  InputAdornment,
   // InputLabel,
   // MenuItem,
-  Paper,
   // Select,
   // SelectChangeEvent,
   TextField,
-  Typography,
 } from "@mui/material";
-import { Yard as YardIcon } from "@mui/icons-material";
+import { AgricultureOutlined, YardOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useCrops, useForm } from "../../hooks";
 import { Crops } from "../../types";
@@ -135,76 +132,51 @@ export const NewCropsPage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <YardIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
-            Cultivo
-          </Typography>
-        </Box>
-
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            sx={{ my: 3, mb: 5 }}
-          >
-            {cropsActive ? "Editar" : "Nuevo"} Cultivo
-          </Typography>
-          <Grid container spacing={1} alignItems="center">
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Nombre"
-              variant="outlined"
-              type="text"
-              name="descriptionES"
-              value={descriptionES}
-              onChange={handleInputChange}
-              inputProps={{ maxLength: 20 }} 
-              InputProps={{
-                startAdornment: <InputAdornment position="start" />,
-              }}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}> 
-          <Autocomplete
-              options={cropTypes}
-              value={cropType} 
-              onChange={(event, newValue) => {
-                if (typeof newValue === 'string') {
-                  handleInputChange(event as React.ChangeEvent<HTMLInputElement>); 
-                  setFormValues({ ...formValues, cropType: newValue });
-                  
-                }
-              }}
-              getOptionLabel={(option) => option}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Tipo de Cultivo"
-                  variant="outlined"
-                  name="cropType"
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: <InputAdornment position="start" />,
-                  }}
-                  fullWidth
-                />
-                )}
-                />
-              </Grid>
-            </Grid>
+      <PageContainer maxWidth={980}>
+        <PageHeader
+          icon={<YardOutlined />}
+          eyebrow="Maestros · Cultivos"
+          title={cropsActive ? "Editar cultivo" : "Nuevo cultivo"}
+          onBack={onClickCancel}
+        />
+        <FormCard title="Datos del cultivo" icon={<YardOutlined />}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
+              <TextField
+                label="Nombre"
+                variant="outlined"
+                type="text"
+                name="descriptionES"
+                value={descriptionES}
+                onChange={handleInputChange}
+                inputProps={{ maxLength: 20 }} 
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}> 
+              <Autocomplete
+                options={cropTypes}
+                value={cropType} 
+                onChange={(event, newValue) => {
+                  if (typeof newValue === 'string') {
+                    handleInputChange(event as React.ChangeEvent<HTMLInputElement>); 
+                    setFormValues({ ...formValues, cropType: newValue });
+                    
+                  }
+                }}
+                getOptionLabel={(option) => option}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Tipo de cultivo"
+                    variant="outlined"
+                    name="cropType"
+                    fullWidth
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Descripción ES"
                 variant="outlined"
@@ -213,14 +185,10 @@ export const NewCropsPage: React.FC = () => {
                 value={descriptionES}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 20 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
                 fullWidth
-                sx={{ mt: 2, width: '50%' }} 
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Descripción PT"
                 variant="outlined"
@@ -229,14 +197,10 @@ export const NewCropsPage: React.FC = () => {
                 value={descriptionPT}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 20 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
                 fullWidth
-                sx={{ mt: 2, width: '50%' }} 
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Descripción EN"
                 variant="outlined"
@@ -245,70 +209,47 @@ export const NewCropsPage: React.FC = () => {
                 value={descriptionEN}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 20 }} 
-                InputProps={{
-                  startAdornment: <InputAdornment position="start" />,
-                }}
                 fullWidth
-                sx={{ mt: 2, width: '50%' }} 
               />
             </Grid>
-            <Grid></Grid>
-            <Grid item xs={12} sx={{ height: '20px' }} />
-            <Box>
-            <Typography component="h4" variant="h4" align="center" sx={{ my: 1, mb: 5 }}>
-              Labores que aplica
-            </Typography>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: '20px' }}>
-    <label htmlFor="preparedCheckbox">
-      <Checkbox id="preparedCheckbox" checked={prepared} onChange={handlePreparedChange} name="prepared" />
-      Preparado
-    </label>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: '20px' }}>
-    <label htmlFor="sowingCheckbox">
-      <Checkbox id="sowingCheckbox" checked={sowing} onChange={handleSowingChange} name="sowing" />
-      Siembra
-    </label>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: '20px' }}>
-    <label htmlFor="applicationCheckbox">
-      <Checkbox id="applicationCheckbox" checked={application} onChange={handleApplicationChange} name="application" />
-      Aplicacion
-    </label>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: '20px' }}>
-    <label htmlFor="germinationCheckbox">
-      <Checkbox id="germinationCheckbox" checked={germination} onChange={handleGerminationChange} name="germination" />
-      Arrancado
-    </label>
-  </div>
-  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-    <label htmlFor="harvestCheckbox">
-      <Checkbox id="harvestCheckbox" checked={harvest} onChange={handleHarvestChange} name="harvest" />
-      Cosecha
-    </label>
-  </div>
-</div>
-
-          </Box>
-          <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ mt: { sm: 5 } }}>
-            <Grid item xs={12} sm={3}>
-              <Button onClick={onClickCancel}>Cancelar</Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={cropsActive ? handleUpdateCrops : handleAddCrops}
-              // fullWidth
-              >
-                {!cropsActive ? "Guardar" : "Actualizar"}
-              </Button>
-            </Grid>
           </Grid>
-        </Paper>
-      </Container>
+        </FormCard>
+        <FormCard title="Labores que aplica" icon={<AgricultureOutlined />} delay={100}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 3, rowGap: 0.5 }}>
+            <FormControlLabel
+              control={<Checkbox id="preparedCheckbox" checked={prepared} onChange={handlePreparedChange} name="prepared" />}
+              label="Preparado"
+            />
+            <FormControlLabel
+              control={<Checkbox id="sowingCheckbox" checked={sowing} onChange={handleSowingChange} name="sowing" />}
+              label="Siembra"
+            />
+            <FormControlLabel
+              control={<Checkbox id="applicationCheckbox" checked={application} onChange={handleApplicationChange} name="application" />}
+              label="Aplicación"
+            />
+            <FormControlLabel
+              control={<Checkbox id="germinationCheckbox" checked={germination} onChange={handleGerminationChange} name="germination" />}
+              label="Arrancado"
+            />
+            <FormControlLabel
+              control={<Checkbox id="harvestCheckbox" checked={harvest} onChange={handleHarvestChange} name="harvest" />}
+              label="Cosecha"
+            />
+          </Box>
+        </FormCard>
+        <FormActions>
+          <Button variant="outlined" onClick={onClickCancel}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={cropsActive ? handleUpdateCrops : handleAddCrops}
+          // fullWidth
+          >
+            {!cropsActive ? "Guardar" : "Actualizar"}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
 };

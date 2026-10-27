@@ -2,19 +2,14 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useForm, useUser } from "../../hooks";
 import { UserDto } from "../../types";
-import { Loading, UserForm } from "../../components";
+import { FormActions, FormCard, Loading, PageContainer, PageHeader, UserForm } from "../../components";
 import { removeUserActive } from "../../store/user";
 import {
   Button,
-  Container,
-  Grid,
-  Paper,
-  Typography,
-  Box,
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { Person as PersonIcon } from "@mui/icons-material";
+import { PersonOutlineOutlined } from "@mui/icons-material";
 
 const initialForm: UserDto = {
   username: "",
@@ -71,43 +66,32 @@ export const UserPage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
+      <PageContainer maxWidth={980}>
+        <PageHeader
+          icon={<PersonOutlineOutlined />}
+          eyebrow="Usuarios y cuentas · Usuarios Backoffice"
+          title={userActive ? "Editar usuario" : "Nuevo usuario"}
+          onBack={onClickCancel}
+        />
+        <FormCard
+          title="Datos del usuario"
+          icon={<PersonOutlineOutlined />}
+          aside={
+            user?.isAdmin && (
+              <FormControlLabel
+                sx={{ mr: 0 }}
+                control={
+                  <Switch
+                    checked={formValues.isAdmin}
+                    onChange={() => handleChangeAdmin()}
+                    defaultChecked
+                  />
+                }
+                label="Full Admin"
+              />
+            )
+          }
         >
-          <PersonIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
-            Usuarios-Backoffice
-          </Typography>
-        </Box>
-
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography component="h1" variant="h4" align="center" sx={{ my: 3 }}>
-            {userActive ? "Editar" : "Nuevo"} usuairo
-          </Typography>
-          {user?.isAdmin && (
-            <FormControlLabel
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                mb: 2,
-              }}
-              control={
-                <Switch
-                  checked={formValues.isAdmin}
-                  onChange={() => handleChangeAdmin()}
-                  defaultChecked
-                />
-              }
-              label="Full Admin"
-            />
-          )}
           <UserForm
             key="users"
             // user={formValues}
@@ -115,29 +99,19 @@ export const UserPage: React.FC = () => {
             isNewUser={!userActive}
             setUser={handleInputChange}
           />
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-around"
-            sx={{ mt: { sm: 5 } }}
+        </FormCard>
+        <FormActions>
+          <Button variant="outlined" onClick={() => onClickCancel()}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={userActive ? handleUpdateUser : handleAddNewUser}
+          // fullWidth
           >
-            <Grid item xs={12} sm={3} key="grid-back">
-              <Button onClick={() => onClickCancel()}>Cancelar</Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={userActive ? handleUpdateUser : handleAddNewUser}
-              // fullWidth
-              >
-                {!userActive ? "Guardar" : "Actualizar"}
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+            {!userActive ? "Guardar" : "Actualizar"}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
 };

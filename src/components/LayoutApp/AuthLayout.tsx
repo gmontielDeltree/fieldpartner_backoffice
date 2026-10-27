@@ -83,13 +83,10 @@ const BrandPanel: React.FC = () => (
               ...authEnter(60),
             }}
           >
-            <span>Backoffice de FieldPartner,</span>
+            <span>Backoffice de FieldPartner</span>
             <Box component="span" sx={{ color: onPhoto.ink3 }}>
-              la trastienda del sistema.
+              Cuentas, licencias y maestros.
             </Box>
-          </Typography>
-          <Typography sx={{ maxWidth: 420, mt: 1.5, fontSize: 15, lineHeight: 1.55, color: onPhoto.ink2, ...authEnter(110) }}>
-            Administrá cuentas, licencias, menús y los datos maestros que usa toda la plataforma.
           </Typography>
 
           <Box sx={{ display: 'grid', gridTemplateColumns: { md: 'minmax(0, 1fr)', lg: 'repeat(3, minmax(0, 1fr))' }, gap: 1.25, mt: 4 }}>

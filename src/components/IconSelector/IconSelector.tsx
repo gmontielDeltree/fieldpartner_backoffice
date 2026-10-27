@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useState } from 'react';
 import * as MuiIcons from '@mui/icons-material';
-import { TextField, InputAdornment, IconButton, CircularProgress } from '@mui/material';
-import { Close as CloseIcon, Search as SearchIcon } from '@mui/icons-material';
+import { TextField, InputAdornment, IconButton, CircularProgress, Tooltip } from '@mui/material';
+import { CloseRounded as CloseIcon, SearchRounded as SearchIcon } from '@mui/icons-material';
 
 const IconSelectorModal = lazy(() =>
   import('../IconSelectorModal/IconSelectorModal').then(module => ({
@@ -20,7 +20,7 @@ interface IconSelectorProps {
 export const IconSelector: React.FC<IconSelectorProps> = ({
   value,
   onChange,
-  label = 'Seleccionar Ícono',
+  label = 'Seleccionar ícono',
   error,
   helperText,
 }) => {
@@ -41,40 +41,49 @@ export const IconSelector: React.FC<IconSelectorProps> = ({
         onClick={() => setIsModalOpen(true)}
         error={error}
         helperText={helperText}
+        sx={{ '& .MuiInputBase-root, & .MuiInputBase-input': { cursor: 'pointer' } }}
         InputProps={{
           readOnly: true,
           startAdornment: Icon && (
-            <InputAdornment position='start'>
-              <Icon />
+            <InputAdornment position='start' sx={{ color: 'var(--ink-2)' }}>
+              <Icon sx={{ fontSize: 20 }} />
             </InputAdornment>
           ),
           endAdornment: (
             <InputAdornment position='end'>
               {value && (
-                <IconButton
-                  onClick={handleClearIcon}
-                  size='small'
-                  sx={{
-                    mr: 0.5,
-                    color: 'error.main',
-                    '&:hover': {
-                      backgroundColor: 'error.light',
-                      color: 'error.dark',
-                    },
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
+                <Tooltip title='Quitar ícono'>
+                  <IconButton
+                    aria-label='Quitar ícono'
+                    onClick={handleClearIcon}
+                    size='small'
+                    sx={{
+                      mr: 0.25,
+                      color: 'var(--ink-3)',
+                      '&:hover': { color: 'var(--red)', backgroundColor: 'var(--red-tint)' },
+                    }}
+                  >
+                    <CloseIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
               )}
-              <IconButton onClick={() => setIsModalOpen(true)} size='small'>
-                {Icon ? <Icon /> : <SearchIcon />}
-              </IconButton>
+              <Tooltip title='Elegir ícono'>
+                <IconButton
+                  aria-label='Elegir ícono'
+                  onClick={() => setIsModalOpen(true)}
+                  size='small'
+                  edge='end'
+                  sx={{ color: 'var(--ink-2)' }}
+                >
+                  <SearchIcon sx={{ fontSize: 19 }} />
+                </IconButton>
+              </Tooltip>
             </InputAdornment>
           ),
         }}
       />
 
-      <Suspense fallback={<CircularProgress />}>
+      <Suspense fallback={<CircularProgress size={20} />}>
         {isModalOpen && (
           <IconSelectorModal
             open={isModalOpen}

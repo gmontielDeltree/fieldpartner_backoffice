@@ -1,19 +1,15 @@
 import React, { useEffect } from "react";
-import { Loading } from "../components";
+import { FormActions, FormCard, Loading, PageContainer, PageHeader } from "../components";
 import {
-  Box,
   Button,
-  Container,
   Grid,
-  InputAdornment,
-  Paper,
   Radio,
   RadioGroup,
   FormControlLabel,
   TextField,
   Typography,
 } from "@mui/material";
-import { Inventory as InventoryIcon } from "@mui/icons-material";
+import { Inventory2Outlined, LabelOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
   useAppDispatch,
@@ -23,6 +19,13 @@ import {
 } from "../hooks";
 import { SupplyType } from "../types";
 import { removeSupplieActive } from "../store/supplie";
+
+/** Rótulo chico arriba de un grupo de radios. */
+const FieldCaption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Typography component="div" sx={{ fontSize: 12.5, fontWeight: 500, color: "var(--ink-2)", mb: 0.5 }}>
+    {children}
+  </Typography>
+);
 
 const initialForm: SupplyType = {
   name: "",
@@ -80,41 +83,16 @@ export const SuppliesTypePage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <InventoryIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
-            Tipos de Insumos
-          </Typography>
-        </Box>
-
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            sx={{ my: 3, mb: 5 }}
-          >
-            {supplieActive ? "Editar" : "Nuevo"} Insumo
-          </Typography>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-around"
-          >
-            <Box sx={{ width: '45%' }}>
-            <Grid container spacing={2}>
-
-            <Grid item xs={12} >
+      <PageContainer maxWidth={980}>
+        <PageHeader
+          icon={<Inventory2Outlined />}
+          eyebrow="Maestros · Tipos de insumos"
+          title={supplieActive ? "Editar tipo de insumo" : "Nuevo tipo de insumo"}
+          onBack={onClickCancel}
+        />
+        <FormCard title="Tipo de insumo" icon={<Inventory2Outlined />}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Tipo ES"
                 variant="outlined"
@@ -124,11 +102,10 @@ export const SuppliesTypePage: React.FC = () => {
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
-                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} >
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Tipo PT"
                 variant="outlined"
@@ -138,11 +115,10 @@ export const SuppliesTypePage: React.FC = () => {
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
-                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} >
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Tipo EN"
                 variant="outlined"
@@ -152,29 +128,26 @@ export const SuppliesTypePage: React.FC = () => {
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
-                InputProps={{ startAdornment: <InputAdornment position="start" /> }}
                 fullWidth
               />
             </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Descripción"
+                variant="outlined"
+                type="text"
+                name="description"
+                value={description}
+                onChange={handleInputChange}
+                fullWidth
+              />
             </Grid>
-            </Box>
-            <Box sx={{ width: '50%', marginTop: '-125px' }}>
-              <Grid item xs={12} style={{ marginTop: '-20px' }}>
-                <TextField
-                  label="Descripción"
-                  variant="outlined"
-                  type="text"
-                  name="description"
-                  value={description}
-                  onChange={handleInputChange}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start" />,
-                  }}
-                  fullWidth
-                />
-              </Grid>
-            </Box>
-            <Grid item xs={6}>
+          </Grid>
+        </FormCard>
+        <FormCard title="Clasificación" icon={<LabelOutlined />} delay={100}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <FieldCaption>Fitosanitario</FieldCaption>
               <RadioGroup
                 row
                 name="fitosanitario"
@@ -189,11 +162,12 @@ export const SuppliesTypePage: React.FC = () => {
                 <FormControlLabel
                   value="false"
                   control={<Radio />}
-                  label="No Fitosanitario"
+                  label="No fitosanitario"
                 />
               </RadioGroup>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
+              <FieldCaption>Cultivo</FieldCaption>
               <RadioGroup
                 row
                 name="cultivo"
@@ -208,35 +182,25 @@ export const SuppliesTypePage: React.FC = () => {
                 <FormControlLabel
                   value="false"
                   control={<Radio />}
-                  label="No Cultivo"
+                  label="No cultivo"
                 />
               </RadioGroup>
             </Grid>
           </Grid>
-          <Grid
-            container
-            spacing={1}
-            alignItems="center"
-            justifyContent="space-around"
-            sx={{ mt: { sm: 5 } }}
+        </FormCard>
+        <FormActions>
+          <Button variant="outlined" onClick={() => onClickCancel()}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={
+              supplieActive ? handleUpdateSupplie : handleAddSupplie
+            }
           >
-            <Grid item xs={12} sm={3} key="grid-back">
-              <Button onClick={() => onClickCancel()}>Cancelar</Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={
-                  supplieActive ? handleUpdateSupplie : handleAddSupplie
-                }
-              >
-                {!supplieActive ? "Guardar" : "Actualizar"}
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+            {!supplieActive ? "Guardar" : "Actualizar"}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
 };

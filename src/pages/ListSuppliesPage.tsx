@@ -2,38 +2,36 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { ColumnProps, SupplyType } from "../types";
 import React, { useEffect } from "react";
 import { useAppDispatch, useSupplies, useForm } from "../hooks";
-import { Inventory as InventoryIcon } from "@mui/icons-material";
 import {
   DataTable,
+  EmptyState,
   ItemRow,
+  ListCard,
+  ListToolbar,
   Loading,
-  SearchButton,
-  SearchInput,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
   TableCellStyled,
+  ValuePill,
 } from "../components";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-// import 'semantic-ui-css/semantic.min.css';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
+  AddRounded,
+  DeleteOutline,
+  EditOutlined,
+  Inventory2Outlined,
+  SearchRounded,
 } from "@mui/icons-material";
 import { setSupplieActive } from "../store/supplie";
 
 
 const columns: ColumnProps[] = [
   { text: "Tipo", align: "left", field: "name", sortable: true },
-  { text: "Descripcion", align: "right", field: "description", sortable: true },
-  { text: "Cultivo", align: "center", field: "cultivo", sortable: true },
-  { text: "Fitosanitario", align: "right", field: "fitosanitario", sortable: true },
+  { text: "Descripción", align: "left", field: "description", sortable: true },
+  { text: "Cultivo", align: "left", field: "cultivo", sortable: true },
+  { text: "Fitosanitario", align: "left", field: "fitosanitario", sortable: true },
 ];
 
 export const ListSuppliesPage: React.FC = () => {
@@ -113,79 +111,42 @@ export const ListSuppliesPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <InventoryIcon />
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Tipos de Insumos
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
-          >
-            <Grid
-              container
-              spacing={0}
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ p: 2, mt: { sm: 2 } }}
-            >
-              <Grid item xs={6} sm={4}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component={RouterLink}
-                  to="/type-supplies/new"
-                  startIcon={<AddIcon />}
-                >
-                  Nuevo Insumo
-                </Button>
-              </Grid>
-              <Grid item xs={6} sm={8}>
-                <Grid
-                  container
-                  justifyContent="flex-end"
-                  alignItems="center"
-                >
-                  <Grid item xs={8} sm={5}>
-                    <SearchInput
-                      value={filterText}
-                      placeholder="Buscar Insumo"
-                      handleInputChange={handleInputChange}
-                    />
-                  </Grid>
-                  <Grid item xs={4} sm={3}>
-                    <SearchButton
-                      text="Buscar"
-                      onClick={() => onClickSearch()}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 1, textAlign: "right" }}
-                    >
-                      {rows.length} {rows.length === 1 ? "insumo" : "insumos"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
+      <PageContainer>
+        <PageHeader
+          icon={<Inventory2Outlined />}
+          title="Tipos de insumos"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/type-supplies/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar>
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar insumo…"
+              onSubmit={onClickSearch}
+            />
+            <Button variant="outlined" size="small" startIcon={<SearchRounded />} onClick={() => onClickSearch()} sx={{ height: 34 }}>
+              Buscar
+            </Button>
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+            ) : (
+              <EmptyState icon={<Inventory2Outlined />} title="No se encontraron insumos" hint="Cargá el primero con «Nuevo»." />
+            )
+          ) : (
             <DataTable
               key="datatable-supplies"
               columns={columns}
@@ -194,53 +155,42 @@ export const ListSuppliesPage: React.FC = () => {
               sortDirection={sortDirection}
               onSort={handleSort}
             >
-              {!isLoading && rows.length === 0 && (
-                <ItemRow>
-                  <TableCellStyled align="center" colSpan={5}>
-                    No se encontraron insumos
-                  </TableCellStyled>
-                </ItemRow>
-              )}
               {rows.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>
                     {row.name}
                   </TableCellStyled>
-                  <TableCellStyled align="right">
+                  <TableCellStyled align="left">
                     {row.description}
                   </TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.cultivo ? "Cultivo" : "No Cultivo"}
+                  <TableCellStyled align="left">
+                    <ValuePill tone={row.cultivo ? "accent" : "neutral"}>
+                      {row.cultivo ? "Cultivo" : "No cultivo"}
+                    </ValuePill>
                   </TableCellStyled>
-                  <TableCellStyled align="right">
-                    {row.fitosanitario ? "SI" : "NO"}
+                  <TableCellStyled align="left">
+                    <ValuePill tone={row.fitosanitario ? "orange" : "neutral"}>
+                      {row.fitosanitario ? "Sí" : "No"}
+                    </ValuePill>
                   </TableCellStyled>
-                  <TableCellStyled align="right">
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">
-                      <IconButton
-                        aria-label="Editar"
-                        onClick={() => onClickUpdateSupplie(row)}
-                      >
-                        <EditIcon />
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateSupplie(row)}>
+                        <EditOutlined />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Eliminar">
-                      <IconButton
-                        onClick={() => handleDeleteSupplie(row)}
-                        style={{ fontSize: '1rem' }}
-                        color="default"
-                      >
-                        <DeleteIcon />
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteSupplie(row)}>
+                        <DeleteOutline />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>
                 </ItemRow>
               ))}
             </DataTable>
-          </Box>
-        </Box>
-      </Container>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
 };
-

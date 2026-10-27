@@ -11,12 +11,14 @@ import {
   CircularProgress,
   Alert,
   Grid,
-  useTheme,
 } from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import ScienceIcon from '@mui/icons-material/Science';
+import AutoAwesomeOutlined from '@mui/icons-material/AutoAwesomeOutlined';
+import ScienceOutlined from '@mui/icons-material/ScienceOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import VisibilityOutlined from '@mui/icons-material/VisibilityOutlined';
 import { generateMaterialIcon } from '../../services/iconGeneratorService';
+import { DialogHeading, FormSectionTitle } from '../ui';
 
 interface IconGeneratorModalProps {
   open: boolean;
@@ -34,7 +36,6 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
   const [generatedIcon, setGeneratedIcon] = useState<string | null>(null);
   const [generationStatus, setGenerationStatus] = useState<string>('');
   const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const theme = useTheme();
 
   // Función para manejar timeout de generación
   const handleGenerationTimeout = () => {
@@ -96,17 +97,17 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
   const LoadingIndicator = () => (
     <Box sx={{ textAlign: 'center' }}>
       <CircularProgress
-        size={80}
+        size={56}
         thickness={4}
         sx={{
-          color: theme.palette.primary.main,
+          color: 'var(--accent)',
           mb: 2,
         }}
       />
-      <Typography variant='body2' color='textSecondary' sx={{ mb: 1 }}>
+      <Typography sx={{ mb: 0.5, fontSize: 13.5, fontWeight: 500, color: 'var(--ink)' }}>
         {generationStatus}
       </Typography>
-      <Typography variant='caption' color='textSecondary'>
+      <Typography sx={{ fontSize: 12.5, color: 'var(--ink-3)' }}>
         Este proceso puede tomar hasta 3 minutos...
       </Typography>
     </Box>
@@ -123,10 +124,10 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'background.paper',
-          borderRadius: 1,
-          border: '1px solid',
-          borderColor: 'divider',
+          background: 'var(--inset)',
+          borderRadius: '10px',
+          boxShadow: 'var(--shadow-hairline)',
+          color: 'var(--ink)',
           p: 2,
           position: 'relative',
         }}
@@ -140,12 +141,12 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
                 __html: svgContent.replace('<svg', '<svg style="width: 150px; height: 150px;"'),
               }}
             />
-            <Typography variant='caption' color='success.main' sx={{ mt: 2 }}>
+            <Typography sx={{ mt: 2, fontSize: 12.5, fontWeight: 500, color: 'var(--green)' }}>
               {generationStatus}
             </Typography>
           </>
         ) : (
-          <Typography variant='body2' color='textSecondary'>
+          <Typography sx={{ fontSize: 13, color: 'var(--ink-3)' }}>
             El ícono generado aparecerá aquí
           </Typography>
         )}
@@ -161,46 +162,18 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth='md'
-      fullWidth
-      sx={{
-        '& .MuiDialog-paper': {
-          borderRadius: 3,
-          background: theme.palette.background.paper,
-        },
-      }}
-    >
-      <DialogTitle
-        sx={{
-          textAlign: 'center',
-          py: 3,
-          backgroundColor: theme.palette.primary.light,
-          color: theme.palette.getContrastText(theme.palette.primary.light),
-          position: 'relative',
-        }}
-      >
-        <Box display='flex' alignItems='center' justifyContent='center' gap={1}>
-          <AutoAwesomeIcon fontSize='large' />
-          <Typography variant='h5' component='div'>
-            Generador de Íconos con QTS Agro IA
-          </Typography>
-        </Box>
-        <Typography variant='subtitle1' sx={{ mt: 1, opacity: 0.9 }}>
-          Potenciado por QTS Agro IA
-        </Typography>
+    <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
+      <DialogTitle sx={{ pb: 2 }}>
+        <DialogHeading icon={<AutoAwesomeOutlined />} subtitle='Potenciado por QTS Agro IA'>
+          Generador de íconos con QTS Agro IA
+        </DialogHeading>
       </DialogTitle>
 
-      <DialogContent sx={{ py: 3 }}>
+      <DialogContent dividers>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <ScienceIcon color='primary' />
-                <Typography variant='h6'>Describe tu ícono</Typography>
-              </Box>
+              <FormSectionTitle icon={<ScienceOutlined />}>Describe tu ícono</FormSectionTitle>
 
               <TextField
                 fullWidth
@@ -211,25 +184,27 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
                 onChange={e => setPrompt(e.target.value)}
                 placeholder='Ej: Un ícono de una hoja de árbol'
                 disabled={isGenerating}
-                sx={{ mb: 1 }}
               />
 
               <Box
                 sx={{
-                  backgroundColor: theme.palette.grey[100],
-                  borderRadius: 1,
-                  p: 2,
-                  borderLeft: `4px solid ${theme.palette.info.main}`,
+                  px: 1.5,
+                  py: 1.25,
+                  borderRadius: '8px',
+                  background: 'var(--inset)',
+                  boxShadow: 'var(--shadow-hairline)',
+                  fontSize: 13,
+                  color: 'var(--ink-2)',
                 }}
               >
-                <Typography variant='body2' color='textSecondary'>
-                  <strong>Sugerencia:</strong> Sé lo más específico posible y menciona elementos
-                  clave.
-                </Typography>
+                <Box component='strong' sx={{ color: 'var(--ink)', fontWeight: 600 }}>
+                  Sugerencia:
+                </Box>{' '}
+                Sé lo más específico posible y menciona elementos clave.
               </Box>
 
-              <Alert severity='info' sx={{ mt: 1 }}>
-                Por ahora genera cualquier cosa mas adelante se puede mejorar
+              <Alert severity='info'>
+                Por ahora genera cualquier cosa; más adelante se puede mejorar.
               </Alert>
             </Box>
           </Grid>
@@ -239,16 +214,14 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
+                gap: 2,
                 height: '100%',
-                borderLeft: { md: `1px solid ${theme.palette.divider}` },
+                borderLeft: { md: '1px solid var(--line)' },
                 pl: { md: 3 },
-                pt: { xs: 3, md: 0 },
+                pt: { xs: 1, md: 0 },
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                <AutoAwesomeIcon color='primary' />
-                <Typography variant='h6'>Vista previa</Typography>
-              </Box>
+              <FormSectionTitle icon={<VisibilityOutlined />}>Vista previa</FormSectionTitle>
 
               {renderPreviewIcon(generatedIcon || '')}
             </Box>
@@ -256,27 +229,20 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
         </Grid>
       </DialogContent>
 
-      <DialogActions
-        sx={{
-          p: 3,
-          justifyContent: 'space-between',
-          borderTop: `1px solid ${theme.palette.divider}`,
-        }}
-      >
+      <DialogActions sx={{ justifyContent: 'space-between' }}>
         <Button
           onClick={() => {
             handleReset();
             onClose();
           }}
-          color='inherit'
           variant='outlined'
         >
           Cancelar
         </Button>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {generatedIcon && (
-            <Button variant='outlined' onClick={handleReset} startIcon={<AutoAwesomeIcon />}>
+            <Button variant='outlined' onClick={handleReset} startIcon={<AutoAwesomeOutlined />}>
               Generar otro
             </Button>
           )}
@@ -287,7 +253,6 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
               onClick={handleGenerate}
               disabled={!prompt || isGenerating}
               startIcon={<AutoAwesomeIcon />}
-              sx={{ minWidth: 180 }}
             >
               Generar con IA
             </Button>
@@ -297,7 +262,6 @@ export const IconGeneratorModal: React.FC<IconGeneratorModalProps> = ({
               onClick={handleConfirm}
               color='primary'
               startIcon={<CheckCircleIcon />}
-              sx={{ minWidth: 180 }}
             >
               Usar este ícono
             </Button>

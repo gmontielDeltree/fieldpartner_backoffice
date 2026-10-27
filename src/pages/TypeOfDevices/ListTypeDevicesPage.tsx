@@ -1,32 +1,32 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { 
-Box,
-Button,
-Container,
-Grid,
-IconButton,
-Tooltip,
-Typography,
-TableContainer,
-Paper,
-} from "@mui/material";
-import {
-Add as AddIcon,
-Edit as EditIcon,
-Delete as DeleteIcon,
-SettingsInputAntenna as SettingsInputAntennaIcon ,
-} from "@mui/icons-material";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import { AddRounded, DeleteOutline, EditOutlined, SettingsInputAntennaOutlined } from "@mui/icons-material";
 import { useAppDispatch, useForm, useTypeDevices } from "../../hooks";
 import { setTypeDevicesACtive } from "../../store/typedevices";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
-import { ColumnProps, TypeDevices } from "../../types";
+import {
+  DataTable,
+  EmptyState,
+  FilteredCount,
+  ItemRow,
+  ListCard,
+  ListToolbar,
+  Loading,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
+  StatusPill,
+  TableCellStyled,
+  ValuePill,
+} from "../../components";
+import { ColumnProps, DeviceStatus, TypeDevices } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Familia", align: "left", field: "family", sortable: true },
-  { text: "Subfamilia", align: "center", field: "subFamily", sortable: true },
-  { text: "Modelo", align: "center", field: "model", sortable: true },
-  { text: "Status", align: "center", field: "available", sortable: true },
+  { text: "Subfamilia", align: "left", field: "subFamily", sortable: true },
+  { text: "Modelo", align: "left", field: "model", sortable: true },
+  { text: "Estado", align: "left", field: "available", sortable: true },
 ];
 
 export const ListTypeDevicesPage: React.FC = () => {
@@ -131,124 +131,77 @@ export const ListTypeDevicesPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <SettingsInputAntennaIcon/>
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Tipos de Dispositivo
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
-          >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                to="/type-of-devices/new"
-                startIcon={<AddIcon />}
-                sx={{ mb: 2 }}
-              >
-                Nuevo
-              </Button>  
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent="flex-end">
-                <Grid item xs={8} sm={5}>
-                  <SearchInput
-                    value={filterText}
-                    placeholder="Tipo / Dispositivo"
-                    handleInputChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <SearchButton text="Buscar" onClick={() => onClickSearch()} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: "right" }}
-                  >
-                    {rows.length} {rows.length === 1 ? "dispositivo" : "dispositivos"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
-            <TableContainer
-              key="table-licences"
-              sx={{
-                minHeight: "120px",
-                maxHeight: "540px",
-                overflow: "scroll",
-                mb: 5
-              }}
-              component={Paper}
+      <PageContainer>
+        <PageHeader
+          icon={<SettingsInputAntennaOutlined />}
+          title="Tipos de dispositivos"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/type-of-devices/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar aside={filterText ? <FilteredCount shown={rows.length} total={typeDevices.length} /> : undefined}>
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar por familia, modelo o estado…"
+              onSubmit={() => onClickSearch()}
+            />
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+            ) : (
+              <EmptyState icon={<SettingsInputAntennaOutlined />} title="No se encontraron dispositivos" hint="Cargá el primero con «Nuevo»." />
+            )
+          ) : (
+            <DataTable
+              key="datatable-type-devices"
+              columns={columns}
+              isLoading={isLoading}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
             >
-              <DataTable
-                key="datatable-type-devices"
-                columns={columns}
-                isLoading={isLoading}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              >
-                {!isLoading && rows.length === 0 && (
-                  <ItemRow>
-                    <TableCellStyled align="center" colSpan={5}>
-                      No se encontraron dispositivos
-                    </TableCellStyled>
-                  </ItemRow>
-                )}
-                {rows.map((row) => (
-                  <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.family}</TableCellStyled>
-                    <TableCellStyled align="center">{row.subFamily}</TableCellStyled>
-                    <TableCellStyled align="center">{row.model}</TableCellStyled>
-                    <TableCellStyled align="center">{row.available}</TableCellStyled>
-                    <TableCellStyled align="right">
-                      <Tooltip title="Editar">
-                        <IconButton
-                          aria-label="Editar"
-                          onClick={() => onClickUpdateTypeDevices(row)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton
-                          onClick={() => handleDeleteTypeDevices(row)}
-                          style={{ fontSize: '1rem' }}
-                          color="default"
-                        >
-                          <DeleteIcon name="trash alternate" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCellStyled>
-                  </ItemRow>
-                ))}
-              </DataTable>
-            </TableContainer>
-          </Box>
-        </Box>
-      </Container>
+              {rows.map((row) => (
+                <ItemRow key={row._id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.family}</TableCellStyled>
+                  <TableCellStyled align="left">{row.subFamily}</TableCellStyled>
+                  <TableCellStyled align="left">{row.model}</TableCellStyled>
+                  <TableCellStyled align="left">
+                    {row.available ? (
+                      <StatusPill status={row.available === DeviceStatus.Activo ? "done" : "neutral"} size="sm" dot>
+                        {row.available}
+                      </StatusPill>
+                    ) : null}
+                  </TableCellStyled>
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
+                    <Tooltip title="Editar">
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateTypeDevices(row)}>
+                        <EditOutlined />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Eliminar">
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteTypeDevices(row)}>
+                        <DeleteOutline />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCellStyled>
+                </ItemRow>
+              ))}
+            </DataTable>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
-  
-  
-  
 };

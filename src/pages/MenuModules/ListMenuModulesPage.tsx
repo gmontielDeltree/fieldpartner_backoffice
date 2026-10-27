@@ -3,52 +3,71 @@ import { useNavigate, Link as RouterLink, useSearchParams } from 'react-router-d
 import {
   Box,
   Button,
-  Container,
-  Grid,
   IconButton,
-  Tooltip,
-  Typography,
-  TableContainer,
-  Paper,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
-  Chip,
+  Tooltip,
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  List as ListIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  FileDownload as FileDownloadIcon,
+  AddRounded,
+  DeleteOutline,
+  DescriptionOutlined,
+  EditOutlined,
+  FileDownloadOutlined,
+  GridOnOutlined,
+  ListAltOutlined,
 } from '@mui/icons-material';
 import { useAppDispatch, useForm, useMenuModules } from '../../hooks';
 import { setMenuModulesACtive } from '../../store/menumodules/menuModulesSlice';
 import {
   DataTable,
+  EmptyState,
+  FilterChips,
+  FilteredCount,
   ItemRow,
+  ListCard,
+  ListToolbar,
   Loading,
-  SearchButton,
-  SearchInput,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
   TableCellStyled,
-  DynamicIcon,
+  ValuePill,
 } from '../../components';
+import type { Tone } from '../../components';
 import { ColumnProps, MenuModules } from '../../types';
-import { ListModulesPage } from './ListModulesPage';
+import { IconCell, ListModulesPage } from './ListModulesPage';
 import { exportMenuModules, ExportFormat } from '../../utils/excelExport';
 import Swal from 'sweetalert2';
 
 const columns: ColumnProps[] = [
   { text: 'Ícono', align: 'center' },
-  { text: 'Modulo', align: 'left' },
-  { text: 'System', align: 'center', field: 'systemType', sortable: true },
-  { text: 'ID', align: 'center', field: 'id', sortable: true },
-  { text: 'Menu', align: 'center', field: 'menuOption', sortable: true },
-  { text: 'Orden', align: 'center', field: 'order', sortable: true },
-  { text: 'Tipo', align: 'center', field: 'menuType', sortable: true },
+  { text: 'Módulo', align: 'left' },
+  { text: 'Sistema', align: 'left', field: 'systemType', sortable: true },
+  { text: 'ID', align: 'right', field: 'id', sortable: true },
+  { text: 'Menú', align: 'left', field: 'menuOption', sortable: true },
+  { text: 'Orden', align: 'right', field: 'order', sortable: true },
+  { text: 'Tipo', align: 'left', field: 'menuType', sortable: true },
   { text: 'Ruta', align: 'left', field: 'route', sortable: true },
-  { text: 'Acciones', align: 'center' },
 ];
+
+/** Tono de la ficha del tipo de menú (solo presentación). */
+const MENU_TYPE_TONE: Record<string, Tone> = {
+  SideBar: 'accent',
+  NavBar: 'blue',
+  Modal: 'orange',
+};
+
+const Dash = () => (
+  <Box component='span' sx={{ color: 'var(--ink-3)' }}>
+    -
+  </Box>
+);
+
+type View = 'menus' | 'modules';
 
 export const ListMenuModulesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,12 +79,6 @@ export const ListMenuModulesPage: React.FC = () => {
     | 'menus'
     | 'modules';
   const [view, setView] = useState<'menus' | 'modules'>(initialView);
-
-  // Anchor para el menú del "título selector"
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const menuOpen = Boolean(anchorEl);
-  const openMenu = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
-  const closeMenu = () => setAnchorEl(null);
 
   // Anchor para el menú de exportación
   const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(null);
@@ -202,368 +215,205 @@ export const ListMenuModulesPage: React.FC = () => {
 
   const rows = filterMenuModules(menuModules, filterText)
 
+  // Selector de vista (Menús / Módulos) en la barra de la lista
+  const viewSwitcher = (
+    <FilterChips<View>
+      options={[
+        { key: 'menus', label: 'Menús' },
+        { key: 'modules', label: 'Módulos' },
+      ]}
+      value={view}
+      onChange={next => handleViewChange(null, next)}
+      sx={{ mx: 0, px: 0.25, py: 0.25, borderRadius: '10px', background: 'var(--field)', boxShadow: 'var(--shadow-hairline)' }}
+    />
+  );
+
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth='lg' sx={{ ml: 0 }}>
-        <Box
-          component='div'
-          display='flex'
-          alignItems='center'
-          justifyContent='space-between'
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <Box display='flex' alignItems='center' gap={1}>
-            <ListIcon />
-            <Button
-              onClick={openMenu}
-              endIcon={<KeyboardArrowDownIcon />}
-              disableRipple
-              sx={{
-                p: 0,
-                textTransform: 'none',
-                color: 'text.primary',
-                '& .MuiButton-endIcon': { ml: 1 },
-              }}
-              aria-haspopup='menu'
-              aria-expanded={menuOpen ? 'true' : undefined}
-              aria-controls='title-menu'
-            >
-              <Typography component='h4' variant='h4' sx={{ ml: { sm: 1 } }}>
-                {view === 'menus' ? 'Menús' : 'Módulos'}
-              </Typography>
-            </Button>
-            <Menu
-              id='title-menu'
-              anchorEl={anchorEl}
-              open={menuOpen}
-              onClose={closeMenu}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-            >
-              <MenuItem
-                selected={view === 'menus'}
-                onClick={() => {
-                  handleViewChange(null, 'menus');
-                  closeMenu();
-                }}
-              >
-                Menús
-              </MenuItem>
-              <MenuItem
-                selected={view === 'modules'}
-                onClick={() => {
-                  handleViewChange(null, 'modules');
-                  closeMenu();
-                }}
-              >
-                Módulos
-              </MenuItem>
-            </Menu>
-          </Box>
-          <Box />
-        </Box>
-
-        {view === 'menus' ? (
-          <Box component='div' sx={{ mt: 5 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 2,
-                mb: 3,
-                bgcolor: 'background.default',
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2
-              }}
-            >
-              <Grid
-                container
-                spacing={2}
-                direction='row'
-                alignItems='center'
-                justifyContent='space-between'
-              >
-                <Grid item xs={12} sm={3}>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    component={RouterLink}
-                    to='/menus-modules/new'
-                    startIcon={<AddIcon />}
-                    fullWidth
-                    sx={{
-                      py: 1.2,
-                      fontWeight: 600,
-                      boxShadow: 2,
-                      '&:hover': {
-                        boxShadow: 4,
-                      },
-                    }}
-                  >
-                    Nuevo Menú
-                  </Button>
-                </Grid>
-
-                <Grid item xs={12} sm={9}>
-                  <Grid container spacing={1} justifyContent='flex-end' alignItems='center'>
-                    {/* Botón de Exportar */}
-                    <Grid item xs={12} sm={2}>
-                      <Button
-                        variant='outlined'
-                        color='success'
-                        startIcon={<FileDownloadIcon />}
-                        onClick={openExportMenu}
-                        fullWidth
-                        sx={{
-                          py: 1.2,
-                          fontWeight: 600,
-                          borderWidth: 2,
-                          '&:hover': {
-                            borderWidth: 2,
-                            bgcolor: 'success.light',
-                            color: 'white',
-                          },
-                        }}
-                      >
-                        Exportar
-                      </Button>
-                      <Menu
-                        anchorEl={exportAnchorEl}
-                        open={exportMenuOpen}
-                        onClose={closeExportMenu}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                      >
-                        <MenuItem onClick={() => handleExport('excel')}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <FileDownloadIcon fontSize='small' color='success' />
-                            <Typography>Excel (.xlsx)</Typography>
-                          </Box>
-                        </MenuItem>
-                        <MenuItem onClick={() => handleExport('csv')}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <FileDownloadIcon fontSize='small' color='info' />
-                            <Typography>CSV (.csv)</Typography>
-                          </Box>
-                        </MenuItem>
-                      </Menu>
-                    </Grid>
-
-                    {/* Buscador */}
-                    <Grid item xs={12} sm={6}>
-                      <SearchInput
-                        value={filterText}
-                        placeholder='Buscar por menú, módulo, sistema o ID...'
-                        handleInputChange={handleInputChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
-                      <SearchButton text='Buscar' onClick={() => onClickSearch()} />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: 'right' }}
-                  >
-                    {rows.length} {rows.length === 1 ? 'módulo' : 'módulos'}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              {/* Stats rápidos */}
-              <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Chip
-                  label={`Total de menús: ${menuModules.length}`}
-                  color='primary'
+      {view === 'menus' ? (
+        <PageContainer>
+          <PageHeader
+            icon={<ListAltOutlined />}
+            title='Menús'
+            meta={
+              !isLoading ? (
+                <ValuePill>
+                  <RollingNumber value={rows.length} />
+                </ValuePill>
+              ) : undefined
+            }
+            actions={
+              <>
+                <Button
                   variant='outlined'
-                  size='small'
-                />
-              </Box>
-            </Paper>
-
-            <Box component='div' sx={{ p: 1 }}>
-              <TableContainer
-                key='table-menu-modules'
-                sx={{
-                  minHeight: '120px',
-                  maxHeight: '650px',
-                  overflow: 'auto',
-                  mb: 5,
-                  boxShadow: 2,
-                  borderRadius: 1,
-                }}
-                component={Paper}
-              >
-                <DataTable
-                  key='datatable-menu-modules'
-                  columns={columns}
-                  isLoading={isLoading}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
+                  startIcon={<FileDownloadOutlined />}
+                  onClick={openExportMenu}
+                  aria-haspopup='menu'
+                  aria-expanded={exportMenuOpen ? 'true' : undefined}
                 >
-                  {!isLoading && rows.length === 0 && (
-                    <ItemRow>
-                      <TableCellStyled align='center' colSpan={10}>
-                        No se encontraron módulos
-                      </TableCellStyled>
-                    </ItemRow>
-                  )}
-                  {rows.map(row => (
-                    <ItemRow
-                      key={row._id}
-                      hover
-                      sx={{
-                        '&:hover': {
-                          backgroundColor: 'action.hover',
-                        },
-                      }}
-                    >
-                      {/* Ícono */}
-                      <TableCellStyled align='center' sx={{ width: '60px' }}>
-                        {row.icon && (
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              p: 0.5,
-                            }}
-                          >
-                            <DynamicIcon iconName={row.icon} />
-                          </Box>
-                        )}
-                      </TableCellStyled>
+                  Exportar
+                </Button>
+                <Menu
+                  anchorEl={exportAnchorEl}
+                  open={exportMenuOpen}
+                  onClose={closeExportMenu}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  sx={{ mt: 0.5 }}
+                >
+                  <MenuItem onClick={() => handleExport('excel')}>
+                    <ListItemIcon>
+                      <GridOnOutlined fontSize='small' />
+                    </ListItemIcon>
+                    <ListItemText>Excel (.xlsx)</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={() => handleExport('csv')}>
+                    <ListItemIcon>
+                      <DescriptionOutlined fontSize='small' />
+                    </ListItemIcon>
+                    <ListItemText>CSV (.csv)</ListItemText>
+                  </MenuItem>
+                </Menu>
+                <Button
+                  variant='contained'
+                  component={RouterLink}
+                  to='/menus-modules/new'
+                  startIcon={<AddRounded />}
+                >
+                  Nuevo
+                </Button>
+              </>
+            }
+          />
+          <ListCard>
+            <ListToolbar
+              aside={filterText ? <FilteredCount shown={rows.length} total={menuModules.length} /> : undefined}
+            >
+              {viewSwitcher}
+              <SearchField
+                value={filterText}
+                onChange={handleInputChange}
+                placeholder='Buscar por menú, módulo, sistema o ID…'
+                onSubmit={onClickSearch}
+              />
+            </ListToolbar>
+            {!isLoading && rows.length === 0 ? (
+              filterText ? (
+                <EmptyState title='Sin resultados' hint='Probá con otra búsqueda' />
+              ) : (
+                <EmptyState
+                  icon={<ListAltOutlined />}
+                  title='No se encontraron menús'
+                  hint='Cargá el primero con «Nuevo».'
+                />
+              )
+            ) : (
+              <DataTable
+                key='datatable-menu-modules'
+                columns={columns}
+                isLoading={isLoading}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              >
+                {rows.map(row => (
+                  <ItemRow key={row._id} hover>
+                    {/* Ícono */}
+                    <TableCellStyled align='center' sx={{ width: 56, py: '6px' }}>
+                      {row.icon && <IconCell iconName={row.icon} />}
+                    </TableCellStyled>
 
-                      {/* Módulo */}
-                      <TableCellStyled align='left' sx={{ fontWeight: 500, minWidth: '150px' }}>
-                        {row.module?.moduleNameEs ?? '-'}
-                      </TableCellStyled>
+                    {/* Módulo */}
+                    <TableCellStyled align='left' sx={{ fontWeight: 500, minWidth: 120 }}>
+                      {row.module?.moduleNameEs ?? '-'}
+                    </TableCellStyled>
 
-                      {/* Sistema */}
-                      <TableCellStyled align='center' sx={{ minWidth: '120px' }}>
-                        <Typography variant='caption' sx={{ fontSize: '0.75rem' }}>
-                          {row.systemType || '-'}
-                        </Typography>
-                      </TableCellStyled>
-
-                      {/* ID */}
-                      <TableCellStyled align='center' sx={{ width: '60px' }}>
-                        <Chip
-                          label={row.id}
-                          size='small'
-                          variant='outlined'
-                          sx={{ fontSize: '0.7rem', height: '22px', fontWeight: 600 }}
-                        />
-                      </TableCellStyled>
-
-                      {/* Menu Option */}
-                      <TableCellStyled align='center' sx={{ minWidth: '150px' }}>
-                        <Typography variant='body2' sx={{ fontSize: '0.85rem' }}>
-                          {row.menuOption || '-'}
-                        </Typography>
-                        {row.parentId != null && row.parentId !== ('' as unknown as number) && (
-                          <Typography variant='caption' sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
-                            ↳ submenú de {row.parentId}
-                          </Typography>
-                        )}
-                      </TableCellStyled>
-
-                      {/* Orden */}
-                      <TableCellStyled align='center' sx={{ width: '70px' }}>
-                        <Chip
-                          label={row.order || '-'}
-                          size='small'
-                          color='info'
-                          variant='outlined'
-                          sx={{ fontSize: '0.7rem', height: '22px', minWidth: '35px' }}
-                        />
-                      </TableCellStyled>
-
-                      {/* Tipo de Menú */}
-                      <TableCellStyled align='center' sx={{ minWidth: '100px' }}>
-                        <Chip
-                          label={row.menuType || '-'}
-                          size='small'
-                          color='secondary'
-                          variant='outlined'
-                          sx={{ fontSize: '0.65rem', height: '22px' }}
-                        />
-                      </TableCellStyled>
-
-                      {/* Ruta */}
-                      <TableCellStyled align='left' sx={{ minWidth: '200px', maxWidth: '300px' }}>
-                        <Tooltip title={row.route || 'Sin ruta'} arrow>
-                          <Typography
-                            variant='caption'
-                            sx={{
-                              fontSize: '0.75rem',
-                              color: 'text.secondary',
-                              display: 'block',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {row.route || '-'}
-                          </Typography>
-                        </Tooltip>
-                      </TableCellStyled>
-
-                      {/* Acciones */}
-                      <TableCellStyled align='center' sx={{ width: '120px' }}>
-                        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                          <Tooltip title='Editar menú' arrow>
-                            <IconButton
-                              aria-label='Editar'
-                              onClick={() => onClickUpdateMenuModules(row)}
-                              size='small'
-                              color='primary'
-                              sx={{
-                                '&:hover': {
-                                  backgroundColor: 'primary.light',
-                                  color: 'white',
-                                },
-                              }}
-                            >
-                              <EditIcon fontSize='small' />
-                            </IconButton>
-                          </Tooltip>
-
-                          <Tooltip title='Eliminar menú' arrow>
-                            <IconButton
-                              onClick={() => handleDeleteMenuModules(row)}
-                              size='small'
-                              color='error'
-                              sx={{
-                                '&:hover': {
-                                  backgroundColor: 'error.light',
-                                  color: 'white',
-                                },
-                              }}
-                            >
-                              <DeleteIcon fontSize='small' />
-                            </IconButton>
-                          </Tooltip>
+                    {/* Sistema */}
+                    <TableCellStyled align='left' sx={{ whiteSpace: 'nowrap' }}>
+                      {row.systemType ? (
+                        <Box component='span' sx={{ color: 'var(--ink-2)' }}>
+                          {row.systemType}
                         </Box>
-                      </TableCellStyled>
-                    </ItemRow>
-                  ))}
-                </DataTable>
-              </TableContainer>
-            </Box>
-          </Box>
-        ) : (
-          <Box component='div' sx={{ mt: 4 }}>
-            {/* Lista de Módulos dentro de la misma vista */}
-            <ListModulesPage />
-          </Box>
-        )}
-      </Container>
+                      ) : (
+                        <Dash />
+                      )}
+                    </TableCellStyled>
+
+                    {/* ID */}
+                    <TableCellStyled align='right' sx={{ width: 72 }}>
+                      <ValuePill mono>{row.id}</ValuePill>
+                    </TableCellStyled>
+
+                    {/* Menú */}
+                    <TableCellStyled align='left' sx={{ minWidth: 150 }}>
+                      <Box component='span' sx={{ display: 'block' }}>
+                        {row.menuOption || '-'}
+                      </Box>
+                      {row.parentId != null && row.parentId !== ('' as unknown as number) && (
+                        <Box component='span' sx={{ display: 'block', mt: 0.25, fontSize: 12, color: 'var(--ink-3)' }}>
+                          ↳ submenú de {row.parentId}
+                        </Box>
+                      )}
+                    </TableCellStyled>
+
+                    {/* Orden */}
+                    <TableCellStyled align='right' sx={{ width: 80 }}>
+                      {row.order ? <ValuePill mono>{row.order}</ValuePill> : <Dash />}
+                    </TableCellStyled>
+
+                    {/* Tipo de menú */}
+                    <TableCellStyled align='left' sx={{ width: 100 }}>
+                      {row.menuType ? (
+                        <ValuePill tone={MENU_TYPE_TONE[row.menuType] ?? 'neutral'}>{row.menuType}</ValuePill>
+                      ) : (
+                        <Dash />
+                      )}
+                    </TableCellStyled>
+
+                    {/* Ruta */}
+                    <TableCellStyled align='left' sx={{ minWidth: 200, maxWidth: 300 }}>
+                      <Tooltip title={row.route || 'Sin ruta'}>
+                        <Box
+                          component='span'
+                          sx={{
+                            display: 'block',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: 12,
+                            color: 'var(--ink-2)',
+                          }}
+                        >
+                          {row.route || '-'}
+                        </Box>
+                      </Tooltip>
+                    </TableCellStyled>
+
+                    {/* Acciones */}
+                    <TableCellStyled align='right' sx={{ whiteSpace: 'nowrap' }}>
+                      <Tooltip title='Editar menú'>
+                        <IconButton aria-label='Editar' onClick={() => onClickUpdateMenuModules(row)}>
+                          <EditOutlined />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title='Eliminar menú'>
+                        <IconButton aria-label='Eliminar' onClick={() => handleDeleteMenuModules(row)}>
+                          <DeleteOutline />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCellStyled>
+                  </ItemRow>
+                ))}
+              </DataTable>
+            )}
+          </ListCard>
+        </PageContainer>
+      ) : (
+        /* Lista de Módulos dentro de la misma vista */
+        <ListModulesPage viewSwitcher={viewSwitcher} />
+      )}
     </>
   );
 };
