@@ -14,15 +14,9 @@ export const SearchButton: React.FC<SearchButtonProps> = ({
   return (
     <Button
       variant="contained"
-      color="secondary"
       size="medium"
       fullWidth
-      sx={{
-        height: "98%",
-        margin: "auto",
-        borderTopLeftRadius: 0,
-        borderBottomLeftRadius: 0,
-      }}
+      sx={{ height: "100%", margin: "auto" }}
       onClick={() => onClick()}
       startIcon={<SearchIcon />}
     >

@@ -1,4 +1,5 @@
 import { InputAdornment, TextField } from "@mui/material";
+import { SearchRounded } from "@mui/icons-material";
 import React from "react";
 
 export interface SearchInputProps {
@@ -23,7 +24,11 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       value={value}
       onChange={handleInputChange}
       InputProps={{
-        startAdornment: <InputAdornment position="start" />,
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchRounded sx={{ fontSize: 18, color: "var(--ink-3)" }} />
+          </InputAdornment>
+        ),
       }}
       fullWidth
     />

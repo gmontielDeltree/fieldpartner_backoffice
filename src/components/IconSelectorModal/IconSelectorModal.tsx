@@ -17,7 +17,6 @@ import {
   Grid,
 } from '@mui/material';
 import { Search as SearchIcon, Add as AddIcon } from '@mui/icons-material';
-import { purpleTheme } from '../../themes/purpleTheme';
 import { iconCategories } from '../../helpers/iconsByCategory';
 import { IconGeneratorModal } from '../IconGeneratorModal/IconGeneratorModal';
 import { iconStorageService } from '../../services/iconStorageService';
@@ -146,25 +145,25 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
             cursor: 'pointer',
             p: 1,
             border: isSelected
-              ? `2px solid ${purpleTheme.palette.primary.main}`
+              ? '2px solid var(--accent)'
               : '2px solid transparent',
             borderRadius: 1,
             '&:hover': {
-              backgroundColor: purpleTheme.palette.action?.hover || 'rgba(0, 0, 0, 0.04)',
+              backgroundColor: 'var(--hover-2)',
             },
           }}
         >
           <Icon
             sx={{
               fontSize: 32,
-              color: isSelected ? purpleTheme.palette.primary.main : 'inherit',
+              color: isSelected ? 'var(--accent-ink)' : 'inherit',
             }}
           />
           <Typography
             variant='caption'
             noWrap
             sx={{
-              color: isSelected ? purpleTheme.palette.primary.main : 'inherit',
+              color: isSelected ? 'var(--accent-ink)' : 'inherit',
               mt: 1,
             }}
           >
@@ -291,7 +290,7 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
               flex: '0 0 auto', // Evita que los tabs se encojan
             }}
             TabIndicatorProps={{
-              sx: { backgroundColor: purpleTheme.palette.primary.main },
+              sx: { backgroundColor: 'var(--accent-ink)' },
             }}
           >
             {iconCategories.map(category => (
@@ -301,7 +300,7 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
                 value={category.id}
                 sx={{
                   '&.Mui-selected': {
-                    color: purpleTheme.palette.primary.main,
+                    color: 'var(--accent-ink)',
                   },
                 }}
               />
