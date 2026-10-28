@@ -6,21 +6,18 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   Box,
-  InputAdornment,
   Typography,
   Button,
   Tooltip,
   Tabs,
   Tab,
-  Grid,
 } from '@mui/material';
-import { Search as SearchIcon, Add as AddIcon } from '@mui/icons-material';
-import { purpleTheme } from '../../themes/purpleTheme';
+import { AddRounded, InterestsOutlined } from '@mui/icons-material';
 import { iconCategories } from '../../helpers/iconsByCategory';
 import { IconGeneratorModal } from '../IconGeneratorModal/IconGeneratorModal';
 import { iconStorageService } from '../../services/iconStorageService';
+import { DialogHeading, SearchField } from '../ui';
 
 interface IconSelectorModalProps {
   open: boolean;
@@ -138,38 +135,45 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
         <Box
           style={style}
           onClick={() => setSelectedIcon(name)}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            p: 1,
-            border: isSelected
-              ? `2px solid ${purpleTheme.palette.primary.main}`
-              : '2px solid transparent',
-            borderRadius: 1,
-            '&:hover': {
-              backgroundColor: purpleTheme.palette.action?.hover || 'rgba(0, 0, 0, 0.04)',
-            },
-          }}
+          role='button'
+          aria-pressed={isSelected}
+          sx={{ p: '4px', cursor: 'pointer' }}
         >
-          <Icon
+          <Box
             sx={{
-              fontSize: 32,
-              color: isSelected ? purpleTheme.palette.primary.main : 'inherit',
-            }}
-          />
-          <Typography
-            variant='caption'
-            noWrap
-            sx={{
-              color: isSelected ? purpleTheme.palette.primary.main : 'inherit',
-              mt: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              width: '100%',
+              height: '100%',
+              px: 1,
+              borderRadius: '10px',
+              color: isSelected ? 'var(--accent-ink)' : 'var(--ink-2)',
+              background: isSelected ? 'var(--accent-tint)' : 'transparent',
+              boxShadow: isSelected ? 'inset 0 0 0 1.5px var(--accent)' : 'none',
+              transition: 'background-color 140ms ease, color 140ms ease',
+              '&:hover': {
+                backgroundColor: isSelected ? 'var(--accent-tint)' : 'var(--hover)',
+                color: isSelected ? 'var(--accent-ink)' : 'var(--ink)',
+              },
             }}
           >
-            {name.replace(/([A-Z])/g, ' $1').trim()}
-          </Typography>
+            <Icon sx={{ fontSize: 28 }} />
+            <Typography
+              variant='caption'
+              noWrap
+              sx={{
+                maxWidth: '100%',
+                fontSize: 11.5,
+                fontWeight: isSelected ? 500 : 400,
+                color: 'inherit',
+              }}
+            >
+              {name.replace(/([A-Z])/g, ' $1').trim()}
+            </Typography>
+          </Box>
         </Box>
       </Tooltip>
     );
@@ -197,118 +201,68 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 1,
             height: '80vh', // Altura fija del modal
             display: 'flex',
             flexDirection: 'column',
           },
         }}
       >
-        <DialogTitle
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            textAlign: 'center',
-            py: 2,
-            flex: '0 0 auto', // Evita que el título se encoja
-          }}
-        >
-          Seleccionar Ícono
+        <DialogTitle sx={{ pb: 1.5, flex: '0 0 auto' /* Evita que el título se encoja */ }}>
+          <DialogHeading icon={<InterestsOutlined />}>Seleccionar ícono</DialogHeading>
         </DialogTitle>
 
         <DialogContent
           sx={{
-            pt: 3,
+            pt: 0.5,
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             flex: '1 1 auto',
           }}
         >
-          <Grid
-            container
-            spacing={0}
-            direction='row'
-            alignItems='center'
-            justifyContent='space-between'
-            sx={{ mb: 3 }}
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+              mb: 1,
+              flex: '0 0 auto',
+            }}
           >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant='contained'
-                color='primary'
-                startIcon={<AddIcon />}
-                fullWidth
-                onClick={() => setIsGeneratorOpen(true)}
-              >
-                Nuevo
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent='flex-end'>
-                <Grid item xs={8} sm={5}>
-                  <TextField
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    placeholder='Buscar ícono...'
-                    size='small'
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <Button
-                    variant='contained'
-                    color='secondary'
-                    size='medium'
-                    fullWidth
-                    sx={{
-                      height: '98%',
-                      margin: 'auto',
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
-                    }}
-                    startIcon={<SearchIcon />}
-                  >
-                    Buscar
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+            <SearchField
+              name='searchTerm'
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder='Buscar ícono…'
+            />
+            <Button
+              variant='outlined'
+              startIcon={<AddRounded />}
+              onClick={() => setIsGeneratorOpen(true)}
+            >
+              Nuevo
+            </Button>
+          </Box>
 
           <Tabs
             value={selectedCategory}
             onChange={(_, value) => setSelectedCategory(value)}
+            variant='scrollable'
+            scrollButtons='auto'
             sx={{
-              mb: 3,
+              mb: 1.5,
+              borderBottom: '1px solid var(--line)',
               flex: '0 0 auto', // Evita que los tabs se encojan
-            }}
-            TabIndicatorProps={{
-              sx: { backgroundColor: purpleTheme.palette.primary.main },
             }}
           >
             {iconCategories.map(category => (
-              <Tab
-                key={category.id}
-                label={category.label}
-                value={category.id}
-                sx={{
-                  '&.Mui-selected': {
-                    color: purpleTheme.palette.primary.main,
-                  },
-                }}
-              />
+              <Tab key={category.id} label={category.label} value={category.id} />
             ))}
           </Tabs>
 
-          <Box sx={{ flex: '1 1 auto', minHeight: 0 }}>
+          <Box sx={{ flex: '1 1 auto', minHeight: 0, mx: -0.5 }}>
             <AutoSizer>
               {({ width, height }: { width: number; height: number }) => {
                 const columnCount = Math.floor(width / COLUMN_WIDTH);
@@ -330,24 +284,8 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
           </Box>
         </DialogContent>
 
-        <DialogActions
-          sx={{
-            p: 2,
-            borderTop: 1,
-            borderColor: 'divider',
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 2,
-            flex: '0 0 auto', // Evita que los botones se encojan
-          }}
-        >
-          <Button
-            onClick={onClose}
-            sx={{
-              px: 4, // Padding horizontal para hacer los botones más anchos
-            }}
-            variant='outlined'
-          >
+        <DialogActions sx={{ borderTop: '1px solid var(--line)', pt: 1.5, flex: '0 0 auto' /* Evita que los botones se encojan */ }}>
+          <Button onClick={onClose} variant='outlined'>
             Cancelar
           </Button>
           <Button
@@ -359,9 +297,6 @@ export const IconSelectorModal: React.FC<IconSelectorModalProps> = ({
               }
             }}
             color='primary'
-            sx={{
-              px: 4, // Padding horizontal para hacer los botones más anchos
-            }}
           >
             Confirmar
           </Button>

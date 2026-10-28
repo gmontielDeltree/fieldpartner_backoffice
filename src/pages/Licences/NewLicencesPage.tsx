@@ -1,26 +1,17 @@
 import React, { useEffect } from "react";
-import { Loading } from "../../components";
+import { FormActions, FormCard, Loading, PageContainer, PageHeader } from "../../components";
 import {
   Autocomplete,
-  Box,
   Button,
-  Container,
-  Divider,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   SelectChangeEvent,
   TextField,
-  Typography,
 } from "@mui/material";
-import {
-  DisplaySettings as DisplaySettingsIcon,
-  ArrowBack as ArrowBackIcon,
-  Save as SaveIcon,
-} from "@mui/icons-material";
+import { DisplaySettingsOutlined, TuneOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useLicences, useForm, useSystem } from "../../hooks";
 import { NumericTextField } from "../../components/NumericTextField/NumericTextField";
@@ -108,37 +99,20 @@ export const NewLicencesPage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-licence" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 6 }}>
-        {/* Header */}
-        <Box display="flex" alignItems="center" sx={{ pt: 3, pb: 1 }}>
-          <DisplaySettingsIcon color="primary" sx={{ mr: 1.5, fontSize: 28 }} />
-          <Typography variant="h5" fontWeight={600}>
-            Licencias
-          </Typography>
-        </Box>
-
-        <Paper
-          variant="outlined"
-          sx={{
-            mt: 2,
-            p: { xs: 3, md: 4 },
-            borderRadius: 2,
-          }}
-        >
-          {/* Título del formulario */}
-          <Typography variant="h6" fontWeight={600} gutterBottom>
-            {isEditing ? "Editar licencia" : "Nueva licencia"}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {isEditing
+      <PageContainer maxWidth={980}>
+        <PageHeader
+          icon={<DisplaySettingsOutlined />}
+          eyebrow="Licencias · Licencias"
+          title={isEditing ? "Editar licencia" : "Nueva licencia"}
+          description={
+            isEditing
               ? "Modificá los datos de la licencia seleccionada."
-              : "Completá los campos para dar de alta una nueva licencia."}
-          </Typography>
-
-          <Divider sx={{ mb: 3 }} />
-
-          {/* Formulario */}
-          <Grid container spacing={3}>
+              : "Completá los campos para dar de alta una nueva licencia."
+          }
+          onBack={onClickCancel}
+        />
+        <FormCard title="Datos de la licencia" icon={<DisplaySettingsOutlined />}>
+          <Grid container spacing={2}>
             {/* Fila 1: ID + Descripción */}
             <Grid item xs={12} sm={3}>
               <TextField
@@ -198,7 +172,11 @@ export const NewLicencesPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
+          </Grid>
+        </FormCard>
 
+        <FormCard title="Límites" icon={<TuneOutlined />} delay={100}>
+          <Grid container spacing={2}>
             {/* Fila 3: Unidad máxima + Cantidad de usuarios permitidos */}
             <Grid item xs={12} sm={6}>
               <NumericTextField
@@ -219,30 +197,21 @@ export const NewLicencesPage: React.FC = () => {
               />
             </Grid>
           </Grid>
+        </FormCard>
 
-          <Divider sx={{ mt: 4, mb: 3 }} />
-
-          {/* Acciones */}
-          <Box display="flex" justifyContent="flex-end" gap={2}>
-            <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<ArrowBackIcon />}
-              onClick={onClickCancel}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<SaveIcon />}
-              onClick={isEditing ? handleUpdateLicences : handleAddLicences}
-            >
-              {isEditing ? "Actualizar" : "Guardar"}
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
+        <FormActions>
+          <Button variant="outlined" onClick={onClickCancel}>
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={isEditing ? handleUpdateLicences : handleAddLicences}
+          >
+            {isEditing ? "Actualizar" : "Guardar"}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
 };

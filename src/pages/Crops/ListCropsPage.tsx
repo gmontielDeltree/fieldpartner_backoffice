@@ -1,31 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { Box,
-   Button,
-    Container,
-     Grid,
-      IconButton,
-       Tooltip,
-       Typography,
-        TableContainer,
-         Paper,
-         List,
-         ListItem,
-         ListItemText,
-
-           
-              } from "@mui/material";
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Yard as YardIcon , FilterList} from "@mui/icons-material";
+import {
+  Button,
+  IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Tooltip,
+} from "@mui/material";
+import {
+  AddRounded,
+  DeleteOutline,
+  EditOutlined,
+  ExpandMoreRounded,
+  FilterListRounded,
+  YardOutlined,
+} from "@mui/icons-material";
 import { useAppDispatch, useCrops, useForm } from "../../hooks";
 import { setCropsACtive } from "../../store/crops";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import {
+  DataTable,
+  EmptyState,
+  FilteredCount,
+  ItemRow,
+  ListCard,
+  ListToolbar,
+  Loading,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
+  TableCellStyled,
+  ValuePill,
+} from "../../components";
 import { ColumnProps, Crops } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Nombre", align: "left", field: "descriptionES", sortable: true },
-  { text: "Descripcion PT", align: "center", field: "descriptionPT", sortable: true },
-  { text: "Descripcion EN", align: "center", field: "descriptionEN", sortable: true },
-  { text: "Tipo", align: "center", field: "cropType", sortable: true },
+  { text: "Descripción PT", align: "left", field: "descriptionPT", sortable: true },
+  { text: "Descripción EN", align: "left", field: "descriptionEN", sortable: true },
+  { text: "Tipo", align: "left", field: "cropType", sortable: true },
 ];
 
 export const ListCropsPage: React.FC = () => {
@@ -37,6 +52,8 @@ export const ListCropsPage: React.FC = () => {
   const { isLoading, crops, getCrops, removeCrops } = useCrops();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
   const [showOptions, setShowOptions] = React.useState(false);
+  // ancla del menú de tipos (solo presentación: el menú se abre fuera de la card)
+  const filterAnchorRef = useRef<HTMLButtonElement>(null);
 
   const [sortField, setSortField] = React.useState<keyof Crops>("descriptionES");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
@@ -144,145 +161,116 @@ export const ListCropsPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <YardIcon />
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Cultivos
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
+      <PageContainer>
+        <PageHeader
+          icon={<YardOutlined />}
+          title="Cultivos"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/crops/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar
+            aside={filterText || selectedType ? <FilteredCount shown={rows.length} total={crops.length} /> : undefined}
           >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                to="/crops/new"
-                startIcon={<AddIcon />}
-                sx={{ mb: 2 }}
-              >
-                Nuevo
-              </Button>
-              <Box display="flex" alignItems="left" sx={{ ml: 2, mt: 2, position: "relative" }}>
-              <Tooltip title="Filtrar">
-                <IconButton onClick={handleFilterButtonClick}>
-                  <FilterList />
-                </IconButton>
-              </Tooltip>
-              {showOptions && (
-              <Paper elevation={3} sx={{ position: "absolute", top: 40, zIndex: 1, backgroundColor: "white" }}>
-                <List>
-                  <ListItem button onClick={() => handleSelectChange("")}>
-                    <ListItemText primary="Todos" />
-                  </ListItem>
-                  {cropTypes.map((type, index) => (
-                    <ListItem button key={index} onClick={() => handleSelectChange(type)}>
-                      <ListItemText primary={type} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            )}
-            </Box>
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent="flex-end">
-                <Grid item xs={8} sm={5}>
-                  <SearchInput
-                    value={filterText}
-                    placeholder="Cultivo /Descripcion"
-                    handleInputChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <SearchButton text="Buscar" onClick={() => onClickSearch()} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: "right" }}
-                  >
-                    {rows.length} {rows.length === 1 ? "cultivo" : "cultivos"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
-            <TableContainer
-              key="table-crops"
-              sx={{
-                minHeight: "120px",
-                maxHeight: "540px",
-                overflow: "scroll",
-                mb: 5
-              }}
-              component={Paper}
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar por nombre, descripción o tipo…"
+              onSubmit={onClickSearch}
+            />
+            <Button
+              ref={filterAnchorRef}
+              variant="outlined"
+              size="small"
+              startIcon={<FilterListRounded />}
+              endIcon={<ExpandMoreRounded />}
+              onClick={handleFilterButtonClick}
+              aria-haspopup="menu"
+              aria-expanded={showOptions}
+              sx={{ height: 34 }}
             >
-              <DataTable
-                key="datatable-crops"
-                columns={columns}
-                isLoading={isLoading}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
+              Tipo: {selectedType || "Todos"}
+            </Button>
+            <Popper
+              open={showOptions}
+              anchorEl={filterAnchorRef.current}
+              placement="bottom-start"
+              sx={{ zIndex: (theme) => theme.zIndex.modal }}
+            >
+              <Paper
+                sx={{
+                  mt: 0.5,
+                  minWidth: 200,
+                  borderRadius: "12px",
+                  background: "var(--surface)",
+                  boxShadow: "var(--shadow-overlay)",
+                  animation: "fade-in 160ms ease-out both",
+                }}
               >
-                {!isLoading && rows.length === 0 && (
-                  <ItemRow>
-                    <TableCellStyled align="center" colSpan={5}>
-                      No se encontraron cultivos
-                    </TableCellStyled>
-                  </ItemRow>
-                )}
-                {rows.map((row) => (
-                  <ItemRow key={row._id} hover>
-                    <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionEN}</TableCellStyled>
-                    <TableCellStyled align="center">{row.cropType}</TableCellStyled>
-                    <TableCellStyled align="right">
-                      <Tooltip title="Editar">
-                        <IconButton
-                          aria-label="Editar"
-                          onClick={() => onClickUpdateCrops(row)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton
-                          onClick={() => handleDeleteCrops(row)}
-                          style={{ fontSize: '1rem' }}
-                          color="default"
-                        >
-                          <DeleteIcon name="trash alternate" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCellStyled>
-                  </ItemRow>
-                ))}
-              </DataTable>
-            </TableContainer>
-          </Box>
-        </Box>
-      </Container>
+                <MenuList autoFocusItem={showOptions} sx={{ p: "6px" }}>
+                  <MenuItem selected={selectedType === ""} onClick={() => handleSelectChange("")}>
+                    Todos
+                  </MenuItem>
+                  {cropTypes.map((type, index) => (
+                    <MenuItem key={index} selected={selectedType === type} onClick={() => handleSelectChange(type)}>
+                      {type}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Paper>
+            </Popper>
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText || selectedType ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda o con otro tipo" />
+            ) : (
+              <EmptyState icon={<YardOutlined />} title="No se encontraron cultivos" hint="Cargá el primero con «Nuevo»." />
+            )
+          ) : (
+            <DataTable
+              key="datatable-crops"
+              columns={columns}
+              isLoading={isLoading}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            >
+              {rows.map((row) => (
+                <ItemRow key={row._id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.descriptionES}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionPT}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionEN}</TableCellStyled>
+                  <TableCellStyled align="left">
+                    {row.cropType ? <ValuePill>{row.cropType}</ValuePill> : null}
+                  </TableCellStyled>
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
+                    <Tooltip title="Editar">
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateCrops(row)}>
+                        <EditOutlined />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Eliminar">
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteCrops(row)}>
+                        <DeleteOutline />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCellStyled>
+                </ItemRow>
+              ))}
+            </DataTable>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
-  
-  
-  
 };

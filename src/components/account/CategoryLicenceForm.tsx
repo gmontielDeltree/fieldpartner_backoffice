@@ -4,8 +4,6 @@ import {
     AlertTitle,
     Autocomplete,
     Box,
-    Card,
-    CardContent,
     Checkbox,
     Chip,
     CircularProgress,
@@ -13,22 +11,20 @@ import {
     Grid,
     IconButton,
     InputAdornment,
-    Paper,
     TextField,
     Tooltip,
     Typography,
 } from '@mui/material';
 import {
-    AssignmentTurnedIn as AssignmentTurnedInIcon,
-    Category as CategoryIcon,
-    CalendarMonth as CalendarMonthIcon,
-    Info as InfoIcon,
-    Visibility as VisibilityIcon,
-    VisibilityOff as VisibilityOffIcon,
-    Person as PersonIcon,
-    Email as EmailIcon,
-    ConfirmationNumber as ConfirmationNumberIcon,
+    AssignmentTurnedInOutlined,
+    CategoryOutlined,
+    CalendarMonthOutlined,
+    InfoOutlined,
+    VisibilityOutlined,
+    VisibilityOffOutlined,
+    PersonOutlineOutlined,
 } from '@mui/icons-material';
+import { FormCard, FormSectionTitle } from '../ui';
 import { Account } from '../../interfaces/account';
 import { EnumCategoryAccount, EnumCategoryCod, EnumLicenceType, Licences, UserDto } from '../../types';
 import { enumToArray, regexEmail } from '../../helpers';
@@ -137,451 +133,404 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
     return (
         <Box>
             {/* Sección: Categoría */}
-            <Card variant="outlined" sx={{ mb: 3, borderColor: 'primary.main', borderWidth: 2 }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                        <CategoryIcon sx={{ mr: 1, color: 'primary.main' }} />
-                        Categoría de Cuenta
-                    </Typography>
-
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Autocomplete
-                                value={categoryOptions.find(opts => opts.code === formValues.category) || null}
-                                onChange={onChangeCategory}
-                                disabled={!!formValues.accountId}
-                                options={categoryOptions}
-                                getOptionLabel={(option) => option.label}
-                                renderOption={(props, option) => (
-                                    <Box
-                                        component="li"
-                                        {...props}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1.5,
-                                            py: 1.5,
-                                        }}
-                                    >
-                                        <Chip
-                                            label={option.code}
-                                            size="small"
-                                            color={getCategoryColor(option.code)}
-                                            sx={{ fontWeight: 'bold', minWidth: 40, fontSize: '0.875rem' }}
-                                        />
-                                        <Typography variant="body2">{option.label}</Typography>
-                                    </Box>
-                                )}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Categoría *"
-                                        variant="outlined"
-                                        helperText="Selecciona el tipo de cliente según su actividad"
-                                        required
-                                        InputProps={{
-                                            ...params.InputProps,
-                                            startAdornment: formValues.category && (
-                                                <>
-                                                    <Chip
-                                                        label={formValues.category}
-                                                        size="small"
-                                                        color={getCategoryColor(formValues.category)}
-                                                        sx={{ ml: 1, fontWeight: 'bold' }}
-                                                    />
-                                                    {params.InputProps.startAdornment}
-                                                </>
-                                            ),
-                                        }}
-                                    />
-                                )}
-                                fullWidth
-                            />
-                        </Grid>
-
-                        {/* Mensaje informativo según categoría */}
-                        {formValues.category && (
-                            <Grid item xs={12}>
-                                <Alert
-                                    severity={isCategoryA ? 'success' : 'info'}
-                                    sx={{ borderRadius: 2 }}
+            <FormCard title="Categoría de cuenta" icon={<CategoryOutlined />}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Autocomplete
+                            value={categoryOptions.find(opts => opts.code === formValues.category) || null}
+                            onChange={onChangeCategory}
+                            disabled={!!formValues.accountId}
+                            options={categoryOptions}
+                            getOptionLabel={(option) => option.label}
+                            renderOption={(props, option) => (
+                                <Box
+                                    component="li"
+                                    {...props}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1.5,
+                                        py: 1,
+                                    }}
                                 >
-                                    {isCategoryA ? (
-                                        <>
-                                            <strong>Categoría A:</strong> Esta cuenta requiere configuración completa
-                                            incluyendo datos de compañía y usuario administrador.
-                                        </>
-                                    ) : (
-                                        <>
-                                            <strong>Categoría {formValues.category}:</strong> Esta cuenta solo requiere
-                                            configuración de licencia. Los datos de compañía son opcionales.
-                                        </>
-                                    )}
-                                </Alert>
-                            </Grid>
-                        )}
+                                    <Chip
+                                        label={option.code}
+                                        size="small"
+                                        color={getCategoryColor(option.code)}
+                                        sx={{ fontWeight: 600, minWidth: 32 }}
+                                    />
+                                    <Typography sx={{ fontSize: 13.5 }}>{option.label}</Typography>
+                                </Box>
+                            )}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Categoría"
+                                    variant="outlined"
+                                    helperText="Selecciona el tipo de cliente según su actividad"
+                                    required
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        startAdornment: formValues.category && (
+                                            <>
+                                                <Chip
+                                                    label={formValues.category}
+                                                    size="small"
+                                                    color={getCategoryColor(formValues.category)}
+                                                    sx={{ ml: 0.5, fontWeight: 600 }}
+                                                />
+                                                {params.InputProps.startAdornment}
+                                            </>
+                                        ),
+                                    }}
+                                />
+                            )}
+                            fullWidth
+                        />
                     </Grid>
-                </CardContent>
-            </Card>
+
+                    {/* Mensaje informativo según categoría */}
+                    {formValues.category && (
+                        <Grid item xs={12}>
+                            <Alert severity={isCategoryA ? 'success' : 'info'}>
+                                {isCategoryA ? (
+                                    <>
+                                        <strong>Categoría A:</strong> Esta cuenta requiere configuración completa
+                                        incluyendo datos de compañía y usuario administrador.
+                                    </>
+                                ) : (
+                                    <>
+                                        <strong>Categoría {formValues.category}:</strong> Esta cuenta solo requiere
+                                        configuración de licencia. Los datos de compañía son opcionales.
+                                    </>
+                                )}
+                            </Alert>
+                        </Grid>
+                    )}
+                </Grid>
+            </FormCard>
 
             {/* Sección: Configuración de Licencia */}
-            <Card variant="outlined" sx={{ mb: 3 }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                        <AssignmentTurnedInIcon sx={{ mr: 1, color: 'primary.main' }} />
-                        Configuración de Licencia
-                    </Typography>
+            <FormCard title="Configuración de licencia" icon={<AssignmentTurnedInOutlined />} delay={100}>
+                <Grid container spacing={2}>
+                    {/* Tipo de Licencia */}
+                    <Grid item xs={12} sm={6} md={4}>
+                        <Autocomplete
+                            value={formValues.licenceType || null}
+                            onChange={onChangeLicenceType}
+                            disabled={!!formValues.accountId}
+                            options={licenceTypeOptions}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Tipo de licencia"
+                                    variant="outlined"
+                                    helperText="Campo, Licencia o Hectárea"
+                                    required
+                                />
+                            )}
+                            fullWidth
+                        />
+                    </Grid>
 
-                    <Grid container spacing={3}>
-                        {/* Tipo de Licencia */}
-                        <Grid item xs={12} sm={6} md={4}>
-                            <Autocomplete
-                                value={formValues.licenceType || null}
-                                onChange={onChangeLicenceType}
-                                disabled={!!formValues.accountId}
-                                options={licenceTypeOptions}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Tipo de Licencia *"
-                                        variant="outlined"
-                                        helperText="Campo, Licencia o Hectárea"
-                                        required
-                                    />
-                                )}
-                                fullWidth
-                            />
-                        </Grid>
+                    {/* Licencia */}
+                    <Grid item xs={12} sm={6} md={5}>
+                        <Autocomplete
+                            value={licencesOptions.find(x => x.code === formValues.licence) || null}
+                            onChange={onChangeLicence}
+                            disabled={!!formValues.accountId || !formValues.licenceType}
+                            options={licencesOptions}
+                            getOptionLabel={(option) => option.label}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Licencia"
+                                    variant="outlined"
+                                    helperText="Selecciona primero el tipo de licencia"
+                                    required
+                                />
+                            )}
+                            fullWidth
+                        />
+                    </Grid>
 
-                        {/* Licencia */}
-                        <Grid item xs={12} sm={6} md={5}>
-                            <Autocomplete
-                                value={licencesOptions.find(x => x.code === formValues.licence) || null}
-                                onChange={onChangeLicence}
-                                disabled={!!formValues.accountId || !formValues.licenceType}
-                                options={licencesOptions}
-                                getOptionLabel={(option) => option.label}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Licencia *"
-                                        variant="outlined"
-                                        helperText="Selecciona primero el tipo de licencia"
-                                        required
-                                    />
-                                )}
-                                fullWidth
-                            />
-                        </Grid>
+                    {/* Unidad Máxima */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <TextField
+                            variant="outlined"
+                            type="text"
+                            label="Unidad máxima"
+                            name="maxUnits"
+                            disabled
+                            value={formValues.amountLicencesAllowed || 0}
+                            helperText="Calculado automáticamente"
+                            fullWidth
+                        />
+                    </Grid>
 
-                        {/* Unidad Máxima */}
-                        <Grid item xs={12} sm={6} md={3}>
-                            <TextField
-                                variant="outlined"
-                                type="text"
-                                label="Unidad Máxima"
-                                name="maxUnits"
-                                disabled
-                                value={formValues.amountLicencesAllowed || 0}
-                                helperText="Calculado automáticamente"
-                                fullWidth
-                            />
-                        </Grid>
+                    {/* Usuarios permitidos (informativo, proviene de la licencia) */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <TextField
+                            variant="outlined"
+                            type="text"
+                            label="Usuarios permitidos"
+                            disabled
+                            value={allowedUsersCount || 0}
+                            helperText="Según la licencia seleccionada"
+                            fullWidth
+                        />
+                    </Grid>
 
-                        {/* Usuarios permitidos (informativo, proviene de la licencia) */}
-                        <Grid item xs={12} sm={6} md={3}>
-                            <TextField
-                                variant="outlined"
-                                type="text"
-                                label="Usuarios permitidos"
-                                disabled
-                                value={allowedUsersCount || 0}
-                                helperText="Según la licencia seleccionada"
-                                fullWidth
-                            />
-                        </Grid>
+                    {/* Número de Licencia */}
+                    <Grid item xs={12} sm={6} md={6}>
+                        <TextField
+                            variant="outlined"
+                            type="text"
+                            label="Número de licencia"
+                            name="licenceNumber"
+                            value={formValues.licenceNumber}
+                            onChange={handleInputChange}
+                            disabled={!isCategoryA}
+                            placeholder="Ej: LIC-2024-001"
+                            helperText={
+                                isCategoryA
+                                    ? "Número identificador de la licencia"
+                                    : "Solo disponible para categoría A"
+                            }
+                            fullWidth
+                        />
+                    </Grid>
 
-                        {/* Número de Licencia */}
-                        <Grid item xs={12} sm={6} md={6}>
-                            <TextField
-                                variant="outlined"
-                                type="text"
-                                label="Número de Licencia"
-                                name="licenceNumber"
-                                value={formValues.licenceNumber}
-                                onChange={handleInputChange}
-                                disabled={!isCategoryA}
-                                placeholder="Ej: LIC-2024-001"
-                                helperText={
-                                    isCategoryA
-                                        ? "Número identificador de la licencia"
-                                        : "Solo disponible para categoría A"
-                                }
-                                fullWidth
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <ConfirmationNumberIcon fontSize="small" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </Grid>
-
-                        {/* Fechas de Licencia */}
-                        <Grid item xs={12}>
-                            <Card variant="outlined" sx={{ bgcolor: 'grey.50', p: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                    <CalendarMonthIcon sx={{ mr: 1, color: 'primary.main' }} />
-                                    <Typography variant="subtitle1" fontWeight={500}>
-                                        Período de Vigencia
-                                    </Typography>
+                    {/* Licencia Multipaís */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControlLabel
+                            sx={{ mt: 0.5 }}
+                            control={
+                                <Checkbox
+                                    name="isLicenceMultipleCountry"
+                                    checked={formValues.isLicenceMultipleCountry}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                    <Typography sx={{ fontSize: 13.5 }}>Licencia multipaís</Typography>
+                                    <Tooltip title="Permite usar la licencia en múltiples países">
+                                        <InfoOutlined sx={{ fontSize: 16, color: 'var(--ink-3)' }} />
+                                    </Tooltip>
                                 </Box>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            variant="outlined"
-                                            type="date"
-                                            label="Fecha de Inicio"
-                                            name="startDateLicence"
-                                            value={formValues.startDateLicence}
-                                            onChange={handleInputChange}
-                                            InputLabelProps={{ shrink: true }}
-                                            fullWidth
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            variant="outlined"
-                                            type="date"
-                                            label="Fecha de Fin"
-                                            name="endDateLicence"
-                                            value={formValues.endDateLicence}
-                                            onChange={handleInputChange}
-                                            InputLabelProps={{ shrink: true }}
-                                            fullWidth
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Card>
-                        </Grid>
+                            }
+                        />
+                    </Grid>
 
-                        {/* Licencia Multipaís */}
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name="isLicenceMultipleCountry"
-                                        checked={formValues.isLicenceMultipleCountry}
-                                        onChange={handleCheckboxChange}
-                                    />
-                                }
-                                label={
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Typography>Licencia Multipaís</Typography>
-                                        <Tooltip title="Permite usar la licencia en múltiples países">
-                                            <InfoIcon fontSize="small" color="action" />
-                                        </Tooltip>
-                                    </Box>
-                                }
-                            />
+                    {/* Fechas de Licencia */}
+                    <Grid item xs={12}>
+                        <FormSectionTitle icon={<CalendarMonthOutlined />} sx={{ mt: 0.5, mb: 1.5 }}>
+                            Período de vigencia
+                        </FormSectionTitle>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    variant="outlined"
+                                    type="date"
+                                    label="Fecha de inicio"
+                                    name="startDateLicence"
+                                    value={formValues.startDateLicence}
+                                    onChange={handleInputChange}
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    variant="outlined"
+                                    type="date"
+                                    label="Fecha de fin"
+                                    name="endDateLicence"
+                                    value={formValues.endDateLicence}
+                                    onChange={handleInputChange}
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                />
+                            </Grid>
                         </Grid>
                     </Grid>
-                </CardContent>
-            </Card>
+                </Grid>
+            </FormCard>
 
             {/* Sección: Usuario Admin (solo si es categoría A) */}
             {isCategoryA && (
-                <Card variant="outlined" sx={{ mb: 3 }}>
-                    <CardContent>
-                        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                            <PersonIcon sx={{ mr: 1, color: 'primary.main' }} />
-                            Usuario Administrador
-                        </Typography>
-
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        name="associateUser"
-                                        checked={formValues.associateUser}
-                                        onChange={(e, c) => {
-                                            handleCheckboxChange(e, c);
-                                            if (!c) {
-                                                setFormValues(prev => ({
-                                                    ...prev,
-                                                    emailToAssociate: '',
-                                                }));
-                                                setErrorToEmailAssociation(false);
-                                            }
-                                        }}
-                                    />
-                                }
-                                label={
-                                    <Typography fontWeight={500} variant="body1">
-                                        Asociar a un usuario existente
-                                    </Typography>
-                                }
-                            />
-
-                            {formValues.associateUser ? (
-                                // Email para asociar usuario existente
-                                <Box sx={{ width: '100%', maxWidth: 500 }}>
+                <FormCard
+                    title="Usuario administrador"
+                    icon={<PersonOutlineOutlined />}
+                    delay={140}
+                    aside={
+                        <FormControlLabel
+                            sx={{ mr: 0 }}
+                            control={
+                                <Checkbox
+                                    name="associateUser"
+                                    checked={formValues.associateUser}
+                                    onChange={(e, c) => {
+                                        handleCheckboxChange(e, c);
+                                        if (!c) {
+                                            setFormValues(prev => ({
+                                                ...prev,
+                                                emailToAssociate: '',
+                                            }));
+                                            setErrorToEmailAssociation(false);
+                                        }
+                                    }}
+                                />
+                            }
+                            label={
+                                <Typography sx={{ fontSize: 13.5, fontWeight: 500 }}>
+                                    Asociar a un usuario existente
+                                </Typography>
+                            }
+                        />
+                    }
+                >
+                    {formValues.associateUser ? (
+                        // Email para asociar usuario existente
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    variant="outlined"
+                                    type="email"
+                                    label="Email del usuario a asociar"
+                                    name="emailToAssociate"
+                                    color={
+                                        regexEmail.test(formValues.emailToAssociate) && errorToEmailAssociation
+                                            ? 'error'
+                                            : regexEmail.test(formValues.emailToAssociate) && !errorToEmailAssociation
+                                            ? 'success'
+                                            : undefined
+                                    }
+                                    value={formValues.emailToAssociate}
+                                    focused={!!formValues.emailToAssociate}
+                                    onBlur={onBlurEmailToAssociate}
+                                    onChange={handleInputChange}
+                                    helperText={
+                                        errorToEmailAssociation
+                                            ? 'Usuario no encontrado'
+                                            : 'Ingresa el email de un usuario existente'
+                                    }
+                                    error={errorToEmailAssociation}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
+                    ) : (
+                        // Formulario de nuevo usuario admin
+                        <>
+                            <Typography sx={{ fontSize: 12.5, color: 'var(--ink-3)', mb: 1.5 }}>
+                                Crear nuevo usuario administrador
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         variant="outlined"
+                                        type="text"
+                                        label="Nombre de usuario"
+                                        name="username"
+                                        value={formValues?.user?.username || ''}
+                                        onChange={onChangeUser}
+                                        placeholder="Nombre completo"
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <TextField
+                                        label="Email"
+                                        variant="outlined"
                                         type="email"
-                                        label="Email del Usuario a Asociar"
-                                        name="emailToAssociate"
+                                        name="email"
+                                        value={formValues.user?.email || ''}
+                                        onChange={(e) => {
+                                            onChangeUser(e as React.ChangeEvent<HTMLInputElement>);
+                                            setErrorEmailNewUser(false);
+                                        }}
+                                        onBlur={onBlurEmailNewUser}
+                                        placeholder="usuario@ejemplo.com"
+                                        required
+                                        fullWidth
+                                        error={errorEmailNewUser}
                                         color={
-                                            regexEmail.test(formValues.emailToAssociate) && errorToEmailAssociation
-                                                ? 'error'
-                                                : regexEmail.test(formValues.emailToAssociate) && !errorToEmailAssociation
+                                            regexEmail.test(formValues.user?.email || '') && !errorEmailNewUser
                                                 ? 'success'
                                                 : undefined
                                         }
-                                        value={formValues.emailToAssociate}
-                                        focused={!!formValues.emailToAssociate}
-                                        onBlur={onBlurEmailToAssociate}
-                                        onChange={handleInputChange}
+                                        focused={!!formValues.user?.email}
                                         helperText={
-                                            errorToEmailAssociation
-                                                ? 'Usuario no encontrado'
-                                                : 'Ingresa el email de un usuario existente'
+                                            isCheckingEmail
+                                                ? 'Verificando disponibilidad del email...'
+                                                : errorEmailNewUser
+                                                ? 'El email ya está registrado en el sistema'
+                                                : 'Ingresa el email del nuevo administrador'
                                         }
-                                        error={errorToEmailAssociation}
+                                        InputProps={{
+                                            endAdornment: isCheckingEmail ? (
+                                                <InputAdornment position="end">
+                                                    <CircularProgress size={18} />
+                                                </InputAdornment>
+                                            ) : undefined,
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <TextField
+                                        label="Contraseña"
+                                        variant="outlined"
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        value={formValues.user?.password || ''}
+                                        onChange={onChangeUser}
+                                        placeholder="Mínimo 8 caracteres"
+                                        required
                                         fullWidth
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <EmailIcon />
+                                                    <Tooltip
+                                                        title={
+                                                            <Alert severity="warning" sx={{ fontSize: '0.75rem' }}>
+                                                                <AlertTitle sx={{ fontSize: '0.8rem' }}>
+                                                                    Requisitos de contraseña:
+                                                                </AlertTitle>
+                                                                • Mínimo 8 caracteres<br />
+                                                                • Una mayúscula<br />
+                                                                • Un número<br />
+                                                                • Un carácter especial
+                                                            </Alert>
+                                                        }
+                                                    >
+                                                        <IconButton size="small" aria-label="Requisitos de contraseña" sx={{ ml: -0.5 }}>
+                                                            <InfoOutlined fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </InputAdornment>
+                                            ),
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        edge="end"
+                                                        size="small"
+                                                    >
+                                                        {showPassword ? <VisibilityOffOutlined fontSize="small" /> : <VisibilityOutlined fontSize="small" />}
+                                                    </IconButton>
                                                 </InputAdornment>
                                             ),
                                         }}
                                     />
-                                </Box>
-                            ) : (
-                                // Formulario de nuevo usuario admin
-                                <Paper variant="outlined" elevation={0} sx={{ width: '100%', p: 3, bgcolor: 'grey.50' }}>
-                                    <Typography variant="subtitle1" fontWeight={500} gutterBottom>
-                                        Crear Nuevo Usuario Administrador
-                                    </Typography>
-                                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                variant="outlined"
-                                                type="text"
-                                                label="Nombre de Usuario *"
-                                                name="username"
-                                                value={formValues?.user?.username || ''}
-                                                onChange={onChangeUser}
-                                                placeholder="Nombre completo"
-                                                required
-                                                fullWidth
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <PersonIcon fontSize="small" />
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                label="Email *"
-                                                variant="outlined"
-                                                type="email"
-                                                name="email"
-                                                value={formValues.user?.email || ''}
-                                                onChange={(e) => {
-                                                    onChangeUser(e as React.ChangeEvent<HTMLInputElement>);
-                                                    setErrorEmailNewUser(false);
-                                                }}
-                                                onBlur={onBlurEmailNewUser}
-                                                placeholder="usuario@ejemplo.com"
-                                                required
-                                                fullWidth
-                                                error={errorEmailNewUser}
-                                                color={
-                                                    regexEmail.test(formValues.user?.email || '') && !errorEmailNewUser
-                                                        ? 'success'
-                                                        : undefined
-                                                }
-                                                focused={!!formValues.user?.email}
-                                                helperText={
-                                                    isCheckingEmail
-                                                        ? 'Verificando disponibilidad del email...'
-                                                        : errorEmailNewUser
-                                                        ? 'El email ya está registrado en el sistema'
-                                                        : 'Ingresa el email del nuevo administrador'
-                                                }
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <EmailIcon fontSize="small" />
-                                                        </InputAdornment>
-                                                    ),
-                                                    endAdornment: isCheckingEmail ? (
-                                                        <InputAdornment position="end">
-                                                            <CircularProgress size={18} />
-                                                        </InputAdornment>
-                                                    ) : undefined,
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                label="Contraseña *"
-                                                variant="outlined"
-                                                type={showPassword ? 'text' : 'password'}
-                                                name="password"
-                                                value={formValues.user?.password || ''}
-                                                onChange={onChangeUser}
-                                                placeholder="Mínimo 8 caracteres"
-                                                required
-                                                fullWidth
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <Tooltip
-                                                                title={
-                                                                    <Alert severity="warning" sx={{ fontSize: '0.75rem' }}>
-                                                                        <AlertTitle sx={{ fontSize: '0.8rem' }}>
-                                                                            Requisitos de contraseña:
-                                                                        </AlertTitle>
-                                                                        • Mínimo 8 caracteres<br />
-                                                                        • Una mayúscula<br />
-                                                                        • Un número<br />
-                                                                        • Un carácter especial
-                                                                    </Alert>
-                                                                }
-                                                            >
-                                                                <IconButton size="small">
-                                                                    <InfoIcon fontSize="small" />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                        </InputAdornment>
-                                                    ),
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                aria-label="toggle password visibility"
-                                                                onClick={() => setShowPassword(!showPassword)}
-                                                                edge="end"
-                                                            >
-                                                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            )}
-                        </Box>
-                    </CardContent>
-                </Card>
+                                </Grid>
+                            </Grid>
+                        </>
+                    )}
+                </FormCard>
             )}
         </Box>
     );

@@ -1,19 +1,26 @@
 import React, { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { DataTableUser, Loading } from '../../components';
-import { Box, Typography, Grid, Button, TextField, InputAdornment, Container } from '@mui/material';
 import {
-    Add as AddIcon,
-    Search as SearchIcon,
-    Person as PersonIcon,
-} from '@mui/icons-material';
+    DataTableUser,
+    EmptyState,
+    ListCard,
+    ListToolbar,
+    Loading,
+    PageContainer,
+    PageHeader,
+    RollingNumber,
+    SearchField,
+    ValuePill,
+} from '../../components';
+import { Button } from '@mui/material';
+import { AddRounded, PersonOutlineOutlined, SearchRounded } from '@mui/icons-material';
 import { ColumnProps } from '../../types';
 import { useForm, useUser } from '../../hooks';
 
 const columns: ColumnProps[] = [
     { text: 'Apellido', align: 'left' },
-    { text: 'Nombre', align: 'center' },
-    { text: 'Email', align: 'center' }];
+    { text: 'Nombre', align: 'left' },
+    { text: 'Email', align: 'left' }];
 
 export const ListUserPage: React.FC = () => {
 
@@ -47,88 +54,66 @@ export const ListUserPage: React.FC = () => {
     }, []);
 
     return (
-        <Container maxWidth="md" sx={{ pl: 0, m: 0 }}>
+        <>
             {
                 isLoading && (<Loading loading={true} />)
             }
-            <Box
-                component="div"
-                display="flex"
-                alignItems="center"
-                sx={{ ml: { sm: 2 }, pt: 2 }}>
-                <PersonIcon />
-                <Typography variant='h5' sx={{ ml: { sm: 2 } }} >
-                    Usuarios-Backoffice
-                </Typography>
-            </Box>
-            <Box component="div" sx={{ mt: 7 }}>
-                <Grid
-                    container
-                    spacing={0}
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ p: 2, mt: { sm: 2 } }}
-                >
-                    <Grid item xs={6} sm={2}>
+            <PageContainer>
+                <PageHeader
+                    icon={<PersonOutlineOutlined />}
+                    title="Usuarios Backoffice"
+                    meta={
+                        !isLoading ? (
+                            <ValuePill>
+                                <RollingNumber value={users.length} />
+                            </ValuePill>
+                        ) : undefined
+                    }
+                    actions={
                         <Button
                             variant="contained"
-                            color="secondary"
                             component={RouterLink}
                             to="/user/new"
-                            startIcon={<AddIcon />}
+                            startIcon={<AddRounded />}
                         >
                             Nuevo
                         </Button>
-                    </Grid>
-                    <Grid item xs={12} sm={10}>
-                        <Grid container justifyContent="flex-end" >
-                            <Grid item xs={8} sm={4} >
-                                <TextField
-                                    variant="outlined"
-                                    type='text'
-                                    size='small'
-                                    placeholder='Nombre/Razon Social'
-                                    autoComplete='off'
-                                    name="filterText"
-                                    value={filterText}
-                                    onChange={handleInputChange}
-                                    InputProps={{
-                                        startAdornment: <InputAdornment position="start" />,
-                                    }}
-                                    fullWidth />
-                            </Grid>
-                            <Grid item xs={4} sm={2}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    size="medium"
-                                    fullWidth
-                                    sx={{
-                                        height: '98%',
-                                        margin: 'auto',
-                                        borderTopLeftRadius: 0,
-                                        borderBottomLeftRadius: 0
-                                    }}
-                                    onClick={() => onClickSearch()}
-                                    startIcon={<SearchIcon />}>
-                                    Buscar
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Box
-                    component="div"
-                    sx={{ p: 1, mt: 2 }}>
-                    <DataTableUser
-                        key="datatable-user"
-                        columns={columns}
-                        rows={users}
-                        isLoading={isLoading}
-                    />
-                </Box>
-            </Box>
-        </Container>
+                    }
+                />
+                <ListCard>
+                    <ListToolbar>
+                        <SearchField
+                            value={filterText}
+                            onChange={handleInputChange}
+                            placeholder="Nombre/Razón social…"
+                            onSubmit={onClickSearch}
+                        />
+                        {/* la búsqueda de esta lista no es en vivo: se aplica con Enter o con este botón */}
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => onClickSearch()}
+                            startIcon={<SearchRounded />}
+                        >
+                            Buscar
+                        </Button>
+                    </ListToolbar>
+                    {!isLoading && users.length === 0 ? (
+                        filterText ? (
+                            <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+                        ) : (
+                            <EmptyState icon={<PersonOutlineOutlined />} title="No se encontraron usuarios" hint="Cargá el primero con «Nuevo»." />
+                        )
+                    ) : (
+                        <DataTableUser
+                            key="datatable-user"
+                            columns={columns}
+                            rows={users}
+                            isLoading={isLoading}
+                        />
+                    )}
+                </ListCard>
+            </PageContainer>
+        </>
     )
 }

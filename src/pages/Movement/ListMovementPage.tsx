@@ -2,39 +2,46 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { ColumnProps, Movement } from "../../types";
 import React, { useEffect } from "react";
 import { useAppDispatch, useMovements, useForm } from "../../hooks";
-import { SyncAlt as SyncAltIcon } from "@mui/icons-material";
 import {
   DataTable,
+  EmptyState,
   ItemRow,
+  ListCard,
+  ListToolbar,
   Loading,
-  SearchButton,
-  SearchInput,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
   TableCellStyled,
+  ValuePill,
 } from "../../components";
+import type { Tone } from "../../components";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-// import 'semantic-ui-css/semantic.min.css';
-// import { Icon } from "semantic-ui-react";
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon
+  AddRounded,
+  DeleteOutline,
+  EditOutlined,
+  SearchRounded,
+  SyncAltOutlined,
 } from "@mui/icons-material";
 import { setMovementACtive } from "../../store/movements";
 
 const columns: ColumnProps[] = [
   { text: "Concepto", align: "left", field: "name", sortable: true },
-  { text: "Descripcion", align: "center", field: "description", sortable: true },
-  { text: "Tipo de Movimiento", align: "right", field: "manual", sortable: true },
-  { text: "Suma o Descuenta Stock", align: "right", field: "sumaStock", sortable: true },
+  { text: "Descripción", align: "left", field: "description", sortable: true },
+  { text: "Tipo de movimiento", align: "left", field: "manual", sortable: true },
+  { text: "Suma o descuenta stock", align: "left", field: "sumaStock", sortable: true },
 ];
+
+/** Color de la píldora de stock según el valor guardado (solo presentación; el texto se muestra tal cual). */
+const stockTone = (value?: string): Tone => {
+  const v = String(value ?? "").toLowerCase();
+  if (v.startsWith("suma")) return "green";
+  if (v.startsWith("descuenta")) return "orange";
+  if (v === "ambas" || v === "both") return "blue";
+  return "neutral";
+};
 
 export const ListMovementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -113,79 +120,42 @@ export const ListMovementPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <SyncAltIcon />
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Tipos Movimientos insumos
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
-          >
-            <Grid
-              container
-              spacing={0}
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ p: 2, mt: { sm: 2 } }}
-            >
-              <Grid item xs={6} sm={4}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component={RouterLink}
-                  to="/type-movement/new"
-                  startIcon={<AddIcon />}
-                >
-                  Nuevo Movimiento
-                </Button>
-              </Grid>
-              <Grid item xs={6} sm={8}>
-                <Grid
-                  container
-                  justifyContent="flex-end"
-                  alignItems="center"
-                >
-                  <Grid item xs={8} sm={5}>
-                    <SearchInput
-                      value={filterText}
-                      placeholder="Buscar Movimiento"
-                      handleInputChange={handleInputChange}
-                    />
-                  </Grid>
-                  <Grid item xs={4} sm={3}>
-                    <SearchButton
-                      text="Buscar"
-                      onClick={() => onClickSearch()}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 1, textAlign: "right" }}
-                    >
-                      {rows.length} {rows.length === 1 ? "movimiento" : "movimientos"}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
+      <PageContainer>
+        <PageHeader
+          icon={<SyncAltOutlined />}
+          title="Tipos de movimientos de insumos"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/type-movement/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar>
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar movimiento…"
+              onSubmit={onClickSearch}
+            />
+            <Button variant="outlined" size="small" startIcon={<SearchRounded />} onClick={() => onClickSearch()} sx={{ height: 34 }}>
+              Buscar
+            </Button>
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+            ) : (
+              <EmptyState icon={<SyncAltOutlined />} title="No se encontraron movimientos" hint="Cargá el primero con «Nuevo»." />
+            )
+          ) : (
             <DataTable
               key="datatable-movements"
               columns={columns}
@@ -194,51 +164,36 @@ export const ListMovementPage: React.FC = () => {
               sortDirection={sortDirection}
               onSort={handleSort}
             >
-              {!isLoading && rows.length === 0 && (
-                <ItemRow>
-                  <TableCellStyled align="center" colSpan={5}>
-                    No se encontraron movimientos
-                  </TableCellStyled>
-                </ItemRow>
-              )}
               {rows.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.name}</TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.description}
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.name}</TableCellStyled>
+                  <TableCellStyled align="left">{row.description}</TableCellStyled>
+                  <TableCellStyled align="left">
+                    <ValuePill tone={row.manual ? "neutral" : "accent"}>
+                      {row.manual ? "Manual" : "Automático"}
+                    </ValuePill>
                   </TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.manual ? "Manual" : "Automático"}
+                  <TableCellStyled align="left">
+                    {row.sumaStock ? <ValuePill tone={stockTone(row.sumaStock)}>{row.sumaStock}</ValuePill> : null}
                   </TableCellStyled>
-                  <TableCellStyled align="center">
-                    {row.sumaStock}
-                  </TableCellStyled>
-                  <TableCellStyled align="right">
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">
-                      <IconButton
-                        aria-label="Editar"
-                        onClick={() => onClickUpdateMovement(row)}
-                      >
-                        <EditIcon />
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateMovement(row)}>
+                        <EditOutlined />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Eliminar">
-                      <IconButton
-                        onClick={() => handleDeleteMovement(row)}
-                        style={{ fontSize: '1rem' }}
-                        color="default"
-                      >
-                        <DeleteIcon />
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteMovement(row)}>
+                        <DeleteOutline />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>
                 </ItemRow>
               ))}
             </DataTable>
-          </Box>
-        </Box>
-      </Container>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
 };
-

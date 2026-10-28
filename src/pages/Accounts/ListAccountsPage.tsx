@@ -1,29 +1,38 @@
 import { Link as RouterLink } from 'react-router-dom';
 import React, { useEffect, useState, useCallback } from 'react';
-import { Loading } from '../../components';
-import { DataTable as DataTableAccount, AccountStats, AccountCardView } from '../../components/account';
-import { Box, Typography, Grid, Button, TextField, InputAdornment, Container, IconButton, ToggleButtonGroup, ToggleButton, Tooltip } from '@mui/material';
 import {
-  Add as AddIcon,
-  Search as SearchIcon,
-  Clear as ClearIcon,
-  BusinessCenter as BusinessCenterIcon,
-  ViewList as ViewListIcon,
-  ViewModule as ViewModuleIcon,
+  FilteredCount,
+  ListCard,
+  ListToolbar,
+  Loading,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
+  ValuePill,
+} from '../../components';
+import { DataTable as DataTableAccount, AccountStats, AccountCardView } from '../../components/account';
+import { Button, ToggleButtonGroup, ToggleButton, Tooltip } from '@mui/material';
+import {
+  AddRounded,
+  BadgeOutlined,
+  ViewListOutlined,
+  ViewModuleOutlined,
 } from '@mui/icons-material';
 import { ColumnProps } from '../../types';
 import { useAccount, useForm } from '../../hooks';
 
+// Ojo: el texto de las columnas ordenables es la clave de columnToProperty en components/account/DataTable.
 const columns: ColumnProps[] = [
-  { text: 'Referencia Id', align: 'left' },
-  { text: 'Status', align: 'left' },
-  { text: 'Pais', align: 'left' },
-  { text: 'Denominacion', align: 'left' },
+  { text: 'Referencia ID', align: 'left' },
+  { text: 'Estado', align: 'left' },
+  { text: 'País', align: 'left' },
+  { text: 'Denominación', align: 'left' },
   { text: 'Tipo', align: 'left' },
   { text: 'Licencia', align: 'left' },
-  { text: '#Campos', align: 'left' },
-  { text: '#Contratos', align: 'left' },
-  { text: '#Hectareas', align: 'left' },
+  { text: '#Campos', align: 'right' },
+  { text: '#Contratos', align: 'right' },
+  { text: '#Hectáreas', align: 'right' },
   // { text: '', align: 'center' }
 ];
 
@@ -77,6 +86,15 @@ export const ListAccountPage: React.FC = () => {
     setAccounts(allAccounts);
   }, [reset, allAccounts, setAccounts]);
 
+  // La X del buscador manda el texto vacío: va al mismo handler que la X de antes.
+  const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === '') {
+      handleClearSearch();
+      return;
+    }
+    handleInputChange(event);
+  };
+
   useEffect(() => {
     const loadAccounts = async () => {
       await getAccounts();
@@ -94,107 +112,84 @@ export const ListAccountPage: React.FC = () => {
 
 
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>
+    <>
       {isLoading && <Loading loading={true} />}
-
-      {/* Header */}
-      <Box display="flex" alignItems="center" sx={{ mb: 3 }}>
-        <BusinessCenterIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
-        <Typography variant="h4" fontWeight="600">
-          Cuentas
-        </Typography>
-      </Box>
-
-      {/* Estadísticas */}
-      <AccountStats accounts={allAccounts} />
-
-      {/* Barra de acciones y búsqueda */}
-      <Box sx={{ mb: 3 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6} md={3}>
+      <PageContainer>
+        <PageHeader
+          icon={<BadgeOutlined />}
+          title="Cuentas"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={accounts.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
             <Button
               variant="contained"
-              color="primary"
               component={RouterLink}
               to="/accounts/new"
-              startIcon={<AddIcon />}
-              fullWidth
-              sx={{ height: 40 }}
+              startIcon={<AddRounded />}
             >
-              Nueva Cuenta
+              Nueva cuenta
             </Button>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              variant="outlined"
-              type="text"
-              size="small"
-              placeholder="Buscar por ID, Denominación o País..."
-              autoComplete="off"
-              name="filterText"
-              value={filterText}
-              onChange={handleInputChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon color="action" />
-                  </InputAdornment>
-                ),
-                endAdornment: filterText && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={handleClearSearch}
-                      edge="end"
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={12} md={5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ToggleButtonGroup
-              value={viewMode}
-              exclusive
-              onChange={(_, newView) => newView && setViewMode(newView)}
-              size="small"
-              aria-label="view mode"
-            >
-              <ToggleButton value="table" aria-label="table view">
-                <Tooltip title="Vista de tabla">
-                  <ViewListIcon />
-                </Tooltip>
-              </ToggleButton>
-              <ToggleButton value="cards" aria-label="cards view">
-                <Tooltip title="Vista de tarjetas">
-                  <ViewModuleIcon />
-                </Tooltip>
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Grid>
-        </Grid>
-      </Box>
+          }
+        />
 
-      {/* Vista de datos */}
-      <Box>
-        {viewMode === 'table' ? (
-          <DataTableAccount
-            key="datatable-account"
-            columns={columns}
-            rows={accounts}
-            isLoading={isLoading}
-          />
-        ) : (
-          <AccountCardView
-            key="cardview-account"
-            accounts={accounts}
-            isLoading={isLoading}
-          />
-        )}
-      </Box>
-    </Container>
+        {/* Estadísticas */}
+        <AccountStats accounts={allAccounts} />
+
+        <ListCard>
+          <ListToolbar
+            aside={
+              <>
+                {filterText && <FilteredCount shown={accounts.length} total={allAccounts.length} />}
+                <ToggleButtonGroup
+                  value={viewMode}
+                  exclusive
+                  onChange={(_, newView) => newView && setViewMode(newView)}
+                  size="small"
+                  aria-label="view mode"
+                >
+                  <ToggleButton value="table" aria-label="table view">
+                    <Tooltip title="Vista de tabla">
+                      <ViewListOutlined sx={{ fontSize: 18 }} />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="cards" aria-label="cards view">
+                    <Tooltip title="Vista de tarjetas">
+                      <ViewModuleOutlined sx={{ fontSize: 18 }} />
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </>
+            }
+          >
+            <SearchField
+              value={filterText}
+              onChange={onChangeSearch}
+              placeholder="Buscar por ID, denominación o país…"
+            />
+          </ListToolbar>
+
+          {/* Vista de datos */}
+          {viewMode === 'table' ? (
+            <DataTableAccount
+              key="datatable-account"
+              columns={columns}
+              rows={accounts}
+              isLoading={isLoading}
+            />
+          ) : (
+            <AccountCardView
+              key="cardview-account"
+              accounts={accounts}
+              isLoading={isLoading}
+            />
+          )}
+        </ListCard>
+      </PageContainer>
+    </>
   );
 };

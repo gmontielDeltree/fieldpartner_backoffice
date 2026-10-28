@@ -1,18 +1,15 @@
 // import { Link as RouterLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
-    Grid,
+    Box,
     TextField,
-    FormControl,
-    InputLabel,
-    Input,
     InputAdornment,
     IconButton,
     Button,
     Alert
 } from '@mui/material';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { AuthLayout, Loading } from '../components';
+import { AuthFieldLabel, AuthHeader, Loading, authEnter } from '../components';
 import { useAppDispatch, useAuthStore, useFormValid } from '../hooks';
 import { clearErrorMessage } from '../store';
 
@@ -64,74 +61,68 @@ export const LoginPage: React.FC = () => {
 
 
     return (
-        <AuthLayout title='Backoffice'>
+        <Box>
             {
                 isLoading && <Loading key="loading-auth" loading={true} />
             }
-             <form onSubmit={handleSubmit}>
-                <Grid container>
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <TextField
-                            label="Email"
-                            variant='standard'
-                            type='email'
-                            placeholder='correo@gmail.com'
-                            name="email"
-                            value={email}
-                            error={!!formErrors.email}
-                            onChange={handleInputChange}
-                            fullWidth />
-                    </Grid>
+            <AuthHeader title="Ingresá al Backoffice" subtitle="Usá tu cuenta de administrador de FieldPartner." />
 
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                        <FormControl fullWidth variant="standard">
-                            <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-                            <Input
-                                autoComplete="off"
-                                id="standard-adornment-password"
-                                name="password"
-                                value={password}
-                                onChange={handleInputChange}
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder='Contraseña'
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        </FormControl>
-                    </Grid>
-                    {
-                        errorMessage && (
-                            <Alert severity="error" sx={{ my: 1 }} >{errorMessage}</Alert>
-                        )
-                    }
-                    <Grid container spacing={2} sx={{ mb: 2, mt: 2 }}>
-                        <Grid item xs={12} md={12}>
-                            <Button
-                                type="submit"
-                                variant='contained'
-                                fullWidth
-                                color="primary"
-                                onClick={() => handleLogin()}>
-                                Ingresar
-                            </Button>
-                        </Grid>
-                        {/* <Grid item xs={12} md={6}>
-                            <Button variant='contained' fullWidth>
-                                <Google />
-                                <Typography sx={{ ml: 1 }} > Google</Typography>
-                            </Button>
-                        </Grid> */}
-                    </Grid>
-                </Grid>
-            </form>
-        </AuthLayout>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={authEnter(60)}>
+                <Box sx={{ mb: 2 }}>
+                    <AuthFieldLabel htmlFor="email">Email</AuthFieldLabel>
+                    <TextField
+                        id="email"
+                        type='email'
+                        placeholder='correo@gmail.com'
+                        name="email"
+                        value={email}
+                        error={!!formErrors.email}
+                        helperText={formErrors.email || ''}
+                        onChange={handleInputChange}
+                        autoComplete="email"
+                        autoFocus
+                        fullWidth />
+                </Box>
+
+                <Box>
+                    <AuthFieldLabel htmlFor="password">Contraseña</AuthFieldLabel>
+                    <TextField
+                        id="password"
+                        autoComplete="current-password"
+                        name="password"
+                        value={password}
+                        error={!!formErrors.password}
+                        helperText={formErrors.password || ''}
+                        onChange={handleInputChange}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder='Contraseña'
+                        fullWidth
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                        size="small"
+                                        sx={{ color: 'var(--ink-3)', '&:hover': { color: 'var(--ink-2)' } }}
+                                    >
+                                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Box>
+                {
+                    errorMessage && (
+                        <Alert severity="error" sx={{ mt: 2 }} >{errorMessage}</Alert>
+                    )
+                }
+                <Button type="submit" variant='contained' fullWidth size="large" sx={{ mt: 3 }}>
+                    Ingresar
+                </Button>
+            </Box>
+        </Box>
     )
 }

@@ -14,5 +14,6 @@ export * from './NumericTextField/NumericTextField';
 export * from './IconSelector/IconSelector';
 export * from './DynamicIcon/DynamicIcon';
 export * from './IconSelectorModal/IconSelectorModal';
+export * from './ui';
 
 export { DataTable, ItemRow, TableCellStyled };

@@ -1,27 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAccount, useCountry, useForm, useLicences } from "../../hooks";
+import { Box, Button } from "@mui/material";
 import {
-    Button,
-    Container,
-    Paper,
-    Typography,
-    Box,
-    Stepper,
-    Step,
-    StepLabel,
-    Breadcrumbs,
-    Link,
-    Chip,
-} from "@mui/material";
-import {
-    BusinessCenter as BusinessCenterIcon,
-    NavigateNext as NavigateNextIcon,
     AssignmentTurnedIn as AssignmentTurnedInIcon,
     Business as BusinessIcon,
     Badge as BadgeIcon,
+    BadgeOutlined,
 } from "@mui/icons-material";
 import { CompanyForm, GeneralInfoForm, CategoryLicenceForm } from "../../components/account";
+import { FormActions, FormStepper, PageContainer, PageHeader, ValuePill } from "../../components";
 import { Account } from "../../interfaces/account";
 import { EnumCategoryAccount, EnumCategoryCod, EnumClaveTributaria, EnumLicenceType } from "../../types";
 import { Loading } from '../../components/Loading';
@@ -223,150 +211,65 @@ export const AccountPage: React.FC = () => {
 
     return (
         <>
-            <Container maxWidth="lg" sx={{ py: 3 }}>
-                <Loading key="loading-new-customer" loading={isLoading || loadingLic || isCheckingEmail} />
+            <Loading key="loading-new-customer" loading={isLoading || loadingLic || isCheckingEmail} />
+            <PageContainer maxWidth={1180}>
+                <PageHeader
+                    icon={<BadgeOutlined />}
+                    eyebrow="Usuarios y cuentas · Cuentas"
+                    title="Nueva cuenta"
+                    meta={<ValuePill tone="accent">Modo creación</ValuePill>}
+                    description="Crea una nueva cuenta cliente en el sistema"
+                    onBack={onClickCancel}
+                />
 
-                {/* Breadcrumbs */}
-                <Breadcrumbs
-                    separator={<NavigateNextIcon fontSize="small" />}
-                    aria-label="breadcrumb"
-                    sx={{ mb: 2 }}
-                >
-                    <Link
-                        component={RouterLink}
-                        underline="hover"
-                        color="inherit"
-                        to="/accounts"
-                        sx={{ display: 'flex', alignItems: 'center' }}
-                    >
-                        <BusinessCenterIcon sx={{ mr: 0.5 }} fontSize="small" />
-                        Cuentas
-                    </Link>
-                    <Typography color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
-                        Nueva Cuenta
-                    </Typography>
-                </Breadcrumbs>
+                {
+                    steps.length > 0 && (
+                        <FormStepper
+                            activeStep={indexStep}
+                            sx={{ '& .MuiStepper-root': { maxWidth: 680 } }}
+                            steps={steps.map((step) => ({
+                                text: step.label,
+                                optional: (
+                                    <Box component="span" sx={{ display: 'block', fontSize: 11.5, color: 'var(--ink-3)', whiteSpace: 'nowrap' }}>
+                                        {step.description}
+                                    </Box>
+                                ),
+                            }))}
+                        />
+                    )
+                }
 
-                {/* Header */}
-                <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
-                    <Box display="flex" alignItems="center">
-                        <BusinessCenterIcon sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
-                        <Box>
-                            <Typography variant="h4" fontWeight="600">
-                                Nueva Cuenta
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                                Crea una nueva cuenta cliente en el sistema
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Chip
-                        label="Modo Creación"
-                        color="success"
+                {getStepContent(indexStep)}
+
+                {/* Botones de acción */}
+                <FormActions>
+                    <Button
                         variant="outlined"
-                    />
-                </Box>
-
-                <Paper
-                    elevation={3}
-                    sx={{ my: { xs: 3, md: 3 }, p: { xs: 3, md: 4 } }}
-                >
-                    {
-                        steps.length > 0 && (
-                            <Box sx={{ mb: 4 }}>
-                                <Stepper
-                                    activeStep={indexStep}
-                                    alternativeLabel
-                                    sx={{ width: "100%", margin: "auto" }}
-                                >
-                                    {steps.map((step, index) => {
-                                        const StepIconComponent = step.icon;
-                                        return (
-                                            <Step key={step.label}>
-                                                <StepLabel
-                                                    StepIconComponent={() => (
-                                                        <Box
-                                                            sx={{
-                                                                width: 40,
-                                                                height: 40,
-                                                                borderRadius: '50%',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                bgcolor: indexStep >= index ? 'primary.main' : 'grey.300',
-                                                                color: 'white',
-                                                                transition: 'all 0.3s',
-                                                            }}
-                                                        >
-                                                            <StepIconComponent />
-                                                        </Box>
-                                                    )}
-                                                >
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                        fontWeight={indexStep === index ? 600 : 400}
-                                                    >
-                                                        {step.label}
-                                                    </Typography>
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        {step.description}
-                                                    </Typography>
-                                                </StepLabel>
-                                            </Step>
-                                        );
-                                    })}
-                                </Stepper>
-                            </Box>
-                        )
-                    }
-                    {getStepContent(indexStep)}
-
-                    {/* Botones de acción */}
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            mt: 4,
-                            pt: 3,
-                            borderTop: '1px solid',
-                            borderColor: 'divider',
-                        }}
+                        onClick={indexStep !== 0 ? handleBack : onClickCancel}
                     >
+                        {indexStep !== 0 ? "Volver" : "Cancelar"}
+                    </Button>
+                    {indexStep < steps.length - 1 && (
                         <Button
-                            variant="outlined"
-                            onClick={indexStep !== 0 ? handleBack : onClickCancel}
-                            size="large"
+                            variant="contained"
+                            color="primary"
+                            onClick={handleNext}
+                            disabled={!canGoNext()}
                         >
-                            {indexStep !== 0 ? "Volver" : "Cancelar"}
+                            Siguiente
                         </Button>
-
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            {indexStep < steps.length - 1 && (
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleNext}
-                                    disabled={!canGoNext()}
-                                    size="large"
-                                >
-                                    Siguiente
-                                </Button>
-                            )}
-                            {indexStep === steps.length - 1 && (
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick={onClickAdd}
-                                    size="large"
-                                >
-                                    Guardar Cuenta
-                                </Button>
-                            )}
-                        </Box>
-                    </Box>
-                </Paper>
-            </Container>
+                    )}
+                    {indexStep === steps.length - 1 && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={onClickAdd}
+                        >
+                            Guardar cuenta
+                        </Button>
+                    )}
+                </FormActions>
+            </PageContainer>
         </>
     );
 };

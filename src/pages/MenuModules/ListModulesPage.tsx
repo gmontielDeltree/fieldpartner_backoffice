@@ -1,42 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  TableContainer,
-  Paper,
-  Typography,
-  Chip,
-} from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import { AddRounded, DeleteOutline, EditOutlined, ViewModuleOutlined } from '@mui/icons-material';
 import { useForm, useModules } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 
 import {
   DataTable,
   DynamicIcon,
+  EmptyState,
+  FilteredCount,
   ItemRow,
+  ListCard,
+  ListToolbar,
   Loading,
-  SearchButton,
-  SearchInput,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
   TableCellStyled,
+  ValuePill,
 } from '../../components';
 import { ColumnProps, Modules } from '../../types';
 import { ModuleFormDialog } from '../../components/Modules/ModuleFormDialog';
 //import { setModulesActive } from '../../store/modules/modulesSlice';
 
 const columns: ColumnProps[] = [
-  { text: 'Icono', align: 'center' },
+  { text: 'Ícono', align: 'center' },
   { text: 'Módulo (ES)', align: 'left' },
   { text: 'Módulo (EN)', align: 'left' },
   { text: 'Módulo (PT)', align: 'left' },
-  { text: 'Acciones', align: 'center' },
 ];
 
-export const ListModulesPage: React.FC = () => {
+/** Ficha chica para el ícono que viene de la base (MUI o SVG guardado). */
+export const IconCell: React.FC<{ iconName: string }> = ({ iconName }) => (
+  <Box
+    sx={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+      width: 28,
+      height: 28,
+      borderRadius: '8px',
+      background: 'var(--inset)',
+      boxShadow: 'var(--shadow-hairline)',
+      color: 'var(--ink-2)',
+      verticalAlign: 'middle',
+      '& .MuiSvgIcon-root': { fontSize: 17 },
+      '& > span': { width: 17, height: 17 },
+    }}
+  >
+    <DynamicIcon iconName={iconName} />
+  </Box>
+);
+
+interface ListModulesPageProps {
+  /** selector Menús / Módulos que pone la página contenedora en la barra de la lista */
+  viewSwitcher?: React.ReactNode;
+}
+
+export const ListModulesPage: React.FC<ListModulesPageProps> = ({ viewSwitcher }) => {
   const navigate = useNavigate();
   const { isLoading, modules, getModules, removeModules, createModules, updateModules } =
     useModules();
@@ -132,187 +155,103 @@ export const ListModulesPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const rows = filterModules(modules, filterText);
+
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth='lg' sx={{ ml: 0 }}>
-        <Box component='div' sx={{ mt: 5 }}>
-          {/* Header mejorado */}
-          <Paper
-            elevation={0}
-            sx={{
-              p: 2,
-              mb: 3,
-              bgcolor: 'background.default',
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 2,
-            }}
+      <PageContainer>
+        <PageHeader
+          icon={<ViewModuleOutlined />}
+          title='Módulos'
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant='contained' onClick={handleOpenNew} startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar
+            aside={filterText ? <FilteredCount shown={rows.length} total={modules.length} /> : undefined}
           >
-            <Grid
-              container
-              spacing={2}
-              direction='row'
-              alignItems='center'
-              justifyContent='space-between'
-            >
-              <Grid item xs={12} sm={3}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={handleOpenNew}
-                  startIcon={<AddIcon />}
-                  fullWidth
-                  sx={{
-                    py: 1.2,
-                    fontWeight: 600,
-                    boxShadow: 2,
-                    '&:hover': {
-                      boxShadow: 4,
-                    },
-                  }}
-                >
-                  Nuevo Módulo
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} sm={9}>
-                <Grid container spacing={1} justifyContent='flex-end'>
-                  <Grid item xs={12} sm={7}>
-                    <SearchInput
-                      value={filterText}
-                      placeholder='Buscar por nombre del módulo...'
-                      handleInputChange={handleInputChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={3}>
-                    <SearchButton text='Buscar' onClick={() => onClickSearch()} />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            {/* Stats rápidos */}
-            <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-              <Chip
-                label={`Total de módulos: ${modules.length}`}
-                color='primary'
-                variant='outlined'
-                size='small'
+            {viewSwitcher}
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder='Buscar por nombre del módulo…'
+              onSubmit={onClickSearch}
+            />
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title='Sin resultados' hint='Probá con otra búsqueda' />
+            ) : (
+              <EmptyState
+                icon={<ViewModuleOutlined />}
+                title='No se encontraron módulos'
+                hint='Cargá el primero con «Nuevo».'
               />
-            </Box>
-          </Paper>
-
-          {/* Tabla mejorada */}
-          <Box component='div' sx={{ p: 1 }}>
-            <TableContainer
-              key='table-modules'
-              sx={{
-                minHeight: '120px',
-                maxHeight: '650px',
-                overflow: 'auto',
-                mb: 5,
-                boxShadow: 2,
-                borderRadius: 1,
-              }}
-              component={Paper}
-            >
-              <DataTable key='datatable-modules' columns={columns} isLoading={isLoading}>
-                {filterModules(modules, filterText).map(row => (
-                  <ItemRow
-                    key={row._id}
-                    hover
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                      },
-                    }}
-                  >
-                    {/* Ícono */}
-                    <TableCellStyled align='center' sx={{ width: '80px' }}>
-                      {row.icon ? (
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            p: 0.5,
-                          }}
-                        >
-                          <DynamicIcon iconName={row.icon} />
-                        </Box>
-                      ) : (
-                        <Typography variant='caption' color='text.secondary'>
-                          -
-                        </Typography>
-                      )}
-                    </TableCellStyled>
-
-                    {/* Módulo ES */}
-                    <TableCellStyled align='left' sx={{ fontWeight: 500, minWidth: '200px' }}>
-                      <Typography variant='body2' sx={{ fontSize: '0.9rem' }}>
-                        {row.moduleNameEs || '-'}
-                      </Typography>
-                    </TableCellStyled>
-
-                    {/* Módulo EN */}
-                    <TableCellStyled align='left' sx={{ minWidth: '200px' }}>
-                      <Typography variant='body2' sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
-                        {row.moduleNameEn || '-'}
-                      </Typography>
-                    </TableCellStyled>
-
-                    {/* Módulo PT */}
-                    <TableCellStyled align='left' sx={{ minWidth: '200px' }}>
-                      <Typography variant='body2' sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
-                        {row.moduleNamePt || '-'}
-                      </Typography>
-                    </TableCellStyled>
-
-                    {/* Acciones */}
-                    <TableCellStyled align='center' sx={{ width: '120px' }}>
-                      <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                        <Tooltip title='Editar módulo' arrow>
-                          <IconButton
-                            aria-label='Editar'
-                            onClick={() => handleOpenEdit(row)}
-                            size='small'
-                            color='primary'
-                            sx={{
-                              '&:hover': {
-                                backgroundColor: 'primary.light',
-                                color: 'white',
-                              },
-                            }}
-                          >
-                            <EditIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-
-                        <Tooltip title='Eliminar módulo' arrow>
-                          <IconButton
-                            onClick={() => handleDeleteModules(row)}
-                            size='small'
-                            color='error'
-                            sx={{
-                              '&:hover': {
-                                backgroundColor: 'error.light',
-                                color: 'white',
-                              },
-                            }}
-                          >
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
+            )
+          ) : (
+            <DataTable key='datatable-modules' columns={columns} isLoading={isLoading}>
+              {rows.map(row => (
+                <ItemRow key={row._id} hover>
+                  {/* Ícono */}
+                  <TableCellStyled align='center' sx={{ width: 56, py: '6px' }}>
+                    {row.icon ? (
+                      <IconCell iconName={row.icon} />
+                    ) : (
+                      <Box component='span' sx={{ color: 'var(--ink-3)' }}>
+                        -
                       </Box>
-                    </TableCellStyled>
-                  </ItemRow>
-                ))}
-              </DataTable>
-            </TableContainer>
-          </Box>
-        </Box>
-      </Container>
+                    )}
+                  </TableCellStyled>
+
+                  {/* Módulo ES */}
+                  <TableCellStyled align='left' sx={{ fontWeight: 500, minWidth: 200 }}>
+                    {row.moduleNameEs || '-'}
+                  </TableCellStyled>
+
+                  {/* Módulo EN */}
+                  <TableCellStyled align='left' sx={{ minWidth: 200 }}>
+                    <Box component='span' sx={{ color: 'var(--ink-2)' }}>
+                      {row.moduleNameEn || '-'}
+                    </Box>
+                  </TableCellStyled>
+
+                  {/* Módulo PT */}
+                  <TableCellStyled align='left' sx={{ minWidth: 200 }}>
+                    <Box component='span' sx={{ color: 'var(--ink-2)' }}>
+                      {row.moduleNamePt || '-'}
+                    </Box>
+                  </TableCellStyled>
+
+                  {/* Acciones */}
+                  <TableCellStyled align='right' sx={{ whiteSpace: 'nowrap' }}>
+                    <Tooltip title='Editar módulo'>
+                      <IconButton aria-label='Editar' onClick={() => handleOpenEdit(row)}>
+                        <EditOutlined />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Eliminar módulo'>
+                      <IconButton aria-label='Eliminar' onClick={() => handleDeleteModules(row)}>
+                        <DeleteOutline />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCellStyled>
+                </ItemRow>
+              ))}
+            </DataTable>
+          )}
+        </ListCard>
+      </PageContainer>
 
       <ModuleFormDialog
         open={open}

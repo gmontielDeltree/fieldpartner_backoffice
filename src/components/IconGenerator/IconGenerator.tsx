@@ -13,7 +13,7 @@ export const IconGenerator: React.FC<IconGeneratorProps> = ({
   onIconGenerated,
   onError,
   prompt,
-  buttonText = 'Generar Ícono',
+  buttonText = 'Generar ícono',
 }) => {
   const handleGenerateIcon = async () => {
     try {

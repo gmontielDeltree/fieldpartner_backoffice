@@ -1,26 +1,31 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { Box,
-   Button,
-    Container,
-     Grid,
-      IconButton,
-       Tooltip,
-       Typography,
-        TableContainer,
-         Paper,
-              } from "@mui/material";
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Public as PublicIcon } from "@mui/icons-material";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import { AddRounded, DeleteOutline, EditOutlined, PublicOutlined } from "@mui/icons-material";
 import { useAppDispatch, useCountry, useForm } from "../../hooks";
 import { setCountryACtive } from "../../store/country";
-import { DataTable, ItemRow, Loading, SearchButton, SearchInput, TableCellStyled } from "../../components";
+import {
+  DataTable,
+  EmptyState,
+  FilteredCount,
+  ItemRow,
+  ListCard,
+  ListToolbar,
+  Loading,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
+  TableCellStyled,
+  ValuePill,
+} from "../../components";
 import { ColumnProps, Country } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "Codigo", align: "left", field: "code", sortable: true },
-  { text: "Descripcion ES", align: "center", field: "descriptionES", sortable: true },
-  { text: "Descripcion PT", align: "center", field: "descriptionPT", sortable: true },
-  { text: "Descripcion EN", align: "center", field: "descriptionEN", sortable: true },
+  { text: "Código", align: "left", field: "code", sortable: true },
+  { text: "Descripción ES", align: "left", field: "descriptionES", sortable: true },
+  { text: "Descripción PT", align: "left", field: "descriptionPT", sortable: true },
+  { text: "Descripción EN", align: "left", field: "descriptionEN", sortable: true },
 ];
 
 export const ListCountryPage: React.FC = () => {
@@ -82,11 +87,11 @@ export const ListCountryPage: React.FC = () => {
       country.descriptionEN,
       country.code
     ];
-  
+
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
 
-  
+
   // const handleFilter = () => {
   //   setFilteredType(selectedType);
   // };
@@ -132,145 +137,71 @@ export const ListCountryPage: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <PublicIcon/>
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Paises
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
-          >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                to="/country/new"
-                startIcon={<AddIcon />}
-                sx={{ mb: 2 }}
-              >
-                Nuevo
-              </Button>
-              <Box display="flex" alignItems="left" sx={{ ml: 2, mt: 2, position: "relative" }}>
-              {/* <Tooltip title="Filtrar">
-                <IconButton onClick={handleFilterButtonClick}>
-                  <FilterList />
-                </IconButton>
-              </Tooltip> */}
-              {/* {showOptions && (
-              <Paper elevation={3} sx={{ position: "absolute", top: 40, zIndex: 1, backgroundColor: "white" }}>
-                <List>
-                  <ListItem button onClick={() => handleSelectChange("")}>
-                    <ListItemText primary="Todos" />
-                  </ListItem>
-                  {cropTypes.map((type, index) => (
-                    <ListItem button key={index} onClick={() => handleSelectChange(type)}>
-                      <ListItemText primary={type} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            )} */}
-            </Box>
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent="flex-end">
-                <Grid item xs={8} sm={5}>
-                  <SearchInput
-                    value={filterText}
-                    placeholder="Pais /Descripcion"
-                    handleInputChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <SearchButton text="Buscar" onClick={() => onClickSearch()} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: "right" }}
-                  >
-                    {rows.length} {rows.length === 1 ? "país" : "países"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
-            <TableContainer
-              key="table-country"
-              sx={{
-                minHeight: "120px",
-                maxHeight: "540px",
-                overflow: "scroll",
-                mb: 5
-              }}
-              component={Paper}
+      <PageContainer>
+        <PageHeader
+          icon={<PublicOutlined />}
+          title="Países"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/country/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar aside={filterText ? <FilteredCount shown={rows.length} total={country.length} /> : undefined}>
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar por código o descripción…"
+              onSubmit={onClickSearch}
+            />
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+            ) : (
+              <EmptyState icon={<PublicOutlined />} title="No se encontraron países" hint="Cargá el primero con «Nuevo»." />
+            )
+          ) : (
+            <DataTable
+              key="datatable-country"
+              columns={columns}
+              isLoading={isLoading}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
             >
-              <DataTable
-                key="datatable-country"
-                columns={columns}
-                isLoading={isLoading}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              >
-                {!isLoading && rows.length === 0 && (
-                  <ItemRow>
-                    <TableCellStyled align="center" colSpan={5}>
-                      No se encontraron países
-                    </TableCellStyled>
-                  </ItemRow>
-                )}
-                {rows.map((row) => (
-                  <ItemRow key={row._id} hover>
-                    <TableCellStyled align="left">{row.code}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionES}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionPT}</TableCellStyled>
-                    <TableCellStyled align="center">{row.descriptionEN}</TableCellStyled>
-                    <TableCellStyled align="right">
-                      <Tooltip title="Editar">
-                        <IconButton
-                          aria-label="Editar"
-                          onClick={() => onClickUpdateCountry(row)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton
-                          onClick={() => handleDeleteCountry(row)}
-                          style={{ fontSize: '1rem' }}
-                          color="default"
-                        >
-                          <DeleteIcon name="trash alternate" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCellStyled>
-                  </ItemRow>
-                ))}
-              </DataTable>
-            </TableContainer>
-          </Box>
-        </Box>
-      </Container>
+              {rows.map((row) => (
+                <ItemRow key={row._id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.code}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionPT}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionEN}</TableCellStyled>
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
+                    <Tooltip title="Editar">
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateCountry(row)}>
+                        <EditOutlined />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Eliminar">
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteCountry(row)}>
+                        <DeleteOutline />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCellStyled>
+                </ItemRow>
+              ))}
+            </DataTable>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
-  
-  
-  
 };

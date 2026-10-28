@@ -1,0 +1,747 @@
+/* ──────────────────────────────────────────────────────────
+ * FieldPartner — foundation
+ * Tokens como CSS custom properties, reglas base, keyframes y la
+ * puesta a tono de librerías que no pasan por el theme de MUI
+ * (react-toastify, sweetalert2, mapbox, semantic-ui).
+ * Basado en Beautiful UI (beautifului.dev, MIT), con acento verde
+ * de marca. Los valores espejan src/themes/tokens.ts.
+ * ────────────────────────────────────────────────────────── */
+
+:root {
+  --page: #f4f6f5;
+  /* el mismo --page en r, g, b: velos con transparencia (rgba(var(--page-rgb), .55)) */
+  --page-rgb: 244, 246, 245;
+  --canvas: #eef1ef;
+  --surface: #ffffff;
+  /* --surface en r, g, b: superficies con transparencia */
+  --surface-rgb: 255, 255, 255;
+  /* Vidrio: paneles flotantes sobre el mapa (--glass) y barras pegajosas
+   * sobre la página (--glass-bar). Siempre con backdrop-filter: blur(…).
+   * Se definen sobre las -rgb, así siguen solas al modo oscuro. */
+  --glass: rgba(var(--surface-rgb), 0.92);
+  --glass-bar: rgba(var(--page-rgb), 0.8);
+  --inset: #f7f8f9;
+  --hover: #f4f5f6;
+  --hover-2: #e7e9eb;
+  --field: #f2f2f3;
+
+  --ink: #1f2124;
+  --ink-2: #62656b;
+  --ink-3: #9a9da3;
+  --ink-inverse: #ffffff;
+
+  --line: #ecedef;
+  --line-strong: #e0e2e5;
+  --line-soft: #f3f4f5;
+  --grid-line: rgba(236, 237, 239, 0.78);
+
+  /* encabezado de tabla (ver tableHeadCell en tokens.ts) */
+  --table-head: #edf4ef;
+  --table-head-ink: #3e4943;
+  --table-head-line: #d8e1db;
+
+  --accent: #05a14f;
+  --accent-ink: #087f3e;
+  --accent-tint: #e7f5ec;
+  --accent-ring: rgba(5, 161, 79, 0.24);
+  --brand: #00b050;
+  --leaf: #8dc63f;
+  --sun: #f2c40f;
+
+  --blue: #0285ff;
+  --blue-ink: #0070dd;
+  --blue-tint: #e9f3ff;
+  --green: #199a4d;
+  --green-tint: #e8f5ed;
+  --orange: #ef720d;
+  --orange-tint: #fdf1e5;
+  --red: #e3474c;
+  --red-tint: #fcecec;
+
+  --tooltip-bg: #25272b;
+  --tooltip-fg: #f4f5f6;
+  --tooltip-muted: #a5a8ad;
+  --tooltip-border: #3a3c40;
+
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgba(16, 24, 40, 0.04), 0 2px 4px rgba(16, 24, 40, 0.035);
+  --shadow-raised: 0 0 0 1px var(--line), 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 8px -2px rgba(16, 24, 40, 0.06),
+    0 8px 16px -4px rgba(16, 24, 40, 0.06);
+  --shadow-overlay: 0 0 0 1px var(--line), 0 2px 4px rgba(16, 24, 40, 0.04), 0 8px 16px -4px rgba(16, 24, 40, 0.08),
+    0 24px 48px -12px rgba(16, 24, 40, 0.16);
+
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-window: 14px;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-link: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+
+  /* Alto útil de una página dentro de la ventana de contenido:
+   * viewport − márgenes de la ventana (8 + 8) − barra superior (56). */
+  --fp-topbar-h: 56px;
+  --fp-page-h: calc(100vh - 72px);
+}
+
+/* ── modo oscuro ──────────────────────────────────────────
+ * <html data-theme="dark"> (ColorMode.tsx). Mismos nombres, valores de
+ * darkTokens en tokens.ts: grafito con un dejo verde, superficies que
+ * suben de tono y el verde un punto más claro para el texto de acento. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #151817;
+  --page-rgb: 21, 24, 23;
+  --canvas: #0f1211;
+  --surface: #1c1f1e;
+  --surface-rgb: 28, 31, 30;
+  --glass: rgba(var(--surface-rgb), 0.94);
+  --inset: #181b1a;
+  --hover: #232726;
+  --hover-2: #2b302e;
+  --field: #212524;
+
+  --ink: #e6e9e7;
+  --ink-2: #a5aba8;
+  --ink-3: #737a77;
+  --ink-inverse: #141615;
+
+  --line: #2a2f2d;
+  --line-strong: #363c3a;
+  --line-soft: #222725;
+  --grid-line: rgba(42, 47, 45, 0.9);
+
+  --table-head: #212a25;
+  --table-head-ink: #bcc7c0;
+  --table-head-line: #33403a;
+
+  --accent: #16a457;
+  --accent-ink: #4fcf88;
+  --accent-tint: #1a3226;
+  --accent-ring: rgba(31, 174, 95, 0.35);
+
+  --blue: #3b9bff;
+  --blue-ink: #7cb9ff;
+  --blue-tint: #172a40;
+  --green: #2bb362;
+  --green-tint: #183324;
+  --orange: #f08a3a;
+  --orange-tint: #36261a;
+  --red: #ef6266;
+  --red-tint: #3b2022;
+
+  --tooltip-bg: #2e3331;
+  --tooltip-fg: #eef0ef;
+  --tooltip-border: #404643;
+
+  --shadow-btn: 0 0 0 1px var(--line-strong), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 0 0 1px var(--line), 0 1px 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.105);
+  --shadow-raised: 0 0 0 1px var(--line), 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.18),
+    0 8px 16px -4px rgba(0, 0, 0, 0.18);
+  --shadow-overlay: 0 0 0 1px var(--line-strong), 0 2px 4px rgba(0, 0, 0, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.24),
+    0 24px 48px -12px rgba(0, 0, 0, 0.48);
+}
+
+/* ── web components viejos (Vaadin/Lumo y Shoelace) ───────
+ * Algunas pantallas (precios, integraciones, sensores) usan componentes
+ * lit con sus propios temas; les pasamos tipografía, acento y radios.
+ * :root:root le gana a los :root/html que esos temas inyectan después. */
+:root:root {
+  --lumo-font-family: var(--font-sans);
+  --lumo-primary-color: var(--accent);
+  --lumo-primary-color-50pct: rgba(5, 161, 79, 0.5);
+  --lumo-primary-color-10pct: rgba(5, 161, 79, 0.1);
+  --lumo-primary-text-color: var(--accent-ink);
+  --lumo-body-text-color: var(--ink);
+  --lumo-secondary-text-color: var(--ink-2);
+  --lumo-tertiary-text-color: var(--ink-3);
+  --lumo-contrast-10pct: var(--line);
+  --lumo-contrast-5pct: var(--hover);
+  --lumo-border-radius-s: 6px;
+  --lumo-border-radius-m: 8px;
+  --lumo-border-radius-l: 12px;
+  --lumo-box-shadow-s: var(--shadow-card);
+  --lumo-box-shadow-m: var(--shadow-raised);
+  --lumo-box-shadow-l: var(--shadow-overlay);
+
+  --sl-font-sans: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+  --sl-color-primary-50: #e7f5ec;
+  --sl-color-primary-100: #d0ecda;
+  --sl-color-primary-200: #a6dbb9;
+  --sl-color-primary-300: #73c693;
+  --sl-color-primary-400: #3fb16e;
+  --sl-color-primary-500: #19a05a;
+  --sl-color-primary-600: #05a14f;
+  --sl-color-primary-700: #087f3e;
+  --sl-color-primary-800: #0b6634;
+  --sl-color-primary-900: #0d522c;
+  --sl-color-primary-950: #08321b;
+  --sl-border-radius-small: 6px;
+  --sl-border-radius-medium: 8px;
+  --sl-border-radius-large: 12px;
+  --sl-shadow-small: var(--shadow-card);
+  --sl-shadow-medium: var(--shadow-raised);
+  --sl-shadow-large: var(--shadow-overlay);
+  --sl-shadow-x-large: var(--shadow-overlay);
+}
+
+:root:root[data-theme="dark"] {
+  --lumo-base-color: var(--surface);
+  --lumo-header-text-color: var(--ink);
+  --lumo-contrast: var(--ink);
+  --lumo-contrast-20pct: var(--line-strong);
+  --lumo-contrast-30pct: var(--ink-3);
+  --lumo-contrast-60pct: var(--ink-2);
+
+  --sl-color-neutral-0: var(--surface);
+  --sl-color-neutral-50: var(--inset);
+  --sl-color-neutral-100: var(--hover);
+  --sl-color-neutral-200: var(--hover-2);
+  --sl-color-neutral-300: var(--line-strong);
+  --sl-color-neutral-400: var(--ink-3);
+  --sl-color-neutral-500: #8f9592;
+  --sl-color-neutral-600: var(--ink-2);
+  --sl-color-neutral-700: #c9cdcb;
+  --sl-color-neutral-800: #dde0de;
+  --sl-color-neutral-900: var(--ink);
+  --sl-color-neutral-950: #f4f5f4;
+  --sl-panel-background-color: var(--surface);
+  --sl-input-background-color: var(--surface);
+  --sl-input-border-color: var(--line-strong);
+  --sl-input-color: var(--ink);
+}
+
+/* ── base ─────────────────────────────────────────────── */
+
+/* semantic-ui (cargado global) fija la raíz en 14px; lo dejamos explícito
+ * para que no dependa del orden de carga. El theme usa htmlFontSize 14. */
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  letter-spacing: -0.01em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  text-underline-position: from-font;
+  text-decoration-skip-ink: auto;
+}
+
+::selection {
+  background: var(--accent-tint);
+  color: var(--ink);
+}
+
+.tabular,
+.MuiDataGrid-cell,
+.MuiTableCell-body {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbars finas y neutras en todo el sistema */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--line-strong);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-3);
+}
+
+/* ── keyframes compartidos ─────────────────────────────── */
+
+@keyframes shimmer-text {
+  from {
+    background-position: 150% center;
+  }
+  to {
+    background-position: -50% center;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* loader de grilla de pixeles: meseta de brillo, desfasada por celda */
+@keyframes pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  18%,
+  42% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.15;
+  }
+}
+
+/* ── react-toastify ────────────────────────────────────── */
+
+/* ReactToastify.css se carga después que este archivo: sus variables y
+ * reglas ganan por orden. :root:root y el prefijo .Toastify suben la
+ * especificidad para que manden las nuestras. */
+:root:root {
+  --toastify-color-light: var(--surface);
+  --toastify-text-color-light: var(--ink);
+  --toastify-color-info: var(--blue);
+  --toastify-color-success: var(--green);
+  --toastify-color-warning: var(--orange);
+  --toastify-color-error: var(--red);
+  --toastify-font-family: var(--font-sans);
+  --toastify-toast-min-height: 52px;
+}
+
+.Toastify .Toastify__toast.Toastify__toast-theme--colored,
+.Toastify .Toastify__toast.Toastify__toast-theme--light {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.Toastify__toast-container {
+  --toastify-toast-width: 380px;
+}
+
+.Toastify__toast {
+  min-height: 52px;
+  padding: 10px 12px;
+  border-radius: var(--radius-window);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-overlay);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  animation-timing-function: var(--ease-out-strong);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--default,
+.Toastify__toast-theme--colored.Toastify__toast--info,
+.Toastify__toast-theme--colored.Toastify__toast--success,
+.Toastify__toast-theme--colored.Toastify__toast--warning,
+.Toastify__toast-theme--colored.Toastify__toast--error,
+.Toastify__toast-theme--light {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.Toastify__toast-body {
+  gap: 2px;
+  padding: 2px 4px;
+}
+
+.Toastify__toast-icon {
+  width: 22px;
+  margin-inline-end: 10px;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: var(--green);
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: var(--red);
+}
+
+.Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: var(--orange);
+}
+
+.Toastify__toast--info .Toastify__toast-icon svg {
+  fill: var(--blue);
+}
+
+.Toastify__close-button,
+.Toastify .Toastify__close-button--colored,
+.Toastify .Toastify__close-button--light {
+  align-self: center;
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+.Toastify__close-button:hover {
+  color: var(--ink);
+}
+
+.Toastify__progress-bar--colored.Toastify__progress-bar--success,
+.Toastify__progress-bar--success {
+  background: var(--green);
+}
+
+/* ── sweetalert2 ───────────────────────────────────────── */
+
+.swal2-container.swal2-backdrop-show {
+  background: rgba(17, 19, 22, 0.32) !important;
+  backdrop-filter: blur(2px);
+}
+
+.swal2-popup {
+  width: min(420px, calc(100vw - 32px)) !important;
+  padding: 22px 22px 18px !important;
+  border-radius: var(--radius-window) !important;
+  background: var(--surface) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  font-family: var(--font-sans) !important;
+  color: var(--ink) !important;
+}
+
+.swal2-show {
+  animation: pop-in 200ms var(--ease-out-strong) both !important;
+}
+
+.swal2-icon {
+  width: 44px !important;
+  height: 44px !important;
+  margin: 0 auto 12px !important;
+  border-width: 2px !important;
+}
+
+.swal2-icon .swal2-icon-content {
+  font-size: 26px !important;
+}
+
+.swal2-icon.swal2-success [class^="swal2-success-line"] {
+  height: 3px !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+  width: 44px !important;
+  height: 44px !important;
+  top: -2px !important;
+  left: -2px !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-line-tip {
+  top: 23px !important;
+  left: 9px !important;
+  width: 12px !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-line-long {
+  top: 19px !important;
+  right: 7px !important;
+  width: 22px !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-fix,
+.swal2-icon.swal2-success [class^="swal2-success-circular-line"] {
+  display: none !important;
+}
+
+.swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+  top: 20px !important;
+  width: 26px !important;
+  height: 3px !important;
+}
+
+.swal2-icon.swal2-error [class$="left"] {
+  left: 7px !important;
+}
+
+.swal2-icon.swal2-error [class$="right"] {
+  right: 7px !important;
+}
+
+.swal2-title {
+  padding: 0 !important;
+  color: var(--ink) !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.swal2-html-container {
+  margin: 8px 0 0 !important;
+  color: var(--ink-2) !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+}
+
+.swal2-actions {
+  gap: 8px;
+  margin-top: 20px !important;
+}
+
+.swal2-styled {
+  margin: 0 !important;
+  padding: 9px 16px !important;
+  border-radius: 999px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  transition: transform 150ms var(--ease-out-strong), filter 150ms ease, background-color 150ms ease !important;
+}
+
+.swal2-styled:active {
+  transform: scale(0.96);
+}
+
+.swal2-styled.swal2-confirm {
+  background: var(--accent) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background: var(--accent-ink) !important;
+}
+
+.swal2-styled.swal2-deny {
+  background: var(--red) !important;
+}
+
+.swal2-styled.swal2-cancel {
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background: var(--inset) !important;
+}
+
+.swal2-styled:focus {
+  box-shadow: 0 0 0 3px var(--accent-tint) !important;
+}
+
+.swal2-input,
+.swal2-textarea,
+.swal2-select {
+  border: 1px solid var(--line-strong) !important;
+  border-radius: var(--radius-control) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+:root[data-theme="dark"] .swal2-input,
+:root[data-theme="dark"] .swal2-textarea,
+:root[data-theme="dark"] .swal2-select {
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+}
+
+.swal2-input:focus,
+.swal2-textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-tint) !important;
+}
+
+/* ── mapbox: controles con el mismo lenguaje de botones ── */
+
+.mapboxgl-ctrl-group:not(:empty) {
+  overflow: hidden;
+  border-radius: var(--radius-control) !important;
+  box-shadow: var(--shadow-raised) !important;
+}
+
+.mapboxgl-ctrl-group button {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.mapboxgl-ctrl-group button + button {
+  border-top: 1px solid var(--line) !important;
+}
+
+.mapboxgl-ctrl-geocoder {
+  border-radius: var(--radius-control) !important;
+  box-shadow: var(--shadow-raised) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.mapboxgl-popup-content {
+  padding: 10px 12px !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  font-family: var(--font-sans);
+}
+
+/* ── semantic-ui: algunas listas viejas lo cargan ──────── */
+
+.ui.table {
+  border: 0 !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.ui.table thead th {
+  background: var(--table-head) !important;
+  color: var(--table-head-ink) !important;
+  border-bottom: 1px solid var(--table-head-line) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.004em;
+}
+
+/* El reset de semantic-ui pisa la tipografía del body; semantic-ui y
+ * bootstrap (sensores) también fijan body blanco con texto negro, que en
+ * modo oscuro deja ilegible todo lo que hereda el color. `html body` les
+ * gana por especificidad sin importar el orden de carga. */
+body.pushable,
+body {
+  font-family: var(--font-sans);
+}
+
+html body {
+  background-color: var(--canvas);
+  color: var(--ink);
+}
+
+/* ── modo oscuro: librerías que pintan blanco por su cuenta ── */
+
+/* mapbox: los controles quedan como los dibuja mapbox; popups y geocoder
+ * pasan a superficie oscura para que el texto (var(--ink)) se lea */
+:root[data-theme="dark"] .mapboxgl-popup-content {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+:root[data-theme="dark"] .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
+:root[data-theme="dark"] .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
+  border-bottom-color: var(--surface);
+}
+
+:root[data-theme="dark"] .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+:root[data-theme="dark"] .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+:root[data-theme="dark"] .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
+  border-top-color: var(--surface);
+}
+
+:root[data-theme="dark"] .mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: var(--surface);
+}
+
+:root[data-theme="dark"] .mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: var(--surface);
+}
+
+:root[data-theme="dark"] .mapboxgl-popup-close-button {
+  color: var(--ink-2);
+}
+
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder,
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder .suggestions {
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder--input {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder .suggestions > .active > a,
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder .suggestions > li > a:hover {
+  background-color: var(--hover);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .mapboxgl-ctrl-geocoder--icon {
+  fill: var(--ink-3);
+}
+
+/* semantic-ui: superficies y textos de sus componentes */
+:root[data-theme="dark"] .ui.table,
+:root[data-theme="dark"] .ui.segment,
+:root[data-theme="dark"] .ui.card,
+:root[data-theme="dark"] .ui.cards > .card,
+:root[data-theme="dark"] .ui.menu,
+:root[data-theme="dark"] .ui.modal,
+:root[data-theme="dark"] .ui.modal > .content,
+:root[data-theme="dark"] .ui.modal > .header,
+:root[data-theme="dark"] .ui.modal > .actions,
+:root[data-theme="dark"] .ui.dropdown .menu {
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+}
+
+:root[data-theme="dark"] .ui.table td,
+:root[data-theme="dark"] .ui.header,
+:root[data-theme="dark"] .ui.form .field > label {
+  color: var(--ink) !important;
+  border-color: var(--grid-line) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

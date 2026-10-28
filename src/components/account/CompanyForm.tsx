@@ -1,13 +1,14 @@
-import { Box, Button, Card, CardMedia, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
+import { Box, Button, Grid, IconButton, TextField, Tooltip } from '@mui/material';
 import {
-    Phone as PhoneIcon,
-    CloudUpload as CloudUploadIcon,
-    Cancel as CancelIcon,
-    DoDisturb as DoDisturbIcon
+    BusinessOutlined,
+    FileUploadOutlined,
+    CloseRounded,
+    ImageOutlined,
 } from '@mui/icons-material';
 import React, { ChangeEvent, SetStateAction, useState } from 'react';
 import { urlImg } from '../../config';
 import { Account } from '../../interfaces/account';
+import { FormCard } from '../ui';
 
 export interface CompanyFormProps {
     formValues: Account,
@@ -50,240 +51,212 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
     }
 
     return (
-        <Grid
-            container
-            spacing={2}
-            alignItems="center">
-            <Grid item xs={12} sm={3} >
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Cliente ID"
-                    disabled
-                    value={formValues.accountReference}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={5} >
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Denominacion"
-                    disabled
-                    value={formValues.denomination}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Pais"
-                    disabled
-                    value={formValues.country}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Razon Social"
-                    name="socialReason"
-                    value={formValues.socialReason}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Nombre Fantasia"
-                    name="fantasyName"
-                    value={formValues.fantasyName}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Clave Tributaria"
-                    name="trybutaryCode"
-                    value={formValues.trybutaryCode}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4} >
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Codigo postal"
-                    name="zipCode"
-                    value={formValues.zipCode}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    label="Provincia"
-                    variant="outlined"
-                    type='text'
-                    name="province"
-                    value={formValues.province}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    label="Localidad"
-                    variant="outlined"
-                    type='text'
-                    name="locality"
-                    value={formValues.locality}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="Domicilio"
-                    variant="outlined"
-                    type='text'
-                    name="address"
-                    value={formValues.address}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
+        <>
+            <FormCard title="Datos de compañía" icon={<BusinessOutlined />}>
+                <Grid
+                    container
+                    spacing={2}>
+                    <Grid item xs={12} sm={3} >
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Cliente ID"
+                            disabled
+                            value={formValues.accountReference}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={5} >
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Denominación"
+                            disabled
+                            value={formValues.denomination}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="País"
+                            disabled
+                            value={formValues.country}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={5}>
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Razón social"
+                            name="socialReason"
+                            value={formValues.socialReason}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Nombre fantasía"
+                            name="fantasyName"
+                            value={formValues.fantasyName}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Clave tributaria"
+                            name="trybutaryCode"
+                            value={formValues.trybutaryCode}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <TextField
+                            variant="outlined"
+                            type='text'
+                            label="Código postal"
+                            name="zipCode"
+                            value={formValues.zipCode}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Provincia"
+                            variant="outlined"
+                            type='text'
+                            name="province"
+                            value={formValues.province}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Localidad"
+                            variant="outlined"
+                            type='text'
+                            name="locality"
+                            value={formValues.locality}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            label="Domicilio"
+                            variant="outlined"
+                            type='text'
+                            name="address"
+                            value={formValues.address}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
 
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    label="Telefono"
-                    variant="outlined"
-                    type='text'
-                    name="phone"
-                    value={formValues.phone}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        // startAdornment: <InputAdornment position="start" />,
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <PhoneIcon />
-                            </InputAdornment>)
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    label="Contacto secundario"
-                    variant="outlined"
-                    type='text'
-                    name="secondaryContact"
-                    value={formValues.secondaryContact}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    label="Web"
-                    variant="outlined"
-                    type='text'
-                    name="website"
-                    value={formValues.website}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={8}>
-                <TextField
-                    label="Observaciones"
-                    variant="outlined"
-                    type='text'
-                    name="observation"
-                    value={formValues.observation}
-                    onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
-                    fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={12} sx={{
-                marginTop: "10px",
-                display: "flex",
-                flexDirection: "column-reverse",
-                justifyContent: "center",
-                alignItems: "center"
-            }}>
-                {
-                    !(urlFile || formValues.companyLogo) ? (
-                        <Button
-                            component="label"
-                            variant="contained"
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            Subir Logo
-                            <input
-                                type="file"
-                                accept="image/*"
-                                hidden
-                                onChange={handleFileUpload} />
-                        </Button>
-                    ) :
-                        <IconButton onClick={handleCancelFile} color="error" sx={{ p: 0, pl: 1 }}>
-                            <CancelIcon fontSize="large" />
-                        </IconButton>
-                }
+                    <Grid item xs={12} sm={3}>
+                        <TextField
+                            label="Teléfono"
+                            variant="outlined"
+                            type='text'
+                            name="phone"
+                            value={formValues.phone}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <TextField
+                            label="Contacto secundario"
+                            variant="outlined"
+                            type='text'
+                            name="secondaryContact"
+                            value={formValues.secondaryContact}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Web"
+                            variant="outlined"
+                            type='text'
+                            name="website"
+                            value={formValues.website}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
+                        <TextField
+                            label="Observaciones"
+                            variant="outlined"
+                            type='text'
+                            name="observation"
+                            value={formValues.observation}
+                            onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                </Grid>
+            </FormCard>
 
-                <Box display="inline-block" component={Paper} sx={{ mb: 1 }}>
-                    {
-                        (urlFile || formValues.companyLogo) ? (
-                            <Card sx={{ maxWidth: "220px", height: "120px" }}>
-                                <CardMedia
+            <FormCard title="Logo" icon={<ImageOutlined />} delay={100}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                    {/* Vista previa del logo */}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 220,
+                            height: 120,
+                            flexShrink: 0,
+                            overflow: 'hidden',
+                            borderRadius: '10px',
+                            background: 'var(--inset)',
+                            boxShadow: 'var(--shadow-hairline)',
+                            color: 'var(--ink-3)',
+                        }}
+                    >
+                        {
+                            (urlFile || formValues.companyLogo) ? (
+                                <Box
                                     component="img"
-                                    sx={{ objectFit: "contain" }}
-                                    image={urlFile || `${urlImg}/${formValues.companyLogo}`}
+                                    sx={{ width: '100%', height: '100%', objectFit: "contain" }}
+                                    src={urlFile || `${urlImg}/${formValues.companyLogo}`}
                                     alt="Logo"
                                 />
-                            </Card>
-                        ) :
-                            <Box sx={{ width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <DoDisturbIcon fontSize="large" color="disabled" />
-                            </Box>
-                    }
-                </Box>
-            </Grid>
+                            ) :
+                                <ImageOutlined sx={{ fontSize: 32 }} />
+                        }
+                    </Box>
 
-        </Grid>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {
+                            !(urlFile || formValues.companyLogo) ? (
+                                <Button
+                                    component="label"
+                                    variant="outlined"
+                                    startIcon={<FileUploadOutlined />}
+                                >
+                                    Subir logo
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        hidden
+                                        onChange={handleFileUpload} />
+                                </Button>
+                            ) :
+                                <Tooltip title="Quitar logo">
+                                    <IconButton
+                                        onClick={handleCancelFile}
+                                        aria-label="Quitar logo"
+                                        sx={{ color: 'var(--ink-3)', '&:hover': { color: 'var(--red)', backgroundColor: 'var(--red-tint)' } }}
+                                    >
+                                        <CloseRounded />
+                                    </IconButton>
+                                </Tooltip>
+                        }
+                    </Box>
+                </Box>
+            </FormCard>
+        </>
     )
 }

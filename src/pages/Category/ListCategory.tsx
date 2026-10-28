@@ -4,38 +4,28 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useCategory, useForm } from "../../hooks";
 import {
   DataTable,
+  EmptyState,
+  FilteredCount,
   ItemRow,
+  ListCard,
+  ListToolbar,
   Loading,
-  SearchButton,
-  SearchInput,
+  PageContainer,
+  PageHeader,
+  RollingNumber,
+  SearchField,
   TableCellStyled,
+  ValuePill,
 } from "../../components";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-
-// import 'semantic-ui-css/semantic.min.css';
-// import {Icon} from "semantic-ui-react";
-
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Category as CategoryIcon,
-} from "@mui/icons-material";
+import { Button, IconButton, Tooltip } from "@mui/material";
+import { AddRounded, CategoryOutlined, DeleteOutline, EditOutlined } from "@mui/icons-material";
 import { setCategoryACtive } from "../../store/category";
 
 const columns: ColumnProps[] = [
   { text: "ID Categoria", align: "left", field: "idCategory", sortable: true },
-  { text: "Descripcion ES", align: "center", field: "description", sortable: true },
-  { text: "Descripcion PT", align: "center", field: "descriptionPt", sortable: true },
-  { text: "Descripcion EN", align: "center", field: "descriptionEn", sortable: true },
+  { text: "Descripcion ES", align: "left", field: "description", sortable: true },
+  { text: "Descripcion PT", align: "left", field: "descriptionPt", sortable: true },
+  { text: "Descripcion EN", align: "left", field: "descriptionEn", sortable: true },
 ];
 
 export const ListCategory: React.FC = () => {
@@ -126,63 +116,39 @@ export const ListCategory: React.FC = () => {
   return (
     <>
       {isLoading && <Loading loading />}
-      <Container maxWidth="md" sx={{ ml: 0 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
-        >
-          <CategoryIcon />
-          <Typography component="h4" variant="h4" sx={{ ml: { sm: 2 } }}>
-            Categorías
-          </Typography>
-        </Box>
-        <Box component="div" sx={{ mt: 7 }}>
-          <Grid
-            container
-            spacing={0}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ p: 2, mt: { sm: 2 } }}
-          >
-            <Grid item xs={6} sm={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                to="/category/new"
-                startIcon={<AddIcon />}
-              >
-                Nuevo
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <Grid container justifyContent="flex-end">
-                <Grid item xs={8} sm={5}>
-                  <SearchInput
-                    value={filterText}
-                    placeholder="Name"
-                    handleInputChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                  <SearchButton text="Buscar" onClick={() => onClickSearch()} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1, textAlign: "right" }}
-                  >
-                    {rows.length} {rows.length === 1 ? "categoría" : "categorías"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Box component="div" sx={{ p: 1 }}>
+      <PageContainer>
+        <PageHeader
+          icon={<CategoryOutlined />}
+          title="Categorías"
+          meta={
+            !isLoading ? (
+              <ValuePill>
+                <RollingNumber value={rows.length} />
+              </ValuePill>
+            ) : undefined
+          }
+          actions={
+            <Button variant="contained" component={RouterLink} to="/category/new" startIcon={<AddRounded />}>
+              Nuevo
+            </Button>
+          }
+        />
+        <ListCard>
+          <ListToolbar aside={filterText ? <FilteredCount shown={rows.length} total={categories.length} /> : undefined}>
+            <SearchField
+              value={filterText}
+              onChange={handleInputChange}
+              placeholder="Buscar por ID o descripción…"
+              onSubmit={onClickSearch}
+            />
+          </ListToolbar>
+          {!isLoading && rows.length === 0 ? (
+            filterText ? (
+              <EmptyState title="Sin resultados" hint="Probá con otra búsqueda" />
+            ) : (
+              <EmptyState icon={<CategoryOutlined />} title="No se encontraron categorías" hint="Cargá la primera con «Nuevo»." />
+            )
+          ) : (
             <DataTable
               key="datatable-categories"
               columns={columns}
@@ -191,44 +157,30 @@ export const ListCategory: React.FC = () => {
               sortDirection={sortDirection}
               onSort={handleSort}
             >
-              {!isLoading && rows.length === 0 && (
-                <ItemRow>
-                  <TableCellStyled align="center" colSpan={5}>
-                    No se encontraron categorías
-                  </TableCellStyled>
-                </ItemRow>
-              )}
               {rows.map((row) => (
                 <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left">{row.idCategory}</TableCellStyled>
-                  <TableCellStyled align="center"> {row.description} </TableCellStyled>
-                  <TableCellStyled align="center"> {row.descriptionPt} </TableCellStyled>
-                  <TableCellStyled align="center"> {row.descriptionEn} </TableCellStyled>
-                  <TableCellStyled align="right">
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.idCategory}</TableCellStyled>
+                  <TableCellStyled align="left">{row.description}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionPt}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionEn}</TableCellStyled>
+                  <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">
-                      <IconButton
-                        aria-label="Editar"
-                        onClick={() => onClickUpdateCategory(row)}
-                      >
-                        <EditIcon />
+                      <IconButton aria-label="Editar" onClick={() => onClickUpdateCategory(row)}>
+                        <EditOutlined />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Eliminar">
-                      <IconButton
-                        onClick={() => handleDeleteCategory(row)}
-                        style={{ fontSize: '1rem' }}
-                        color="default"
-                      >
-                        <DeleteIcon name="trash alternate" />
+                      <IconButton aria-label="Eliminar" onClick={() => handleDeleteCategory(row)}>
+                        <DeleteOutline />
                       </IconButton>
                     </Tooltip>
                   </TableCellStyled>
                 </ItemRow>
               ))}
             </DataTable>
-          </Box>
-        </Box>
-      </Container>
+          )}
+        </ListCard>
+      </PageContainer>
     </>
   );
 };

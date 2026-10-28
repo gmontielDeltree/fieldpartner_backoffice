@@ -3,9 +3,11 @@ import React, { ChangeEvent, FC, SyntheticEvent, useState } from 'react';
 import { Country, EnumCategoryAccount, EnumStatusAccount, EnumLicenceType, Licences, UserDto } from '../../types'
 import { Account } from '../../interfaces/account';
 import { enumToArray, regexEmail } from '../../helpers';
-import InfoIcon from '@mui/icons-material/Info';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import {
+    InfoOutlined as InfoIcon,
+    VisibilityOffOutlined as VisibilityOffIcon,
+    VisibilityOutlined as VisibilityIcon,
+} from '@mui/icons-material';
 import { useAccount } from '../../hooks';
 
 
@@ -98,9 +100,6 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     disabled={!!formValues.accountId}
                     value={formValues.accountReference}
                     onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
                     fullWidth />
             </Grid>
             <Grid item xs={12} sm={4} >
@@ -112,9 +111,6 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     name="denomination"
                     value={formValues.denomination}
                     onChange={handleInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
                     fullWidth />
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -133,7 +129,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
             <Grid item xs={12} sm={2} textAlign="center">
                 <FormControl fullWidth>
                     <ListItemText
-                        primary={<Typography color="GrayText" variant='subtitle2'>Moneda</Typography>}
+                        primary={<Typography sx={{ fontSize: 12, color: 'var(--ink-3)' }}>Moneda</Typography>}
                         secondary={
                             <Typography sx={{ fontWeight: "bold" }} letterSpacing={1} variant='subtitle1'>
                                 {countrySelected?.currency || "-"}
@@ -174,8 +170,9 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     display: "flex",
                     p: 2,
                     alignItems: "center",
-                    borderRadius: "15px",
-                    border: "1px solid #f4f4f4"
+                    borderRadius: "12px",
+                    gap: 1,
+                    border: "1px solid var(--line)"
                 }}>
                     <TextField
                         key="inicio-licencia"
@@ -185,9 +182,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                         name="startDateLicence"
                         value={formValues.startDateLicence}
                         onChange={handleInputChange}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start" />,
-                        }}
+                        InputLabelProps={{ shrink: true }}
                         fullWidth />
                     <TextField
                         key="fin-licencia"
@@ -198,9 +193,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                         fullWidth
                         value={formValues.endDateLicence}
                         onChange={handleInputChange}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start" />,
-                        }} />
+                        InputLabelProps={{ shrink: true }} />
                 </Box>
             </Grid>
             <Grid item xs={12} sm={2}>
@@ -247,9 +240,6 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                     name="maxUnits"
                     disabled
                     value={formValues.amountLicencesAllowed}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start" />,
-                    }}
                     fullWidth />
             </Grid>
             <Grid item xs={12} sm={12} alignItems="center" sx={{ mt: 2 }}>
@@ -274,7 +264,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                     }));
                                 }
                             }} />}
-                        label={<Typography fontWeight={400} variant="h5">Asociar a un usuario existente</Typography>} />
+                        label={<Typography sx={{ fontSize: 13.5, fontWeight: 500 }}>Asociar a un usuario existente</Typography>} />
                     {
                         formValues.associateUser && (
                             <TextField
@@ -300,8 +290,8 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                 </Box>
                 {
                     !formValues.associateUser && (
-                        <Paper variant='outlined' elevation={2} sx={{ width: "60%", p: 2, margin: "auto" }}>
-                            <Typography variant='h6' textAlign="center" sx={{ mb: 2 }}>Licencia Admin</Typography>
+                        <Paper sx={{ width: "60%", p: 2, margin: "auto", boxShadow: 'var(--shadow-card)' }}>
+                            <Typography sx={{ fontSize: 14.5, fontWeight: 600, color: 'var(--ink)', mb: 2 }}>Licencia Admin</Typography>
                             <Grid container direction="column" spacing={1} >
                                 <Grid item xs={12}>
                                     <TextField
@@ -313,9 +303,6 @@ export const LicenceForm: FC<LicenceFormProps> = ({
                                         name="username"
                                         value={formValues?.user?.username}
                                         onChange={onChangeUser}
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start" />,
-                                        }}
                                         fullWidth />
                                 </Grid>
                                 <Grid item xs={12} sx={{ my: 1 }}>

@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
+import { ViewModuleOutlined } from '@mui/icons-material';
 import { useModules } from '../../hooks/useModules';
 import { IconSelector } from '../../components/IconSelector/IconSelector';
-import { NumericTextField } from '../../components';
+import {
+  FormActions,
+  FormCard,
+  NumericTextField,
+  PageContainer,
+  PageHeader,
+} from '../../components';
 
 type ModuleForm = {
   moduleNameEs: string;
@@ -41,11 +48,15 @@ export const NewModulePage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth='sm'>
-      <Box sx={{ mt: 4 }}>
-        <Typography variant='h5'>Nuevo Módulo</Typography>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12}>
+    <PageContainer maxWidth={980}>
+      <PageHeader
+        icon={<ViewModuleOutlined />}
+        eyebrow='Menús y módulos · Módulos'
+        title='Nuevo módulo'
+      />
+      <FormCard title='Datos del módulo' icon={<ViewModuleOutlined />}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
             <TextField
               fullWidth
               label='Nombre (ES)'
@@ -53,7 +64,7 @@ export const NewModulePage: React.FC = () => {
               onChange={handleChange('moduleNameEs')}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={4}>
             <TextField
               fullWidth
               label='Name (EN)'
@@ -61,7 +72,7 @@ export const NewModulePage: React.FC = () => {
               onChange={handleChange('moduleNameEn')}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={4}>
             <TextField
               fullWidth
               label='Nome (PT)'
@@ -69,7 +80,7 @@ export const NewModulePage: React.FC = () => {
               onChange={handleChange('moduleNamePt')}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={4}>
             <NumericTextField
               fullWidth={true}
               variant='outlined'
@@ -78,16 +89,16 @@ export const NewModulePage: React.FC = () => {
               onChange={handleOrdenChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={8}>
             <IconSelector value={form.icon} onChange={handleIconSelect} />
           </Grid>
-          <Grid item xs={12} textAlign='right'>
-            <Button variant='contained' onClick={handleSubmit} disabled={!form.moduleNameEs}>
-              Guardar
-            </Button>
-          </Grid>
         </Grid>
-      </Box>
-    </Container>
+      </FormCard>
+      <FormActions>
+        <Button variant='contained' onClick={handleSubmit} disabled={!form.moduleNameEs}>
+          Guardar
+        </Button>
+      </FormActions>
+    </PageContainer>
   );
 };

@@ -1,21 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
-    Breadcrumbs,
     Button,
     Chip,
-    Container,
-    Link,
-    Paper,
     Typography,
 } from '@mui/material';
-import {
-    BusinessCenter as BusinessCenterIcon,
-    NavigateNext as NavigateNextIcon,
-    Save as SaveIcon,
-    Cancel as CancelIcon,
-} from '@mui/icons-material';
+import { BadgeOutlined } from '@mui/icons-material';
+import { EmptyState, FormActions, PageContainer, PageHeader } from '../../components';
 import { AccountInfoDisplay, EditAccountForm } from '../../components/account';
 import { Loading } from '../../components/Loading';
 import { useAccount, useAppDispatch, useAppSelector } from '../../hooks';
@@ -143,71 +135,42 @@ export const EditAccountPage: React.FC = () => {
 
     if (!accountActive) {
         return (
-            <Container maxWidth="lg" sx={{ py: 3 }}>
-                <Typography variant="h6" color="text.secondary" textAlign="center">
-                    No se encontró la cuenta. Redirigiendo...
-                </Typography>
-            </Container>
+            <PageContainer maxWidth={1180}>
+                <EmptyState icon={<BadgeOutlined />} title="No se encontró la cuenta. Redirigiendo..." />
+            </PageContainer>
         );
     }
 
     return (
-        <Container maxWidth="xl" sx={{ py: 3 }}>
+        <>
             {isLoading && <Loading loading={true} />}
-
-            {/* Breadcrumbs */}
-            <Breadcrumbs
-                separator={<NavigateNextIcon fontSize="small" />}
-                aria-label="breadcrumb"
-                sx={{ mb: 2 }}
-            >
-                <Link
-                    component={RouterLink}
-                    underline="hover"
-                    color="inherit"
-                    to="/accounts"
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                    <BusinessCenterIcon sx={{ mr: 0.5 }} fontSize="small" />
-                    Cuentas
-                </Link>
-                <Typography color="text.primary">Editar Cuenta</Typography>
-            </Breadcrumbs>
-
-            {/* Header */}
-            <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
-                <Box>
-                    <Box display="flex" alignItems="center" gap={2}>
-                        <BusinessCenterIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                        <Box>
-                            <Typography variant="h4" fontWeight="600">
-                                Editar Cuenta
-                            </Typography>
-                            <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 0.5 }}>
-                                {accountActive.denomination} ({accountActive.accountReference})
+            <PageContainer maxWidth={1180}>
+                <PageHeader
+                    icon={<BadgeOutlined />}
+                    eyebrow="Usuarios y cuentas · Cuentas"
+                    title="Editar cuenta"
+                    description={<>{accountActive.denomination} ({accountActive.accountReference})</>}
+                    onBack={handleCancel}
+                    actions={
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
+                            <Chip
+                                label={`Categoría ${accountActive.category}`}
+                                color={getCategoryColor(accountActive.category)}
+                                sx={{ fontWeight: 600 }}
+                            />
+                            <Typography sx={{ fontSize: 12, color: 'var(--ink-3)' }}>
+                                {getCategoryLabel(accountActive.category)}
                             </Typography>
                         </Box>
-                    </Box>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                    <Chip
-                        label={`Categoría ${accountActive.category}`}
-                        color={getCategoryColor(accountActive.category)}
-                        sx={{ fontWeight: 'bold' }}
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                        {getCategoryLabel(accountActive.category)}
-                    </Typography>
-                </Box>
-            </Box>
+                    }
+                />
 
-            {/* Información de la Cuenta (Readonly) */}
-            <Box sx={{ mb: 4 }}>
-                <AccountInfoDisplay account={accountActive} />
-            </Box>
+                {/* Información de la Cuenta (Readonly) */}
+                <Box sx={{ mb: 2 }}>
+                    <AccountInfoDisplay account={accountActive} />
+                </Box>
 
-            {/* Formulario Editable */}
-            <Box sx={{ mb: 4 }}>
+                {/* Formulario Editable */}
                 <EditAccountForm
                     status={formValues.status}
                     startDateLicence={formValues.startDateLicence}
@@ -217,46 +180,33 @@ export const EditAccountPage: React.FC = () => {
                     onChangeDate={handleChangeDate}
                     onChangeCheckbox={handleChangeCheckbox}
                 />
-            </Box>
 
-            {/* Botones de Acción */}
-            <Paper elevation={3} sx={{ p: 3 }}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}
+                {/* Botones de Acción */}
+                <FormActions
+                    start={
+                        hasChanges && (
+                            <Typography sx={{ fontSize: 13, fontWeight: 500, color: 'var(--orange)' }}>
+                                Tienes cambios sin guardar
+                            </Typography>
+                        )
+                    }
                 >
                     <Button
                         variant="outlined"
-                        color="inherit"
-                        size="large"
-                        startIcon={<CancelIcon />}
                         onClick={handleCancel}
                     >
                         Cancelar
                     </Button>
-
-                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                        {hasChanges && (
-                            <Typography variant="body2" color="warning.main" fontWeight={500}>
-                                Tienes cambios sin guardar
-                            </Typography>
-                        )}
-                        <Button
-                            variant="contained"
-                            color="success"
-                            size="large"
-                            startIcon={<SaveIcon />}
-                            onClick={handleSave}
-                            disabled={!canSave()}
-                        >
-                            Guardar Cambios
-                        </Button>
-                    </Box>
-                </Box>
-            </Paper>
-        </Container>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSave}
+                        disabled={!canSave()}
+                    >
+                        Guardar cambios
+                    </Button>
+                </FormActions>
+            </PageContainer>
+        </>
     );
 };

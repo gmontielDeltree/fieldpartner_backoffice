@@ -1,17 +1,7 @@
 import React, { useEffect } from "react";
-import { Loading } from "../../components";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  //InputAdornment,
-  Paper,
-  //Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import {SettingsInputAntenna as SettingsInputAntennaIcon } from "@mui/icons-material";
+import { FormActions, FormCard, Loading, PageContainer, PageHeader } from "../../components";
+import { Button, Grid, TextField } from "@mui/material";
+import { SettingsInputAntennaOutlined, ToggleOnOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useForm, useTypeDevices,  } from "../../hooks";
 import { DeviceStatus, TypeDevices } from "../../types";
@@ -118,34 +108,20 @@ export const NewTypeDevicesPage: React.FC = () => {
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
-      <Container maxWidth="md" sx={{ mb: 4 }}>
-        <Box
-          component="div"
-          display="flex"
-          alignItems="center"
-          sx={{ ml: { sm: 2 }, pt: 2 }}
+      <PageContainer maxWidth={980}>
+        <PageHeader
+          icon={<SettingsInputAntennaOutlined />}
+          eyebrow="Maestros · Tipos de dispositivos"
+          title={typeDevicesActive ? "Editar tipo de dispositivo" : "Nuevo tipo de dispositivo"}
+          onBack={onClickCancel}
+        />
+        <FormCard
+          title="Datos del tipo de dispositivo"
+          subtitle="El modelo no se puede repetir."
+          icon={<SettingsInputAntennaOutlined />}
         >
-          <SettingsInputAntennaIcon />
-          <Typography variant="h5" sx={{ ml: { sm: 2 } }}>
-            Tipo de dispositivos
-          </Typography>
-        </Box>
-  
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-        >
-          <Typography
-            component="h1"
-            variant="h4"
-            align="center"
-            sx={{ my: 3, mb: 5 }}
-          >
-            {typeDevicesActive ? "Editar" : "Nuevo"} Tipo de Dispositivo
-          </Typography>
-  
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 label="Modelo"
                 variant="outlined"
@@ -157,9 +133,9 @@ export const NewTypeDevicesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={7}>
+            <Grid item xs={12} sm={8}>
               <TextField
-                label="Descripcion"
+                label="Descripción"
                 variant="outlined"
                 type="text"
                 name="description"
@@ -180,7 +156,7 @@ export const NewTypeDevicesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 label="Subfamilia"
                 variant="outlined"
@@ -191,27 +167,26 @@ export const NewTypeDevicesPage: React.FC = () => {
                 fullWidth
               />
             </Grid>
+          </Grid>
+        </FormCard>
+        <FormCard title="Disponibilidad" icon={<ToggleOnOutlined />} delay={100}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <StatusButton available={available} onSwitchChange={handleSwitchChange} />
             </Grid>
           </Grid>
-          <Grid container spacing={2} justifyContent="center" sx={{ mt: 3 }}>
-            <Grid item xs={12} sm={3}>
-              <Button onClick={onClickCancel}>Cancelar</Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={typeDevicesActive ? handleUpdateTypeDevices : handleAddTypeDevices}
-              >
-                {!typeDevicesActive ? "Guardar" : "Actualizar"}
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+        </FormCard>
+        <FormActions>
+          <Button variant="outlined" onClick={onClickCancel}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={typeDevicesActive ? handleUpdateTypeDevices : handleAddTypeDevices}
+          >
+            {!typeDevicesActive ? "Guardar" : "Actualizar"}
+          </Button>
+        </FormActions>
+      </PageContainer>
     </>
   );
-  
 };
