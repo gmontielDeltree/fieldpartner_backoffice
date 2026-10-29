@@ -20,8 +20,10 @@ const onPhoto = {
 };
 
 // Velo oscuro sobre la foto para que el texto se lea (no es decorativo).
+// Backoffice: foto aérea de QTS Agro con velo verde (el login de FieldPartner usa la del
+// atardecer y el del licenciador la de los silos: cada sistema se distingue de entrada).
 const photoVeil =
-  'linear-gradient(180deg, rgba(8, 12, 10, 0.52) 0%, rgba(8, 12, 10, 0.12) 26%, rgba(8, 12, 10, 0.16) 44%, rgba(8, 12, 10, 0.7) 70%, rgba(8, 12, 10, 0.88) 100%)';
+  'linear-gradient(180deg, rgba(9, 34, 21, 0.62) 0%, rgba(9, 34, 21, 0.28) 30%, rgba(9, 34, 21, 0.34) 52%, rgba(7, 26, 16, 0.78) 74%, rgba(6, 22, 13, 0.92) 100%)';
 
 /** Entrada escalonada de los bloques (fade-up de foundation.css). */
 export const authEnter = (delay = 0) => ({
@@ -54,9 +56,9 @@ const BrandPanel: React.FC = () => (
         sx={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'url(/assets/load-bg.jpg)',
+          backgroundImage: 'url(/assets/qts-aerea.jpg)',
           backgroundSize: 'cover',
-          backgroundPosition: { xs: '50% 58%', md: '56% 50%' },
+          backgroundPosition: { xs: '50% 50%', md: '42% 50%' },
           animation: 'fade-in 700ms ease both',
         }}
       />
@@ -65,9 +67,9 @@ const BrandPanel: React.FC = () => (
       <Box sx={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', p: { xs: 2, md: 5 } }}>
         <Box
           component="img"
-          src="/assets/fieldpartner-logo-white.png"
-          alt="FieldPartner"
-          sx={{ alignSelf: 'flex-start', height: { xs: 22, md: 28 }, width: 'auto', mt: { xs: '6px', md: 0 }, ...authEnter(0) }}
+          src="/assets/qtsagro-logo-white.png"
+          alt="QTS Agro do Brasil"
+          sx={{ alignSelf: 'flex-start', height: { xs: 34, md: 84 }, width: 'auto', mt: { xs: 0, md: '-6px' }, ...authEnter(0) }}
         />
 
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
