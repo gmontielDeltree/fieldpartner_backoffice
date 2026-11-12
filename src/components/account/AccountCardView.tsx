@@ -60,7 +60,7 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
 
   const onClickEditAccount = (account: AccountDto): void => {
     dispatch(setAccountActive(account));
-    navigate(`/accounts/${account.accountId}`);
+    navigate(`/accounts/${account.id}`);
   };
 
   if (isLoading) {
@@ -87,7 +87,7 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
         {accounts.map((account) => {
           const statusInfo = getStatusColor(account.status);
           return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={account.accountId}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={account.id}>
               <Box
                 sx={{
                   height: '100%',
@@ -119,10 +119,6 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
                   >
                     {account.denomination}
                   </Typography>
-                  <Typography sx={{ fontSize: 12.5, color: 'var(--ink-3)', fontVariantNumeric: 'tabular-nums' }}>
-                    {account.accountReference}
-                  </Typography>
-
                   <Box sx={{ my: 1.5, borderTop: '1px solid var(--line)' }} />
 
                   {/* Métricas */}
@@ -130,14 +126,14 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
                     <Box display="flex" alignItems="center" gap={1} sx={{ color: 'var(--ink-3)', '& svg': { fontSize: 16 } }}>
                       <PublicOutlined />
                       <Typography sx={{ fontSize: 13, color: 'var(--ink-2)' }}>
-                        {account.country}
+                        {account.countryCode}
                       </Typography>
                     </Box>
 
                     <Box display="flex" alignItems="center" gap={1} sx={{ color: 'var(--ink-3)', '& svg': { fontSize: 16 } }}>
                       <DescriptionOutlined />
                       <Typography sx={{ fontSize: 13, color: 'var(--ink-2)' }}>
-                        {account.licenceType} - {account.licence}
+                        {account.licence?.licenceTypeLabel ?? '-'}
                       </Typography>
                     </Box>
 
@@ -146,9 +142,9 @@ export const AccountCardView: React.FC<AccountCardViewProps> = ({ accounts, isLo
                       justifyContent="space-between"
                       sx={{ mt: 0.5, py: 1, borderRadius: '8px', background: 'var(--inset)', boxShadow: 'var(--shadow-hairline)' }}
                     >
-                      <Metric value={account.countCampos || 0} label="Campos" />
-                      <Metric value={account.countLicencias || 0} label="Licencias" />
-                      <Metric value={account.countHectareas || 0} label="Hectáreas" />
+                      <Metric value={account.countFields || 0} label="Campos" />
+                      <Metric value={account.countLicences || 0} label="Licencias" />
+                      <Metric value={account.countHectares || 0} label="Hectáreas" />
                     </Box>
                   </Stack>
                 </Box>

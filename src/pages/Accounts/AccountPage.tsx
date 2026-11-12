@@ -17,7 +17,6 @@ import { getShortDate } from "../../helpers/dates";
 import { uploadFile } from "../../helpers/fileUpload";
 
 const initialForm: Account = {
-    accountReference: "",
     licenceNumber: "",
     denomination: "",
     country: "",
@@ -49,6 +48,10 @@ const initialForm: Account = {
     observation: "",
     associateUser: false,
     emailToAssociate: "",
+    companyEmail: "",
+    userLanguage: "es",
+    activeUsersAllowed: 0,
+    maxHectares: 0,
 };
 
 export const AccountPage: React.FC = () => {
@@ -148,7 +151,6 @@ export const AccountPage: React.FC = () => {
         switch (indexStep) {
             case 0: // Información General
                 return (
-                    formValues.accountReference.trim() !== '' &&
                     formValues.denomination.trim() !== '' &&
                     formValues.country !== '' &&
                     formValues.status !== ''
@@ -156,25 +158,21 @@ export const AccountPage: React.FC = () => {
             case 1: { // Categoría y Licencia
                 const hasCategory = formValues.category !== '';
                 const hasLicence = formValues.licenceType !== '' && formValues.licence !== '';
+                const isBorC = formValues.category === 'B' || formValues.category === 'C';
+                const hasMaxHectares = !isBorC || (formValues.maxHectares > 0);
 
-                // Si es categoría A, validar usuario
-                if (isCategoryA) {
-                    if (formValues.associateUser) {
-                        // Validar email de asociación
-                        return hasCategory && hasLicence && formValues.emailToAssociate.trim() !== '';
-                    } else {
-                        // Validar nuevo usuario
-                        return (
-                            hasCategory &&
-                            hasLicence &&
-                            formValues.user?.username?.trim() !== '' &&
-                            formValues.user?.email?.trim() !== '' &&
-                            formValues.user?.password?.trim() !== '' &&
-                            !isCheckingEmail
-                        );
-                    }
+                if (formValues.associateUser) {
+                    return hasCategory && hasLicence && hasMaxHectares && formValues.emailToAssociate.trim() !== '';
                 }
-                return hasCategory && hasLicence;
+                return (
+                    hasCategory &&
+                    hasLicence &&
+                    hasMaxHectares &&
+                    formValues.user?.username?.trim() !== '' &&
+                    formValues.user?.email?.trim() !== '' &&
+                    formValues.user?.password?.trim() !== '' &&
+                    !isCheckingEmail
+                );
             }
             default:
                 return true;

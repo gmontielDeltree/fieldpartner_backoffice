@@ -73,8 +73,7 @@ export const NewCountryPage: React.FC = () => {
   };
 
   const handleUpdateCountry = () => {
-    console.log("Datos a actualizar:", formValues);
-    if (!formValues._id) return;
+    if (!formValues.id && !formValues._id) return;
     updateCountry(formValues);
   };
 

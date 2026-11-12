@@ -10,7 +10,7 @@ import { useAppSelector } from '../hooks';
  * lateral) y, al pie, las marcas que antes ocupaban toda la pantalla. */
 export const HomePage: React.FC = () => {
     const { user } = useAppSelector((state) => state.auth);
-    const firstName = user?.firstName || '';
+    const firstName = user?.username || '';
     const sections = NAV_GROUPS.filter((group) => group.items.length > 1);
 
     return (

@@ -8,8 +8,7 @@ import {
     AxiosError,
     HttpStatusCode
 } from 'axios';
-import { ResponseAuthLogin, ResponseAuthRenew, User, UserLogin, UserRegister } from '../types';
-import { convertTimestampToDate } from '../helpers/dates';
+import { AuthChallenge, ResponseAuthLogin, ResponseAuthRenew, User, UserLogin, UserRegister } from '../types';
 
 
 export interface ErrorResponseAuth {
@@ -33,20 +32,26 @@ export const useAuthStore = () => {
         // dispatch(onChecking());
         dispatch(startLoading());
         try {
-            const response = await backofficeApi.post<ResponseAuthLogin>(
+            const response = await backofficeApi.post<ResponseAuthLogin | AuthChallenge>(
                 `/${controller}/login`, {
                 email, password
             });
 
-            if (response.data) {
-                const { auth, user } = response.data;
-                const { accessToken, refreshToken, expiration } = auth;
-                localStorage.setItem('t_bo', accessToken);
-                localStorage.setItem('r_bo', refreshToken);
-                localStorage.setItem('t_exp_bo', convertTimestampToDate(expiration).getTime().toString());
-                localStorage.setItem("user_session_bo", JSON.stringify(user));
-                dispatch(onLogin(user));
+            if ('challengeName' in response.data) {
+                localStorage.setItem('challenge_bo', JSON.stringify(response.data));
+                dispatch(onLogout('Debe cambiar su contraseña al ingresar por primera vez.'));
+                dispatch(finishLoading());
+                navigate('/auth/complete-new-password');
+                return;
             }
+
+            const { auth, user } = response.data;
+            const { accessToken, refreshToken, expiresIn } = auth;
+            localStorage.setItem('t_bo', accessToken);
+            localStorage.setItem('r_bo', refreshToken);
+            localStorage.setItem('t_exp_bo', (new Date().getTime() + expiresIn * 1000).toString());
+            localStorage.setItem('user_session_bo', JSON.stringify(user));
+            dispatch(onLogin(user));
             dispatch(finishLoading());
             dispatch(clearErrorMessage());
 
@@ -155,13 +160,12 @@ export const useAuthStore = () => {
             dispatch(onLogin(userLogin));
 
             const response = await backofficeApi.post<ResponseAuthRenew>(
-                `/${controller}/renew`, { refreshToken });
+                `/${controller}/refresh`, { refreshToken });
 
             if (response.status === HttpStatusCode.Created) {
-                const expiresIn = new Date().getTime() + response.data.ExpiresIn * 1000;
                 localStorage.setItem('t_bo', response.data.accessToken);
-                // localStorage.setItem('r_bo', response.data.refreshToken);
-                localStorage.setItem('t_exp_bo', expiresIn.toString());
+                localStorage.setItem('r_bo', response.data.refreshToken);
+                localStorage.setItem('t_exp_bo', (new Date().getTime() + response.data.expiresIn * 1000).toString());
             }
 
         } catch (error) {
