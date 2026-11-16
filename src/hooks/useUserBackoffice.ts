@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode, isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react";
@@ -65,9 +65,10 @@ export const useUser = () => {
                 Swal.fire('Usuario', 'Verificar campos obligatorios.', 'error');
             }
 
-        } catch (error: any) {
+        } catch (error) {
             console.log(error)
-            const message = error?.response?.data?.message || 'Ocurrió un error inesperado';
+            const message = (isAxiosError(error) && error.response?.data?.message)
+                || 'Ocurrió un error inesperado';
             Swal.fire('Ups', Array.isArray(message) ? message.join(' · ') : message, 'error');
             setIsLoading(false);
             if (error) setError(error);
