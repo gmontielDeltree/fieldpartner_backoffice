@@ -22,10 +22,10 @@ import { AddRounded, CategoryOutlined, DeleteOutline, EditOutlined } from "@mui/
 import { setCategoryACtive } from "../../store/category";
 
 const columns: ColumnProps[] = [
-  { text: "ID Categoria", align: "left", field: "idCategory", sortable: true },
-  { text: "Descripcion ES", align: "left", field: "description", sortable: true },
-  { text: "Descripcion PT", align: "left", field: "descriptionPt", sortable: true },
-  { text: "Descripcion EN", align: "left", field: "descriptionEn", sortable: true },
+  { text: "Tipo Categoría", align: "left", field: "categoryType", sortable: true },
+  { text: "Descripcion ES", align: "left", field: "descriptionES", sortable: true },
+  { text: "Descripcion PT", align: "left", field: "descriptionPT", sortable: true },
+  { text: "Descripcion EN", align: "left", field: "descriptionEN", sortable: true },
 ];
 
 export const ListCategory: React.FC = () => {
@@ -36,7 +36,7 @@ export const ListCategory: React.FC = () => {
     useCategory();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const [sortField, setSortField] = React.useState<keyof Category>("idCategory");
+  const [sortField, setSortField] = React.useState<keyof Category>("categoryType");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
 
   const handleSort = (field: string) => {
@@ -65,10 +65,10 @@ export const ListCategory: React.FC = () => {
   const matchesFilter = (category: Category, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
-      category.idCategory,
-      category.description,
-      category.descriptionPt,
-      category.descriptionEn,
+      category.categoryType,
+      category.descriptionES,
+      category.descriptionPT,
+      category.descriptionEN,
     ];
 
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
@@ -79,9 +79,9 @@ export const ListCategory: React.FC = () => {
     return [...filteredBySearch].sort((a, b) => {
       const primary = compareValues(a, b, sortField);
       const result = sortDirection === "asc" ? primary : -primary;
-      // Desempate: dentro de un mismo valor, ordenar por ID por defecto
-      if (result === 0 && sortField !== "idCategory") {
-        return compareValues(a, b, "idCategory");
+      // Desempate: dentro de un mismo valor, ordenar por tipo por defecto
+      if (result === 0 && sortField !== "categoryType") {
+        return compareValues(a, b, "categoryType");
       }
       return result;
     });
@@ -96,14 +96,11 @@ export const ListCategory: React.FC = () => {
 
   const onClickUpdateCategory = (item: Category) => {
     dispatch(setCategoryACtive(item));
-    navigate(`/category/${item._id}`);
+    navigate(`/category/${item.id}`);
   };
 
   const handleDeleteCategory = (item: Category) => {
-    if (item._id && item._rev) {
-      removeCategory(item._id, item._rev);
-      getCategories();
-    }
+    if (item.id) removeCategory(item.id);
   };
 
   useEffect(() => {
@@ -138,7 +135,7 @@ export const ListCategory: React.FC = () => {
             <SearchField
               value={filterText}
               onChange={handleInputChange}
-              placeholder="Buscar por ID o descripción…"
+              placeholder="Buscar por tipo o descripción…"
               onSubmit={onClickSearch}
             />
           </ListToolbar>
@@ -158,11 +155,11 @@ export const ListCategory: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.idCategory}</TableCellStyled>
-                  <TableCellStyled align="left">{row.description}</TableCellStyled>
-                  <TableCellStyled align="left">{row.descriptionPt}</TableCellStyled>
-                  <TableCellStyled align="left">{row.descriptionEn}</TableCellStyled>
+                <ItemRow key={row.id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.categoryType}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionPT}</TableCellStyled>
+                  <TableCellStyled align="left">{row.descriptionEN}</TableCellStyled>
                   <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">
                       <IconButton aria-label="Editar" onClick={() => onClickUpdateCategory(row)}>

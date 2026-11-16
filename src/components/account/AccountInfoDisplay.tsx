@@ -11,7 +11,6 @@ import {
     AssignmentTurnedInOutlined,
     TrendingUpRounded,
     PublicOutlined,
-    MailOutline,
 } from '@mui/icons-material';
 import { AccountDto } from '../../interfaces/account';
 import { FormCard, InfoItem, StatusPill } from '../ui';
@@ -83,18 +82,11 @@ export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account 
                 <Grid item xs={12} md={6} lg={4}>
                     <FormCard title="Datos básicos" icon={<BadgeOutlined />} sx={{ height: '100%', mb: 0 }}>
                         <Stack spacing={1.5}>
-                            <InfoRow label="Cuenta ID" value={account.accountReference} />
                             <InfoRow label="Denominación" value={account.denomination} />
-
-                            <InfoItem label="Email">
-                                <IconValue icon={<MailOutline />}>
-                                    {account.email || 'N/A'}
-                                </IconValue>
-                            </InfoItem>
 
                             <InfoItem label="País">
                                 <IconValue icon={<PublicOutlined />}>
-                                    {account.country}
+                                    {account.countryCode}
                                 </IconValue>
                             </InfoItem>
 
@@ -114,9 +106,9 @@ export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account 
                 <Grid item xs={12} md={6} lg={4}>
                     <FormCard title="Licencia" icon={<AssignmentTurnedInOutlined />} delay={100} sx={{ height: '100%', mb: 0 }}>
                         <Stack spacing={1.5}>
-                            <InfoRow label="Tipo de licencia" value={account.licenceType} />
-                            <InfoRow label="Licencia ID" value={account.licence} />
-                            <InfoRow label="Unidades permitidas" value={account.amountLicencesAllowed} />
+                            <InfoRow label="Tipo de licencia" value={account.licence?.licenceTypeLabel} />
+                            <InfoRow label="Licencia ID" value={account.licence?.id} />
+                            <InfoRow label="Unidades permitidas" value={account.licence?.amountLicencesAllowed ?? undefined} />
 
                             <InfoItem label="Multipaís">
                                 <StatusPill status={account.isLicenceMultipleCountry ? 'done' : 'neutral'} size="sm">
@@ -131,9 +123,9 @@ export const AccountInfoDisplay: React.FC<AccountInfoDisplayProps> = ({ account 
                 <Grid item xs={12} md={6} lg={4}>
                     <FormCard title="Métricas" icon={<TrendingUpRounded />} delay={140} sx={{ height: '100%', mb: 0 }}>
                         <Stack spacing={1}>
-                            <MetricTile value={account.countCampos || 0} label="Campos" />
-                            <MetricTile value={account.countLicencias || 0} label="Licencias" />
-                            <MetricTile value={account.countHectareas?.toLocaleString() || 0} label="Hectáreas" />
+                            <MetricTile value={account.countFields || 0} label="Campos" />
+                            <MetricTile value={account.countLicences || 0} label="Licencias" />
+                            <MetricTile value={account.countHectares?.toLocaleString() || 0} label="Hectáreas" />
                         </Stack>
                     </FormCard>
                 </Grid>

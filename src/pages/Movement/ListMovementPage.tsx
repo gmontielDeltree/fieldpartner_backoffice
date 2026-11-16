@@ -1,5 +1,5 @@
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { ColumnProps, Movement } from "../../types";
+import { ColumnProps, Movement, StockSumLabels } from "../../types";
 import React, { useEffect } from "react";
 import { useAppDispatch, useMovements, useForm } from "../../hooks";
 import {
@@ -31,15 +31,14 @@ const columns: ColumnProps[] = [
   { text: "Concepto", align: "left", field: "name", sortable: true },
   { text: "Descripción", align: "left", field: "description", sortable: true },
   { text: "Tipo de movimiento", align: "left", field: "manual", sortable: true },
-  { text: "Suma o descuenta stock", align: "left", field: "sumaStock", sortable: true },
+  { text: "Suma o descuenta stock", align: "left", field: "stockSum", sortable: true },
 ];
 
-/** Color de la píldora de stock según el valor guardado (solo presentación; el texto se muestra tal cual). */
+/** Color de la píldora de stock según el valor del enum StockSumType. */
 const stockTone = (value?: string): Tone => {
-  const v = String(value ?? "").toLowerCase();
-  if (v.startsWith("suma")) return "green";
-  if (v.startsWith("descuenta")) return "orange";
-  if (v === "ambas" || v === "both") return "blue";
+  if (value === "ADD") return "green";
+  if (value === "SUBTRACT") return "orange";
+  if (value === "BOTH") return "blue";
   return "neutral";
 };
 
@@ -99,15 +98,11 @@ export const ListMovementPage: React.FC = () => {
 
   const onClickUpdateMovement = (item: Movement) => {
     dispatch(setMovementACtive(item));
-    navigate(`/type-movement/${item._id}`);
+    navigate(`/type-movement/${item.id}`);
   };
 
   const handleDeleteMovement = (item: Movement) => {
-    if (item._id && item._rev) {
-      removeMovement(item._id, item._rev);
-      getMovements();
-      navigate(`/type-movement/${item._id}`);
-    }
+    if (item.id) removeMovement(item.id);
   };
 
   useEffect(() => {
@@ -165,7 +160,7 @@ export const ListMovementPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.name}</TableCellStyled>
                   <TableCellStyled align="left">{row.description}</TableCellStyled>
                   <TableCellStyled align="left">
@@ -174,7 +169,7 @@ export const ListMovementPage: React.FC = () => {
                     </ValuePill>
                   </TableCellStyled>
                   <TableCellStyled align="left">
-                    {row.sumaStock ? <ValuePill tone={stockTone(row.sumaStock)}>{row.sumaStock}</ValuePill> : null}
+                    {row.stockSum ? <ValuePill tone={stockTone(row.stockSum)}>{StockSumLabels[row.stockSum]}</ValuePill> : null}
                   </TableCellStyled>
                   <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">

@@ -28,10 +28,10 @@ import { setSupplieActive } from "../store/supplie";
 
 
 const columns: ColumnProps[] = [
-  { text: "Tipo", align: "left", field: "name", sortable: true },
-  { text: "Descripción", align: "left", field: "description", sortable: true },
-  { text: "Cultivo", align: "left", field: "cultivo", sortable: true },
-  { text: "Fitosanitario", align: "left", field: "fitosanitario", sortable: true },
+  { text: "Código", align: "left", field: "code", sortable: true },
+  { text: "Tipo", align: "left", field: "descriptionES", sortable: true },
+  { text: "Cultivo", align: "left", field: "isCrop", sortable: true },
+  { text: "Fitosanitario", align: "left", field: "phytosanitary", sortable: true },
 ];
 
 export const ListSuppliesPage: React.FC = () => {
@@ -47,7 +47,7 @@ export const ListSuppliesPage: React.FC = () => {
   } = useSupplies();
   const { filterText, handleInputChange } = useForm({ filterText: "" });
 
-  const [sortField, setSortField] = React.useState<keyof SupplyType>("name");
+  const [sortField, setSortField] = React.useState<keyof SupplyType>("descriptionES");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc");
 
   const handleSort = (field: string) => {
@@ -73,8 +73,8 @@ export const ListSuppliesPage: React.FC = () => {
     return [...list].sort((a, b) => {
       const primary = compareValues(a, b, sortField);
       const result = sortDirection === "asc" ? primary : -primary;
-      if (result === 0 && sortField !== "name") {
-        return compareValues(a, b, "name");
+      if (result === 0 && sortField !== "descriptionES") {
+        return compareValues(a, b, "descriptionES");
       }
       return result;
     });
@@ -90,15 +90,11 @@ export const ListSuppliesPage: React.FC = () => {
 
   const onClickUpdateSupplie = (item: SupplyType) => {
     dispatch(setSupplieActive(item));
-    navigate(`/type-supplies/${item._id}`);
+    navigate(`/type-supplies/${item.id}`);
   };
 
   const handleDeleteSupplie = (item: SupplyType) => {
-    if (item._id && item._rev) {
-      removeSupplie(item._id, item._rev);
-      getSupplies();
-      navigate(`/type-supplies/${item._id}`);
-    }
+    if (item.id !== undefined) removeSupplie(item.id);
   };
 
   useEffect(() => {
@@ -156,21 +152,21 @@ export const ListSuppliesPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>
-                    {row.name}
+                    {row.code}
                   </TableCellStyled>
                   <TableCellStyled align="left">
-                    {row.description}
+                    {row.descriptionES}
                   </TableCellStyled>
                   <TableCellStyled align="left">
-                    <ValuePill tone={row.cultivo ? "accent" : "neutral"}>
-                      {row.cultivo ? "Cultivo" : "No cultivo"}
+                    <ValuePill tone={row.isCrop ? "accent" : "neutral"}>
+                      {row.isCrop ? "Cultivo" : "No cultivo"}
                     </ValuePill>
                   </TableCellStyled>
                   <TableCellStyled align="left">
-                    <ValuePill tone={row.fitosanitario ? "orange" : "neutral"}>
-                      {row.fitosanitario ? "Sí" : "No"}
+                    <ValuePill tone={row.phytosanitary ? "orange" : "neutral"}>
+                      {row.phytosanitary ? "Sí" : "No"}
                     </ValuePill>
                   </TableCellStyled>
                   <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>

@@ -113,16 +113,12 @@ export const ListCountryPage: React.FC = () => {
 //   };
 
   const onClickUpdateCountry = (item: Country) => {
-    console.log("Item ID:", item._id);
     dispatch(setCountryACtive(item));
-    navigate(`/country/${item._id}`);
+    navigate(`/country/${item.id}`);
   };
 
-  const handleDeleteCountry = (item:  Country) => {
-    if (item._id && item._rev) {
-      removeCountry(item._id, item._rev);
-      getCountry();
-    }
+  const handleDeleteCountry = (item: Country) => {
+    if (item.id) removeCountry(item.id);
   };
 
   useEffect(() => {
@@ -179,7 +175,7 @@ export const ListCountryPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id ?? row.code} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.code}</TableCellStyled>
                   <TableCellStyled align="left">{row.descriptionES}</TableCellStyled>
                   <TableCellStyled align="left">{row.descriptionPT}</TableCellStyled>

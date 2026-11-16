@@ -18,9 +18,11 @@ import { ColumnProps } from '../../types';
 import { useForm, useUser } from '../../hooks';
 
 const columns: ColumnProps[] = [
-    { text: 'Apellido', align: 'left' },
-    { text: 'Nombre', align: 'left' },
-    { text: 'Email', align: 'left' }];
+    { text: 'Usuario', align: 'left' },
+    { text: 'Email', align: 'left' },
+    { text: 'Cuenta', align: 'left' },
+    { text: 'Rol', align: 'left' },
+    { text: 'Estado', align: 'left' }];
 
 export const ListUserPage: React.FC = () => {
 
@@ -40,10 +42,12 @@ export const ListUserPage: React.FC = () => {
             getUsers();
             return;
         }
+        const term = filterText.toLowerCase();
         const filtedUsers = users.filter(
-            ({ username, email }) =>
-                (username && username.toLowerCase().includes(filterText.toLowerCase())) ||
-                (email && email.toLowerCase().includes(filterText.toLowerCase()))
+            ({ username, email, accountDenomination }) =>
+                (username && username.toLowerCase().includes(term)) ||
+                (email && email.toLowerCase().includes(term)) ||
+                (accountDenomination && accountDenomination.toLowerCase().includes(term))
         );
         setUsers(filtedUsers);
     }

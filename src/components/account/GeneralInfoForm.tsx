@@ -73,23 +73,6 @@ export const GeneralInfoForm: FC<GeneralInfoFormProps> = ({
             icon={<BadgeOutlined />}
         >
             <Grid container spacing={2}>
-                {/* Cuenta ID */}
-                <Grid item xs={12} sm={6} md={3}>
-                    <TextField
-                        variant="outlined"
-                        type="text"
-                        label="Cuenta ID"
-                        name="accountReference"
-                        disabled={!!formValues.accountId}
-                        value={formValues.accountReference}
-                        onChange={handleInputChange}
-                        placeholder="Ej: ACC-001"
-                        helperText="Identificador único de la cuenta"
-                        required
-                        fullWidth
-                    />
-                </Grid>
-
                 {/* Denominación */}
                 <Grid item xs={12} sm={6} md={5}>
                     <TextField
