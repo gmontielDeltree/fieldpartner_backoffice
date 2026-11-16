@@ -5,8 +5,8 @@ import { clearErrorMessage, finishLoading, onChecking, onLogin, onLogout, startL
 import { useAppSelector } from './useRedux';
 // import { UserLogin } from '@types';
 import {
-    AxiosError,
-    HttpStatusCode
+    HttpStatusCode,
+    isAxiosError
 } from 'axios';
 import { AuthChallenge, ResponseAuthLogin, ResponseAuthRenew, User, UserLogin, UserRegister } from '../types';
 
@@ -77,16 +77,14 @@ export const useAuthStore = () => {
                 return dispatch(finishLoading());
             }
 
-        } catch (error: AxiosError<ErrorResponseAuth> | any) {
-            if (error.response && error.response.data) {
-                const responseError: ErrorResponseAuth = error.response.data;
-                const code = responseError.code;
-                const message = responseError.message;
+        } catch (error) {
+            if (isAxiosError<ErrorResponseAuth>(error) && error.response?.data) {
+                const { code, message } = error.response.data;
 
                 if (code === "UsernameExistsException")
                     dispatch(onLogout(message));
                 else
-                    dispatch(onLogout(error.response.data.message[1]));
+                    dispatch(onLogout(message[1]));
             }
             dispatch(finishLoading());
         }

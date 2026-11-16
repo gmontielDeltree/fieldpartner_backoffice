@@ -67,7 +67,7 @@ const httpOpts: PouchDB.Configuration.RemoteDatabaseConfiguration = {
   skip_setup: true,
 };
 
-const remoteDb = <T extends Record<string, any>>(slug: string): PouchDB.Database<T> => {
+const remoteDb = <T extends object>(slug: string): PouchDB.Database<T> => {
   if (!remoteCouchDBUrl) {
     console.error(
       '[pouchdbService] VITE_COUCHDB_URL no está definido. Las llamadas a CouchDB van a fallar.',
@@ -119,7 +119,7 @@ const noopSyncHandler: SyncHandlerStub = {
 class SyncManagerStub {
   register(
     _name: string,
-    _local: PouchDB.Database<any>,
+    _local: PouchDB.Database,
     _remoteUrl: string,
     _opts: PouchDB.Replication.SyncOptions = {},
   ) {

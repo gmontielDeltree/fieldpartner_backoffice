@@ -11,6 +11,16 @@ const LABEL_TO_TYPE: Record<string, string> = {
   H: EnumLicenceType.H,
 };
 
+/** Shape del LicenceTypeDto que devuelve GET /licence-types en el back. */
+interface LicenceTypeResponse {
+  id: string;
+  label: string;
+  description?: string;
+  systemType?: string;
+  maximumUnitAllowed?: number;
+  allowedUsersCount?: number;
+}
+
 
 export const useLicences = () => {
 
@@ -42,7 +52,7 @@ export const useLicences = () => {
     const getLicences = async () => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.get<any[]>('/licence-types');
+            const response = await backofficeApi.get<LicenceTypeResponse[]>('/licence-types');
             const documents: Licences[] = response.data.map(item => ({
                 _id: item.id,
                 id: item.id,
