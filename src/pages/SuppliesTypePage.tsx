@@ -76,7 +76,7 @@ export const SuppliesTypePage: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      dispatch((removeSupplieActive));
+      dispatch(removeSupplieActive());
     };
   }, [dispatch]);
 
