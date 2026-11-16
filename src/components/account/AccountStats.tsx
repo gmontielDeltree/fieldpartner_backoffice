@@ -96,13 +96,12 @@ export const AccountStats: React.FC<AccountStatsProps> = ({ accounts }) => {
   thirtyDaysFromNow.setDate(today.getDate() + 30);
 
   const expiringLicenses = accounts.filter(acc => {
-    const endDate = new Date(acc.endDateLicence);
+    if (!acc.licence?.endDate) return false;
+    const endDate = new Date(acc.licence.endDate);
     return endDate >= today && endDate <= thirtyDaysFromNow;
   }).length;
 
-  // Calcular totales
-  // const totalFields = accounts.reduce((sum, acc) => sum + (acc.countCampos || 0), 0);
-  const totalHectares = accounts.reduce((sum, acc) => sum + (acc.countHectareas || 0), 0);
+  const totalHectares = accounts.reduce((sum, acc) => sum + (acc.countHectares || 0), 0);
 
   const stats: Omit<StatCardProps, 'index'>[] = [
     {

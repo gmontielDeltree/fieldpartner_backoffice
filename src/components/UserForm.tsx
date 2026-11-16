@@ -1,5 +1,8 @@
 import React, { ChangeEvent } from 'react';
-import { Box, Grid, TextField, InputAdornment, Alert, AlertTitle } from '@mui/material';
+import {
+    Box, Grid, TextField, InputAdornment, Alert, AlertTitle,
+    FormControl, InputLabel, Select, MenuItem,
+} from '@mui/material';
 // import { User } from '../types';
 
 
@@ -12,6 +15,11 @@ export interface UserFormProps {
     password: string;
     previousPassword?: string;
     newPassword?: string;
+    // Selector de cuenta: solo en alta y solo para GENERAL_ADMIN (al ADMIN el back le fuerza su cuenta).
+    showAccountSelector?: boolean;
+    accounts?: { id: string; denomination: string }[];
+    accountId?: string;
+    onAccountChange?: (id: string) => void;
 }
 
 export const UserForm: React.FC<UserFormProps> = ({
@@ -21,7 +29,11 @@ export const UserForm: React.FC<UserFormProps> = ({
     email,
     password,
     previousPassword,
-    newPassword
+    newPassword,
+    showAccountSelector = false,
+    accounts = [],
+    accountId = '',
+    onAccountChange,
 }) => {
 
     return (
@@ -29,6 +41,25 @@ export const UserForm: React.FC<UserFormProps> = ({
             <Grid
                 container
                 spacing={2}>
+                {
+                    isNewUser && showAccountSelector && (
+                        <Grid item xs={12} sm={12}>
+                            <FormControl fullWidth>
+                                <InputLabel id="account-select-label">Cuenta</InputLabel>
+                                <Select
+                                    labelId="account-select-label"
+                                    label="Cuenta"
+                                    value={accountId}
+                                    onChange={(e) => onAccountChange?.(e.target.value as string)}
+                                >
+                                    {accounts.map((a) => (
+                                        <MenuItem key={a.id} value={a.id}>{a.denomination}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    )
+                }
                 <Grid item xs={12} sm={12}>
                     <TextField
                         label="Nombre"

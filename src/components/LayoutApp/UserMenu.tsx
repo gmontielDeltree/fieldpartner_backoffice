@@ -22,10 +22,7 @@ const getInitials = (name: string): string => {
     .slice(0, 2);
 };
 
-const displayName = (user: User) => {
-  const full = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
-  return full || user.username || '';
-};
+const displayName = (user: User) => user.username || '';
 
 interface UserMenuProps {
   user: User;
@@ -38,7 +35,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout, collapsed = 
   const open = Boolean(anchorEl);
   const { mode, toggle } = useColorMode();
   const name = displayName(user);
-  const detail = user.username && user.username !== name ? user.username : user.isAdmin ? 'Administrador' : '';
+  const detail = user.role === 'ADMIN' ? 'Administrador' : '';
 
   const handleMenuOpen = (event: MouseEvent<HTMLElement>): void => setAnchorEl(event.currentTarget);
   const handleMenuClose = (): void => setAnchorEl(null);

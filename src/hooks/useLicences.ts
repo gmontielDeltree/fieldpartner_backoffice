@@ -1,8 +1,15 @@
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react"
-import { Licences } from "../types";
+import { Licences, EnumLicenceType } from "../types";
 import { dbContext } from "../services/pouchdbService";
+import { backofficeApi } from "../config";
+
+const LABEL_TO_TYPE: Record<string, string> = {
+  C: EnumLicenceType.C,
+  L: EnumLicenceType.L,
+  H: EnumLicenceType.H,
+};
 
 
 export const useLicences = () => {
@@ -35,21 +42,22 @@ export const useLicences = () => {
     const getLicences = async () => {
         setIsLoading(true);
         try {
-            const response = await dbContext.licences.allDocs({ include_docs: true });
-
-            setIsLoading(false);
-
-            if (response.rows.length) {
-                const documents: Licences[] = response.rows.map(row => row.doc as Licences);
-                setLicences(documents);
-            } else {
-                setLicences([]);
-            }
-
+            const response = await backofficeApi.get<any[]>('/licence-types');
+            const documents: Licences[] = response.data.map(item => ({
+                _id: item.id,
+                id: item.id,
+                description: item.description ?? '',
+                licenceType: LABEL_TO_TYPE[item.label] ?? item.label,
+                systemType: item.systemType ?? '',
+                maximumUnitAllowed: item.maximumUnitAllowed ?? 0,
+                allowedUsersCount: item.allowedUsersCount ?? 0,
+            }));
+            setLicences(documents);
         } catch (error) {
             Swal.fire('Error', 'No se pudieron cargar las licencias.', 'error');
-            setIsLoading(false);
             setError(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 

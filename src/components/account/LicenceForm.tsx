@@ -91,17 +91,6 @@ export const LicenceForm: FC<LicenceFormProps> = ({
 
     return (
         <Grid container spacing={1} alignItems="center">
-            <Grid item xs={12} sm={2.5} >
-                <TextField
-                    variant="outlined"
-                    type='text'
-                    label="Cuenta ID"
-                    name="accountReference"
-                    disabled={!!formValues.accountId}
-                    value={formValues.accountReference}
-                    onChange={handleInputChange}
-                    fullWidth />
-            </Grid>
             <Grid item xs={12} sm={4} >
                 <TextField
                     variant="outlined"

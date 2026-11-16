@@ -144,7 +144,7 @@ export const ListLicencesPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id ?? row._id} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.id}</TableCellStyled>
                   <TableCellStyled align="left">{row.systemType}</TableCellStyled>
                   <TableCellStyled align="left">{row.description}</TableCellStyled>

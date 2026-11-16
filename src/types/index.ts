@@ -17,27 +17,74 @@ export interface UserDto extends Document {
   isAdmin?: boolean;
 }
 
+/** Shape returned by the back's GET /users (users grouped by account). */
+export interface AccountUsersResponse {
+  account: { id: string; denomination: string; category: string };
+  users: Array<{
+    id: string;
+    email: string;
+    username: string;
+    role: string | null;
+    state: string;
+  }>;
+}
+
+/** Payload for POST /users — alineado al CreateUserDto del back (sin campos extra). */
+export interface CreateUserPayload {
+  email: string;
+  username: string;
+  password: string;
+  language?: string;
+  accountId?: string;
+  role?: 'USER' | 'ADMIN' | 'GENERAL_ADMIN';
+}
+
+/** Flattened row for the system-wide users listing (one user + its account context). */
+export interface SystemUser {
+  id: string;
+  username: string;
+  email: string;
+  role: string | null;
+  state: string;
+  accountId: string;
+  accountDenomination: string;
+  accountCategory: string;
+}
+
 export interface Authenticate {
   accessToken: string;
   refreshToken: string;
-  expiration: number;
+  expiresIn: number;
 }
 
 export interface User {
   id: string;
   username: string;
+  email: string;
+  role: string;
+  language: string;
+  photoName?: string;
   accountId: string;
-  countryId: string;
-  isAdmin: boolean;
+  accountName: string;
+  countryCode: string;
+  currency: string;
 }
+
 export interface ResponseAuthLogin {
   user: User;
   auth: Authenticate;
 }
 
+export interface AuthChallenge {
+  challengeName: 'NEW_PASSWORD_REQUIRED';
+  session: string;
+  email: string;
+}
+
 export interface ResponseAuthRenew {
   accessToken: string;
   refreshToken: string;
+  expiresIn: number;
 }
 
 export interface UserRegister {
@@ -158,6 +205,7 @@ export enum MenuOptionType {
 }
 
 export interface Country extends Document {
+  id?: string;
   code: string;
   descriptionES: string;
   descriptionPT: string;
@@ -247,28 +295,10 @@ export interface Document {
   _rev?: string;
 }
 
-export interface Authenticate {
+export interface ResponseAuthRenew {
   accessToken: string;
   refreshToken: string;
-  expiration: number;
-}
-
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  accountId: string;
-  isAdmin: boolean;
-}
-
-export interface ResponseAuthLogin {
-  user: User;
-  auth: Authenticate;
-}
-
-export interface ResponseAuthRenew {
-  AccessToken: string;
-  ExpiresIn: number;
+  expiresIn: number;
 }
 
 export interface UserRegister {
@@ -530,10 +560,11 @@ export enum EnumLicenceType {
 }
 
 export enum EnumStatusAccount {
-  Activa = 'Activa',
-  Inactiva = 'Inactiva',
-  Suspendida = 'Suspendida',
-  Cancelada = 'Cancelada',
+  Activa = 'ACTIVE',
+  Inactiva = 'INACTIVE',
+  Suspendida = 'SUSPENDED',
+  Pendiente = 'PENDING',
+  Cancelada = 'CANCELLED',
 }
 
 export enum EnumCategoryCod {

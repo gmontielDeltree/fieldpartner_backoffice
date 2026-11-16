@@ -75,7 +75,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<OrderBy>('accountReference');
+    const [orderBy, setOrderBy] = useState<OrderBy>('denomination');
 
     const handleRequestSort = (property: OrderBy) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -94,7 +94,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     const onClickEditCustomer = (item: AccountDto): void => {
         dispatch(setAccountActive(item));
-        navigate(`/accounts/${item.accountId}`);
+        navigate(`/accounts/${item.id}`);
     };
 
     // Ordenar y paginar los datos
@@ -106,14 +106,10 @@ export const DataTable: React.FC<DataTableProps> = ({
         return sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     }, [sortedRows, page, rowsPerPage]);
 
-    // Mapeo de columnas a propiedades de Account (por el texto de la columna)
     const columnToProperty: { [key: string]: OrderBy } = {
-        'Referencia ID': 'accountReference',
         'Estado': 'status',
-        'País': 'country',
+        'País': 'countryCode',
         'Denominación': 'denomination',
-        'Tipo': 'licenceType',
-        'Licencia': 'licence',
     };
 
     if (isLoading) {
@@ -178,22 +174,19 @@ export const DataTable: React.FC<DataTableProps> = ({
                         {paginatedRows.map((row) => {
                             const statusInfo = getStatusColor(row.status);
                             return (
-                                <ItemRow key={row.accountId} hover>
-                                    <TableCellStyled component="th" scope="row" sx={{ fontWeight: 500 }}>
-                                        {row.accountReference}
-                                    </TableCellStyled>
+                                <ItemRow key={row.id} hover>
                                     <TableCellStyled align="left">
                                         <StatusPill status={statusInfo.color} size="sm">
                                             {statusInfo.label}
                                         </StatusPill>
                                     </TableCellStyled>
-                                    <TableCellStyled align="left">{row.country}</TableCellStyled>
+                                    <TableCellStyled align="left">{row.countryCode}</TableCellStyled>
                                     <TableCellStyled align="left">{row.denomination}</TableCellStyled>
-                                    <TableCellStyled align="left">{row.licenceType}</TableCellStyled>
-                                    <TableCellStyled align="left">{row.licence}</TableCellStyled>
-                                    <TableCellStyled align="right">{row.countCampos || "-"}</TableCellStyled>
-                                    <TableCellStyled align="right">{row.countLicencias || "-"}</TableCellStyled>
-                                    <TableCellStyled align="right">{row.countHectareas || "-"}</TableCellStyled>
+                                    <TableCellStyled align="left">{row.licence?.licenceTypeLabel ?? '-'}</TableCellStyled>
+                                    <TableCellStyled align="left">{row.licence?.id ?? '-'}</TableCellStyled>
+                                    <TableCellStyled align="right">{row.countFields || '-'}</TableCellStyled>
+                                    <TableCellStyled align="right">{row.countLicences || '-'}</TableCellStyled>
+                                    <TableCellStyled align="right">{row.countHectares || '-'}</TableCellStyled>
                                     <TableCellStyled align="right" sx={{ whiteSpace: 'nowrap' }}>
                                         <Tooltip title="Editar cuenta">
                                             <IconButton
