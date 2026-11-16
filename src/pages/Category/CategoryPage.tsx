@@ -10,9 +10,9 @@ import Swal from "sweetalert2";
 
 const initialForm: Category = {
   idCategory: "",
-  description: "",
-  descriptionPt: "",
-  descriptionEn: ""
+  descriptionES: "",
+  descriptionPT: "",
+  descriptionEN: ""
 };
 
 export const CategoryPage: React.FC = () => {
@@ -22,9 +22,9 @@ export const CategoryPage: React.FC = () => {
   const [disabledButton, setDisabledButton] = useState(false);
   const {
     idCategory,
-    description,
-    descriptionPt,
-    descriptionEn,
+    descriptionES,
+    descriptionPT,
+    descriptionEN,
     formValues,
     setFormValues,
     handleInputChange,
@@ -39,7 +39,7 @@ export const CategoryPage: React.FC = () => {
   };
 
   const handleUpdateCategory = () => {
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateCategory(formValues);
   };
 
@@ -110,8 +110,8 @@ export const CategoryPage: React.FC = () => {
                 label="Descripcion ES"
                 variant="outlined"
                 type="text"
-                name="description"
-                value={description}
+                name="descriptionES"
+                value={descriptionES}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 30 }}
                 fullWidth
@@ -122,8 +122,8 @@ export const CategoryPage: React.FC = () => {
                 label="Descripcion PT"
                 variant="outlined"
                 type="text"
-                name="descriptionPt"
-                value={descriptionPt}
+                name="descriptionPT"
+                value={descriptionPT}
                 onChange={handleInputChange}
                 fullWidth
               />
@@ -133,8 +133,8 @@ export const CategoryPage: React.FC = () => {
                 label="Descripcion EN"
                 variant="outlined"
                 type="text"
-                name="descriptionEn"
-                value={descriptionEn}
+                name="descriptionEN"
+                value={descriptionEN}
                 onChange={handleInputChange}
                 fullWidth
               />

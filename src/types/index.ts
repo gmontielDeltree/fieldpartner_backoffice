@@ -99,10 +99,11 @@ export interface UserLogin {
 }
 
 export interface Category extends Document {
+  id?: string;
   idCategory: string;
-  description: string;
-  descriptionPt: string;
-  descriptionEn: string;
+  descriptionES: string;
+  descriptionPT: string;
+  descriptionEN: string;
 }
 
 export interface SupplieState {
@@ -110,24 +111,45 @@ export interface SupplieState {
   supplies: SupplyType[];
 }
 
+/** Valores del enum StockSumType del back. */
+export type StockSum = 'BOTH' | 'ADD' | 'SUBTRACT';
+
+export const StockSumLabels: Record<StockSum, string> = {
+  ADD: 'Suma',
+  SUBTRACT: 'Descuenta',
+  BOTH: 'Ambas',
+};
+
 export interface Movement extends Document {
-  manual: boolean;
-  sumaStock: 'both' | 'suma' | 'descuenta';
+  id?: string;
   name: string;
-  conceptoPT: string;
-  conceptoEN: string;
+  conceptES: string;
+  conceptPT: string;
+  conceptEN: string;
   description: string;
   typeMovement: string;
-  concepto: string;
+  manual: boolean;
+  stockSum: StockSum;
 }
 
+/** Valores del enum CropType del back, con su rótulo en ES para la UI. */
+export const CropTypeLabels: Record<string, string> = {
+  TUBER: 'Tubérculo',
+  GRAMINEAE: 'Gramínea',
+  TEXTILE: 'Textil',
+  LEGUME: 'Legumbres',
+  OILSEED: 'Oleaginosa',
+  INDUSTRIAL: 'Industrial',
+  CEREAL: 'Cereal',
+};
+
 export interface Crops extends Document {
-  crop: string;
+  id?: string;
   descriptionES: string;
   descriptionPT: string;
   descriptionEN: string;
   cropType: string;
-  cropVariety: string;
+  variety: string;
   prepared: boolean;
   sowing: boolean;
   application: boolean;
@@ -354,12 +376,13 @@ export interface SupplieState {
 }
 
 export interface SupplyType extends Document {
-  name: string;
-  description: string;
-  tipoPT: string;
-  tipoEN: string;
-  fitosanitario: boolean;
-  cultivo: boolean;
+  id?: number;
+  code: string;
+  descriptionES: string;
+  descriptionPT: string;
+  descriptionEN: string;
+  phytosanitary: boolean;
+  isCrop: boolean;
 }
 
 export const LaboresItems = ['Preparado', 'Siembra', 'Aplicacion', 'Arrancado', 'Cosecha'];
@@ -445,12 +468,6 @@ export interface ItemZipCode extends Document {
   state: string;
 }
 
-export interface Category extends Document {
-  idCategory: string;
-  description: string;
-  descriptionPt: string;
-  descriptionEn: string;
-}
 
 export interface StockMovement extends Document {
   accountId: string;
