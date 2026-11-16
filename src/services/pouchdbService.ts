@@ -93,9 +93,8 @@ export const dbContext = Object.freeze({
 // #region ÍNDICES MANGO
 const createIndexes = async () => {
   try {
-    await Promise.all([
-      dbContext.categories.createIndex({ index: { fields: ['idCategory'] } }),
-    ]);
+    // Categorías ya no usa PouchDB (migrada a fieldpartner-back); sin índices pendientes.
+    await Promise.all([]);
   } catch (err) {
     console.error('[pouchdbService] Error creando índices Mango:', err);
   }

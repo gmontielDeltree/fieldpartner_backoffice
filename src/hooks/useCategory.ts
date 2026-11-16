@@ -30,7 +30,7 @@ export const useCategory = () => {
     setIsLoading(true);
     try {
       const response = await backofficeApi.post('/categories', {
-        idCategory: newCategory.idCategory,
+        categoryType: newCategory.categoryType,
         descriptionES: newCategory.descriptionES,
         descriptionPT: newCategory.descriptionPT,
         descriptionEN: newCategory.descriptionEN,
@@ -54,7 +54,7 @@ export const useCategory = () => {
     setIsLoading(true);
     try {
       const response = await backofficeApi.patch(`/categories/${id}`, {
-        idCategory: updatedCategory.idCategory,
+        categoryType: updatedCategory.categoryType,
         descriptionES: updatedCategory.descriptionES,
         descriptionPT: updatedCategory.descriptionPT,
         descriptionEN: updatedCategory.descriptionEN,
@@ -87,11 +87,14 @@ export const useCategory = () => {
     }
   };
 
-  const categoryIdExists = async (idCategory: string) => {
+  /** El tipo de categoría es único: chequeo contra el listado; excluye el propio id al editar. */
+  const categoryTypeExists = async (categoryType: string, excludeId?: string) => {
     try {
-      if (!idCategory) return false;
+      if (!categoryType) return false;
       const response = await backofficeApi.get<Category[]>('/categories');
-      return response.data.some(category => category.idCategory === idCategory);
+      return response.data.some(
+        category => category.categoryType === categoryType && category.id !== excludeId,
+      );
     } catch (error) {
       console.error(error);
       Swal.fire('Ups', 'Ocurrió un error inesperado.', 'error');
@@ -111,6 +114,6 @@ export const useCategory = () => {
     setCategories,
     updateCategory,
     removeCategory,
-    categoryIdExists,
+    categoryTypeExists,
   };
 };

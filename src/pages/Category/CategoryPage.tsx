@@ -9,7 +9,7 @@ import { removeCategoryActive } from "../../store/category";
 import Swal from "sweetalert2";
 
 const initialForm: Category = {
-  idCategory: "",
+  categoryType: "",
   descriptionES: "",
   descriptionPT: "",
   descriptionEN: ""
@@ -21,7 +21,7 @@ export const CategoryPage: React.FC = () => {
   const { categoryActive } = useAppSelector((state) => state.category); // Alta de usuario
   const [disabledButton, setDisabledButton] = useState(false);
   const {
-    idCategory,
+    categoryType,
     descriptionES,
     descriptionPT,
     descriptionEN,
@@ -31,7 +31,7 @@ export const CategoryPage: React.FC = () => {
     reset,
   } = useForm<Category>(initialForm);
 
-  const { isLoading, createCategory, updateCategory, categoryIdExists } = useCategory();
+  const { isLoading, createCategory, updateCategory, categoryTypeExists } = useCategory();
 
   const handleAddCategory = () => {
     createCategory(formValues);
@@ -48,13 +48,13 @@ export const CategoryPage: React.FC = () => {
     navigate("/categories");
   };
 
-  const onBlurIdCategory = async () => {
+  const onBlurCategoryType = async () => {
     try {
-      if (await categoryIdExists(idCategory)) {
+      if (await categoryTypeExists(categoryType, categoryActive?.id)) {
         setDisabledButton(true);
         Swal.fire({
           title: 'Categoría',
-          text: `El Id categoría ${idCategory} ya existe.`,
+          text: `El tipo de categoría ${categoryType} ya existe.`,
           icon: 'warning',
           timer: 2000, // Se autocierra después de 2 segundos
           timerProgressBar: true, // Muestra una barra de progreso
@@ -89,16 +89,16 @@ export const CategoryPage: React.FC = () => {
           title={categoryActive ? "Editar categoría" : "Nueva categoría"}
           onBack={onClickCancel}
         />
-        <FormCard title="Datos de la categoría" subtitle="El ID no se puede repetir." icon={<CategoryOutlined />}>
+        <FormCard title="Datos de la categoría" subtitle="El tipo de categoría no se puede repetir." icon={<CategoryOutlined />}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="ID Categoria"
+                label="Tipo Categoría"
                 variant="outlined"
                 type="text"
-                name="idCategory"
-                value={idCategory}
-                onBlur={onBlurIdCategory}
+                name="categoryType"
+                value={categoryType}
+                onBlur={onBlurCategoryType}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 30 }}
                 fullWidth
@@ -146,7 +146,7 @@ export const CategoryPage: React.FC = () => {
           <Button
             variant="contained"
             color="primary"
-            disabled={disabledButton || idCategory.length === 0}
+            disabled={disabledButton || categoryType.length === 0}
             onClick={
               categoryActive ? handleUpdateCategory : handleAddCategory
             }

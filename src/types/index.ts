@@ -100,7 +100,7 @@ export interface UserLogin {
 
 export interface Category extends Document {
   id?: string;
-  idCategory: string;
+  categoryType: string;
   descriptionES: string;
   descriptionPT: string;
   descriptionEN: string;
