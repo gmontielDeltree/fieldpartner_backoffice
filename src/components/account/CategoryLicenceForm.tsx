@@ -63,7 +63,7 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
     ];
     const licencesOptions = licences
         .filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
-        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed, allowedUsersCount: x.allowedUsersCount ?? 0 }));
+        .map(x => ({ code: x.id ?? '', label: x.description || x.licenceType, allowedUnit: x.maximumUnitAllowed, allowedUsersCount: x.allowedUsersCount ?? 0 }));
 
     const getCategoryColor = (code: string): 'success' | 'primary' | 'warning' => {
         switch (code) {

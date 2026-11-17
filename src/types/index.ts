@@ -170,7 +170,7 @@ export interface System extends Document {
 // }
 
 export interface Licences extends Document {
-  id: string;
+  id?: string;
   description: string;
   licenceType: string;
   systemType: string;
@@ -208,6 +208,7 @@ export interface Modules extends Document {
 }
 
 export interface TypeDevices extends Document {
+  id?: string;
   model: string;
   description: string;
   family: string;
@@ -215,10 +216,16 @@ export interface TypeDevices extends Document {
   available: DeviceStatus;
 }
 
+/** Valores del enum DeviceAvailability del back; rótulos ES en DeviceStatusLabels. */
 export enum DeviceStatus {
-  Activo = 'Activo',
-  Inactivo = 'Inactivo',
+  Activo = 'ACTIVE',
+  Inactivo = 'INACTIVE',
 }
+
+export const DeviceStatusLabels: Record<DeviceStatus, string> = {
+  [DeviceStatus.Activo]: 'Activo',
+  [DeviceStatus.Inactivo]: 'Inactivo',
+};
 
 export enum MenuOptionType {
   SideBar = 'SideBar',

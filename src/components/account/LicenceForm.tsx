@@ -40,7 +40,7 @@ export const LicenceForm: FC<LicenceFormProps> = ({
 
     const licencesOptions = licences.
         filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
-        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed }));
+        .map(x => ({ code: x.id ?? '', label: x.description || x.licenceType, allowedUnit: x.maximumUnitAllowed }));
 
     const onChangeCountry = (_event: SyntheticEvent, value: { code: string; label: string } | null) => {
         const countryFound = countries.find(c => c.code === value?.code);

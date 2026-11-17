@@ -20,7 +20,7 @@ import {
   TableCellStyled,
   ValuePill,
 } from "../../components";
-import { ColumnProps, DeviceStatus, TypeDevices } from "../../types";
+import { ColumnProps, DeviceStatus, DeviceStatusLabels, TypeDevices } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Familia", align: "left", field: "family", sortable: true },
@@ -83,7 +83,7 @@ export const ListTypeDevicesPage: React.FC = () => {
       typeDevices.description,
       typeDevices.family,
       typeDevices.subFamily,
-      typeDevices.available,
+      DeviceStatusLabels[typeDevices.available] ?? typeDevices.available,
     ];
   
     return searchableFields.some(field => normalizeText(String(field)).includes(normalizedFilter));
@@ -109,16 +109,12 @@ export const ListTypeDevicesPage: React.FC = () => {
 //   };
 
   const onClickUpdateTypeDevices = (item: TypeDevices) => {
-    console.log("Item ID:", item._id);
     dispatch(setTypeDevicesACtive(item));
-    navigate(`/type-of-devices/${item._id}`);
+    navigate(`/type-of-devices/${item.id}`);
   };
 
-  const handleDeleteTypeDevices = (item:  TypeDevices) => {
-    if (item._id && item._rev) {
-        removeTypeDevices(item._id, item._rev);
-      getTypeDevices();
-    }
+  const handleDeleteTypeDevices = (item: TypeDevices) => {
+    if (item.id) removeTypeDevices(item.id);
   };
 
   useEffect(() => {
@@ -173,14 +169,14 @@ export const ListTypeDevicesPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.family}</TableCellStyled>
                   <TableCellStyled align="left">{row.subFamily}</TableCellStyled>
                   <TableCellStyled align="left">{row.model}</TableCellStyled>
                   <TableCellStyled align="left">
                     {row.available ? (
                       <StatusPill status={row.available === DeviceStatus.Activo ? "done" : "neutral"} size="sm" dot>
-                        {row.available}
+                        {DeviceStatusLabels[row.available] ?? row.available}
                       </StatusPill>
                     ) : null}
                   </TableCellStyled>
