@@ -56,7 +56,12 @@ export const useAuthStore = () => {
             dispatch(clearErrorMessage());
 
         } catch (error) {
-            dispatch(onLogout('Incorrect username or password.'));
+            // 401 = credenciales inválidas. Otros rechazos (p. ej. 403 por canal/rol: el BO es
+            // solo para GENERAL_ADMIN) traen un mensaje del back que conviene mostrar tal cual.
+            const backMessage = isAxiosError(error) && error.response?.status !== HttpStatusCode.Unauthorized
+                ? (error.response?.data as { message?: string } | undefined)?.message
+                : undefined;
+            dispatch(onLogout(backMessage || 'Incorrect username or password.'));
             dispatch(finishLoading());
         }
     }
