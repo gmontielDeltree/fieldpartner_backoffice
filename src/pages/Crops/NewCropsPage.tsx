@@ -17,17 +17,16 @@ import {
 import { AgricultureOutlined, YardOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector, useCrops, useForm } from "../../hooks";
-import { Crops } from "../../types";
+import { Crops, CropTypeLabels } from "../../types";
 import { removeCropsActive  } from "../../store/crops";
 
 
 const initialForm: Crops = {
-  crop: "",
   descriptionES: "",
   descriptionPT: "",
   descriptionEN: "",
   cropType: "",
-  cropVariety: "",
+  variety: "",
   prepared: false,
   sowing: false,
   application: false,
@@ -45,15 +44,14 @@ export const NewCropsPage: React.FC = () => {
   const [germination, setGermination] = useState(false);
   const [harvest, setHarvest] = useState(false);
   const { isLoading, createCrops, updateCrops } = useCrops();
-  const cropTypes = ["Tubérculo", "Gramínea", "Textil", "Legumbres", "Oleaginosa", "Industrial", "Cereal"];
-  const { cropsActive } = useAppSelector((state) => state.crop); 
+  const cropTypes = Object.keys(CropTypeLabels);
+  const { cropsActive } = useAppSelector((state) => state.crop);
 
   const {
     descriptionES,
     descriptionEN,
     descriptionPT,
     cropType,
-    cropVariety,
     formValues,
     setFormValues,
     handleInputChange,
@@ -97,8 +95,7 @@ export const NewCropsPage: React.FC = () => {
   };
 
   const handleUpdateCrops = () => {
-    console.log("Datos a actualizar:", formValues);
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateCrops(formValues);
   };
 
@@ -127,8 +124,6 @@ export const NewCropsPage: React.FC = () => {
     };
   }, [dispatch]);
 
-  ( [cropVariety]);
-
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
@@ -156,15 +151,11 @@ export const NewCropsPage: React.FC = () => {
             <Grid item xs={12} sm={6}> 
               <Autocomplete
                 options={cropTypes}
-                value={cropType} 
-                onChange={(event, newValue) => {
-                  if (typeof newValue === 'string') {
-                    handleInputChange(event as React.ChangeEvent<HTMLInputElement>); 
-                    setFormValues({ ...formValues, cropType: newValue });
-                    
-                  }
+                value={cropType || null}
+                onChange={(_event, newValue) => {
+                  setFormValues({ ...formValues, cropType: newValue ?? "" });
                 }}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option) => CropTypeLabels[option] ?? option}
                 renderInput={(params) => (
                   <TextField
                     {...params}

@@ -28,12 +28,12 @@ const FieldCaption: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 );
 
 const initialForm: SupplyType = {
-  name: "",
-  description: "",
-  tipoPT:"",
-  tipoEN:"",
-  fitosanitario: false,
-  cultivo: false,
+  code: "",
+  descriptionES: "",
+  descriptionPT: "",
+  descriptionEN: "",
+  phytosanitary: false,
+  isCrop: false,
 };
 
 export const SuppliesTypePage: React.FC = () => {
@@ -42,10 +42,10 @@ export const SuppliesTypePage: React.FC = () => {
   const { supplieActive } = useAppSelector((state) => state.supplie);
 
   const {
-    name,
-    description,
-    tipoPT,
-    tipoEN,
+    code,
+    descriptionES,
+    descriptionPT,
+    descriptionEN,
     formValues,
     setFormValues,
     handleInputChange,
@@ -60,7 +60,7 @@ export const SuppliesTypePage: React.FC = () => {
   };
 
   const handleUpdateSupplie = () => {
-    if (!formValues._id) return;
+    if (formValues.id === undefined) return;
     updateSupplie(formValues);
   };
 
@@ -76,7 +76,7 @@ export const SuppliesTypePage: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      dispatch((removeSupplieActive));
+      dispatch(removeSupplieActive());
     };
   }, [dispatch]);
 
@@ -92,53 +92,56 @@ export const SuppliesTypePage: React.FC = () => {
         />
         <FormCard title="Tipo de insumo" icon={<Inventory2Outlined />}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                label="Código"
+                variant="outlined"
+                type="text"
+                name="code"
+                value={code}
+                onChange={handleInputChange}
+                error={conceptoError}
+                helperText={conceptoError ? "Este campo es obligatorio" : ""}
+                disabled={!!supplieActive}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
               <TextField
                 label="Tipo ES"
                 variant="outlined"
                 type="text"
-                name="name"
-                value={name}
+                name="descriptionES"
+                value={descriptionES}
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 label="Tipo PT"
                 variant="outlined"
                 type="text"
-                name="tipoPT"
-                value={tipoPT}
+                name="descriptionPT"
+                value={descriptionPT}
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 label="Tipo EN"
                 variant="outlined"
                 type="text"
-                name="tipoEN"
-                value={tipoEN}
+                name="descriptionEN"
+                value={descriptionEN}
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Descripción"
-                variant="outlined"
-                type="text"
-                name="description"
-                value={description}
-                onChange={handleInputChange}
                 fullWidth
               />
             </Grid>
@@ -150,8 +153,8 @@ export const SuppliesTypePage: React.FC = () => {
               <FieldCaption>Fitosanitario</FieldCaption>
               <RadioGroup
                 row
-                name="fitosanitario"
-                value={formValues.fitosanitario.toString()}
+                name="phytosanitary"
+                value={formValues.phytosanitary.toString()}
                 onChange={handleInputChange}
               >
                 <FormControlLabel
@@ -170,8 +173,8 @@ export const SuppliesTypePage: React.FC = () => {
               <FieldCaption>Cultivo</FieldCaption>
               <RadioGroup
                 row
-                name="cultivo"
-                value={formValues.cultivo.toString()}
+                name="isCrop"
+                value={formValues.isCrop.toString()}
                 onChange={handleInputChange}
               >
                 <FormControlLabel

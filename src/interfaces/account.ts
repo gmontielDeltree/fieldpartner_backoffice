@@ -1,26 +1,29 @@
 import { Document, UserDto } from "../types";
 
+export interface LicenceSummary {
+    id: string;
+    status: string;
+    licenceTypeId: string;
+    licenceTypeLabel: string;
+    startDate: string;
+    endDate: string;
+    amountLicencesAllowed: number | null;
+}
+
 export class AccountDto {
-    accountId: string = '';
-    accountReference: string = '';
+    id: string = '';
     denomination: string = '';
-    country: string = '';
-    isLicenceMultipleCountry: boolean = false;
-    status: string = '';
+    countryCode: string = '';
     category: string = '';
-    startDateLicence: string = '';
-    endDateLicence: string = '';
-    licenceType: string = '';
-    licence: string = '';
-    amountLicencesAllowed: number = 0;
-    countCampos: number = 0;
-    countLicencias: number = 0;
-    countHectareas: number = 0;
-    email?: string;
+    status: string = '';
+    isLicenceMultipleCountry: boolean = false;
+    countFields: number = 0;
+    countLicences: number = 0;
+    countHectares: number = 0;
+    licence: LicenceSummary | null = null;
 }
 
 export interface Account extends Document {
-    accountReference: string;
     licenceNumber: string;
     accountId?: string;
     denomination: string;
@@ -52,12 +55,14 @@ export interface Account extends Document {
     countHectareas?: number;
     associateUser: boolean;
     emailToAssociate: string;
+    companyEmail: string;
+    userLanguage: string;
+    activeUsersAllowed: number;
+    maxHectares: number;
 }
 
 
 export interface UpdateAccount {
-    isLicenceMultipleCountry?: boolean;
     status?: string;
-    startDateLicence?: string;
-    endDateLicence?: string;
+    isLicenceMultipleCountry?: boolean;
 }

@@ -34,7 +34,7 @@ import {
   TableCellStyled,
   ValuePill,
 } from "../../components";
-import { ColumnProps, Crops } from "../../types";
+import { ColumnProps, Crops, CropTypeLabels } from "../../types";
 
 const columns: ColumnProps[] = [
   { text: "Nombre", align: "left", field: "descriptionES", sortable: true },
@@ -109,12 +109,12 @@ export const ListCropsPage: React.FC = () => {
       crop.descriptionES,
       crop.descriptionPT,
       crop.descriptionEN,
-      crop.cropType
+      CropTypeLabels[crop.cropType] ?? crop.cropType,
     ];
-  
+
     return searchableFields.some(field => normalizeText(field).includes(normalizedFilter));
   };
-  const cropTypes = ['Oleaginosa', 'Legumbres', 'Tubérculo', 'Cereal', 'Gramínea', 'Textil', 'Industrial'];
+  const cropTypes = Object.keys(CropTypeLabels);
   
   // const handleFilter = () => {
   //   setFilteredType(selectedType);
@@ -137,16 +137,12 @@ export const ListCropsPage: React.FC = () => {
   };
 
   const onClickUpdateCrops = (item: Crops) => {
-    console.log("Item ID:", item._id);
     dispatch(setCropsACtive(item));
-    navigate(`/crops/${item._id}`);
+    navigate(`/crops/${item.id}`);
   };
 
   const handleDeleteCrops = (item: Crops) => {
-    if (item._id && item._rev) {
-      removeCrops(item._id, item._rev);
-      getCrops();
-    }
+    if (item.id) removeCrops(item.id);
   };
 
   useEffect(() => {
@@ -223,7 +219,7 @@ export const ListCropsPage: React.FC = () => {
                   </MenuItem>
                   {cropTypes.map((type, index) => (
                     <MenuItem key={index} selected={selectedType === type} onClick={() => handleSelectChange(type)}>
-                      {type}
+                      {CropTypeLabels[type]}
                     </MenuItem>
                   ))}
                 </MenuList>
@@ -246,12 +242,12 @@ export const ListCropsPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id} hover>
                   <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.descriptionES}</TableCellStyled>
                   <TableCellStyled align="left">{row.descriptionPT}</TableCellStyled>
                   <TableCellStyled align="left">{row.descriptionEN}</TableCellStyled>
                   <TableCellStyled align="left">
-                    {row.cropType ? <ValuePill>{row.cropType}</ValuePill> : null}
+                    {row.cropType ? <ValuePill>{CropTypeLabels[row.cropType] ?? row.cropType}</ValuePill> : null}
                   </TableCellStyled>
                   <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>
                     <Tooltip title="Editar">

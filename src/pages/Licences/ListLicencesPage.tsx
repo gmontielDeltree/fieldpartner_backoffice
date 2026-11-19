@@ -22,7 +22,6 @@ import {
 import { ColumnProps, Licences } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "ID", align: "left", field: "id", sortable: true },
   { text: "Sistema", align: "left", field: "systemType", sortable: true },
   { text: "Descripción", align: "left", field: "description", sortable: true },
   { text: "Tipo", align: "left", field: "licenceType", sortable: true },
@@ -66,7 +65,7 @@ export const ListLicencesPage: React.FC = () => {
 
   const matchesFilter = (item: Licences, filter: string) => {
     const normalizedFilter = normalizeText(filter);
-    return [item.id, item.systemType, item.description, item.licenceType].some((field) =>
+    return [item.systemType, item.description, item.licenceType].some((field) =>
       normalizeText(field).includes(normalizedFilter)
     );
   };
@@ -76,20 +75,18 @@ export const ListLicencesPage: React.FC = () => {
     return [...filtered].sort((a, b) => {
       const primary = compareValues(a, b, sortField);
       const result = sortDirection === "asc" ? primary : -primary;
-      if (result === 0 && sortField !== "id") return compareValues(a, b, "id");
+      if (result === 0 && sortField !== "description") return compareValues(a, b, "description");
       return result;
     });
   };
 
   const onClickUpdateLicences = (item: Licences) => {
     dispatch(setLicencesACtive(item));
-    navigate(`/licences/${item._id}`);
+    navigate(`/licences/${item.id}`);
   };
 
   const handleDeleteLicences = (item: Licences) => {
-    if (item._id && item._rev) {
-      removeLicences(item._id, item._rev);
-    }
+    if (item.id) removeLicences(item.id);
   };
 
   useEffect(() => {
@@ -124,7 +121,7 @@ export const ListLicencesPage: React.FC = () => {
             <SearchField
               value={filterText}
               onChange={handleInputChange}
-              placeholder="Buscar por ID, sistema o descripción…"
+              placeholder="Buscar por sistema, descripción o tipo…"
               onSubmit={getLicences}
             />
           </ListToolbar>
@@ -144,9 +141,8 @@ export const ListLicencesPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.id}</TableCellStyled>
-                  <TableCellStyled align="left">{row.systemType}</TableCellStyled>
+                <ItemRow key={row.id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.systemType}</TableCellStyled>
                   <TableCellStyled align="left">{row.description}</TableCellStyled>
                   <TableCellStyled align="left">{row.licenceType}</TableCellStyled>
                   <TableCellStyled align="right">{row.maximumUnitAllowed}</TableCellStyled>

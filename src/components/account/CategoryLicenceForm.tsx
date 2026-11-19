@@ -56,9 +56,14 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
 
     const categoryOptions = enumToArray(EnumCategoryAccount);
     const licenceTypeOptions = Object.values(EnumLicenceType).map(x => x as string);
+    const languageOptions = [
+        { code: 'es', label: 'Español' },
+        { code: 'pt', label: 'Português' },
+        { code: 'en', label: 'English' },
+    ];
     const licencesOptions = licences
         .filter(l => l.licenceType.toLowerCase() === formValues.licenceType.toLowerCase())
-        .map(x => ({ code: x.id, label: x.id, allowedUnit: x.maximumUnitAllowed, allowedUsersCount: x.allowedUsersCount ?? 0 }));
+        .map(x => ({ code: x.id ?? '', label: x.description || x.licenceType, allowedUnit: x.maximumUnitAllowed, allowedUsersCount: x.allowedUsersCount ?? 0 }));
 
     const getCategoryColor = (code: string): 'success' | 'primary' | 'warning' => {
         switch (code) {
@@ -92,6 +97,7 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                 ...prevState,
                 licence: value.code,
                 amountLicencesAllowed: Number(value.allowedUnit),
+                activeUsersAllowed: value.allowedUsersCount,
             }));
             setAllowedUsersCount(value.allowedUsersCount);
         }
@@ -281,27 +287,44 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                         />
                     </Grid>
 
-                    {/* Número de Licencia */}
-                    <Grid item xs={12} sm={6} md={6}>
-                        <TextField
-                            variant="outlined"
-                            type="text"
-                            label="Número de licencia"
-                            name="licenceNumber"
-                            value={formValues.licenceNumber}
-                            onChange={handleInputChange}
-                            disabled={!isCategoryA}
-                            placeholder="Ej: LIC-2024-001"
-                            helperText={
-                                isCategoryA
-                                    ? "Número identificador de la licencia"
-                                    : "Solo disponible para categoría A"
-                            }
-                            fullWidth
-                        />
-                    </Grid>
+                    {/* Max Hectáreas Licenciables — solo B/C */}
+                    {!isCategoryA && formValues.category !== '' && (
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                variant="outlined"
+                                type="number"
+                                label="Max. Hectáreas Licenciables *"
+                                name="maxHectares"
+                                value={formValues.maxHectares || ''}
+                                onChange={handleInputChange}
+                                inputProps={{ min: 1 }}
+                                placeholder="Ej: 500"
+                                helperText="Total de hectáreas licenciables para esta cuenta"
+                                error={formValues.maxHectares !== undefined && formValues.maxHectares <= 0}
+                                required
+                                fullWidth
+                            />
+                        </Grid>
+                    )}
 
-                    {/* Licencia Multipaís */}
+                    {/* Número de Licencia — solo A */}
+                    {isCategoryA && (
+                        <Grid item xs={12} sm={6} md={6}>
+                            <TextField
+                                variant="outlined"
+                                type="text"
+                                label="Número de licencia"
+                                name="licenceNumber"
+                                value={formValues.licenceNumber}
+                                onChange={handleInputChange}
+                                placeholder="Ej: LIC-2024-001"
+                                helperText="Número identificador de la licencia"
+                                fullWidth
+                            />
+                        </Grid>
+                    )}
+
+                    {/* Licencia Multipaís — después de Max Hectáreas según spec M103 */}
                     <Grid item xs={12} sm={6} md={3}>
                         <FormControlLabel
                             sx={{ mt: 0.5 }}
@@ -358,8 +381,8 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                 </Grid>
             </FormCard>
 
-            {/* Sección: Usuario Admin (solo si es categoría A) */}
-            {isCategoryA && (
+            {/* Sección: Usuario Admin */}
+            {formValues.category !== '' && (
                 <FormCard
                     title="Usuario administrador"
                     icon={<PersonOutlineOutlined />}
@@ -525,6 +548,26 @@ export const CategoryLicenceForm: FC<CategoryLicenceFormProps> = ({
                                                 </InputAdornment>
                                             ),
                                         }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <Autocomplete
+                                        value={languageOptions.find(o => o.code === formValues.userLanguage) || null}
+                                        onChange={(_e, value) => {
+                                            if (value) setFormValues(prev => ({ ...prev, userLanguage: value.code }));
+                                        }}
+                                        options={languageOptions}
+                                        getOptionLabel={(o) => o.label}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Idioma"
+                                                variant="outlined"
+                                                helperText="Idioma del usuario administrador"
+                                                required
+                                            />
+                                        )}
+                                        fullWidth
                                     />
                                 </Grid>
                             </Grid>

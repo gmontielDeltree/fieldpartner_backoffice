@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector, useForm, useUser } from "../../hooks";
+import { useAccount, useAppDispatch, useAppSelector, useForm, useUser } from "../../hooks";
 import { UserDto } from "../../types";
 import { FormActions, FormCard, Loading, PageContainer, PageHeader, UserForm } from "../../components";
 import { removeUserActive } from "../../store/user";
@@ -28,10 +28,35 @@ export const UserPage: React.FC = () => {
     useForm<UserDto>(initialForm);
 
   const { isLoading, createUser, updateUser } = useUser();
+  const { accounts, getAccounts } = useAccount();
+
+  // GENERAL_ADMIN elige la cuenta destino; al ADMIN el back le fuerza su propia cuenta.
+  const isGeneralAdmin = user?.role === "GENERAL_ADMIN";
+  const canAssignAdmin = isGeneralAdmin || user?.role === "ADMIN";
+  const [accountId, setAccountId] = useState("");
+
+  const accountOptions = useMemo(
+    () => accounts.map((a) => ({ id: a.id, denomination: a.denomination })),
+    [accounts]
+  );
+
+  // Cargar cuentas solo cuando hace falta el selector (alta + GENERAL_ADMIN).
+  useEffect(() => {
+    if (isGeneralAdmin && !userActive) getAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGeneralAdmin, userActive]);
 
   const handleAddNewUser = () => {
-    createUser(formValues);
+    createUser({
+      email: formValues.email,
+      username: formValues.username,
+      password: formValues.password,
+      language: "es",
+      accountId: isGeneralAdmin ? accountId : undefined,
+      role: formValues.isAdmin ? "ADMIN" : "USER",
+    });
     reset();
+    setAccountId("");
   };
 
   const handleUpdateUser = () => {
@@ -63,6 +88,9 @@ export const UserPage: React.FC = () => {
     };
   }, [dispatch]);
 
+  // Un GENERAL_ADMIN no puede dar de alta sin elegir cuenta.
+  const createDisabled = !userActive && isGeneralAdmin && !accountId;
+
   return (
     <>
       <Loading key="loading-new-customer" loading={isLoading} />
@@ -77,7 +105,7 @@ export const UserPage: React.FC = () => {
           title="Datos del usuario"
           icon={<PersonOutlineOutlined />}
           aside={
-            user?.isAdmin && (
+            canAssignAdmin && (
               <FormControlLabel
                 sx={{ mr: 0 }}
                 control={
@@ -98,6 +126,10 @@ export const UserPage: React.FC = () => {
             {...formValues}
             isNewUser={!userActive}
             setUser={handleInputChange}
+            showAccountSelector={isGeneralAdmin}
+            accounts={accountOptions}
+            accountId={accountId}
+            onAccountChange={setAccountId}
           />
         </FormCard>
         <FormActions>
@@ -105,6 +137,7 @@ export const UserPage: React.FC = () => {
           <Button
             variant="contained"
             color="primary"
+            disabled={createDisabled}
             onClick={userActive ? handleUpdateUser : handleAddNewUser}
           // fullWidth
           >

@@ -10,6 +10,27 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': ['warn'],
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
   },
+  overrides: [
+    {
+      // Deuda: estos archivos exportan hooks/helpers junto a componentes, lo que
+      // rompe Fast Refresh (HMR recarga el módulo completo). Al separarlos en
+      // archivos propios, sacar la excepción.
+      files: [
+        'src/components/LayoutApp/AuthLayout.tsx',
+        'src/components/ui/ListKit.tsx',
+        'src/components/ui/Pills.tsx',
+        'src/themes/ColorMode.tsx',
+        'src/themes/fieldpartnerTheme.tsx',
+      ],
+      rules: {
+        'react-refresh/only-export-components': 'off',
+      },
+    },
+  ],
 }

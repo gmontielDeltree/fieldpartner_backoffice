@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "axios";
+import { HttpStatusCode, isAxiosError } from "axios";
 // import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useState } from "react"
@@ -6,8 +6,8 @@ import { Account, AccountDto, UpdateAccount } from "../interfaces/account";
 import { backofficeApi } from "../config";
 // import { UserDto } from "../types";
 
-const urlAccount = 'account';
-const urlUserLicence = 'user-licence';
+const urlAccount = 'accounts';
+const urlUserLicence = 'users';
 
 export const useAccount = () => {
 
@@ -21,30 +21,68 @@ export const useAccount = () => {
     const createAccount = async (newAccount: Account) => {
         setIsLoading(true);
         try {
-            const response = await backofficeApi.post(`/${urlAccount}`, {
-                ...newAccount,
-                amountLicencesAllowed: Number(newAccount.amountLicencesAllowed)
-            });
+            const isCategoryA = newAccount.category === 'A';
 
-            setIsLoading(false);
+            const payload: Record<string, unknown> = {
+                category: newAccount.category,
+                denomination: newAccount.denomination,
+                countryCode: newAccount.country,
+                status: newAccount.status || undefined,
+                licenceNumber: isCategoryA ? (newAccount.licenceNumber || undefined) : undefined,
+                isLicenceMultipleCountry: newAccount.isLicenceMultipleCountry,
+                maxHectares: !isCategoryA ? Number(newAccount.maxHectares) : undefined,
+                licence: {
+                    licenceTypeId: newAccount.licence,
+                    startDate: newAccount.startDateLicence,
+                    endDate: newAccount.endDateLicence,
+                    activeUsersAllowed: Number(newAccount.activeUsersAllowed),
+                    amountLicencesAllowed: Number(newAccount.amountLicencesAllowed) || undefined,
+                },
+                user: {
+                    email: newAccount.user?.email,
+                    username: newAccount.user?.username,
+                    password: newAccount.user?.password,
+                    language: newAccount.userLanguage || 'es',
+                },
+            };
+
+            if (isCategoryA) {
+                payload.company = {
+                    fantasyName: newAccount.fantasyName,
+                    socialReason: newAccount.socialReason,
+                    tributaryCode: newAccount.trybutaryCode,
+                    address: newAccount.address,
+                    phone: newAccount.phone,
+                    email: newAccount.companyEmail,
+                    locality: newAccount.locality || undefined,
+                    province: newAccount.province || undefined,
+                    zipCode: newAccount.zipCode || undefined,
+                    website: newAccount.website || undefined,
+                    observation: newAccount.observation || undefined,
+                    secondaryContact: newAccount.secondaryContact || undefined,
+                    companyLogo: newAccount.companyLogo || undefined,
+                };
+            }
+
+            const response = await backofficeApi.post(`/${urlAccount}`, payload);
+
             setStatus(response.status);
             if (response.status === HttpStatusCode.Created) {
                 Swal.fire('Cliente', 'Nuevo cliente agregado.', 'success');
                 return true;
-            }
-            else {
+            } else {
                 Swal.fire('Cliente', 'Verificar campos obligatorios.', 'error');
-                return false
+                return false;
             }
-
-
-        } catch (error: any) {
-            console.log(error)
-            const message = error?.response?.data?.message || 'Ocurrio un error inesperado';
+        } catch (error) {
+            console.error(error);
+            const message = (isAxiosError(error) && error.response?.data?.message)
+                || 'Ocurrió un error inesperado';
             Swal.fire('Ups', message, 'error');
-            setIsLoading(false);
             if (error) setError(error);
             return false;
+        } finally {
+            setIsLoading(false);
         }
     }
 
