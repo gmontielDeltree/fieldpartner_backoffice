@@ -259,14 +259,14 @@ export const NewMenuModulesPage: React.FC = () => {
                 value={order}
                 onChange={handleInputChange}
                 fullWidth
-                placeholder='1, 2, 3...'
+                placeholder='Módulo.posición, ej: 2.05'
               />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
               <AutoCompleteSelect
                 options={menuTypeOptions}
-                label='Tipo de menú *'
+                label='Tipo de menú (vacío: solo permisos)'
                 value={selectedMenuType}
                 onChange={handleMenuTypeChange}
                 fullWidth

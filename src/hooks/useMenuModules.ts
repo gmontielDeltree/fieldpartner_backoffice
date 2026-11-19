@@ -21,7 +21,7 @@ const MENU_TYPE_TO_BACK: Record<string, string> = Object.fromEntries(
 interface MenuModuleResponse {
   id: number;
   parentId: number | null;
-  menuType: string;
+  menuType: string | null;
   order: number;
   labelEs: string;
   labelEn: string | null;
@@ -38,8 +38,10 @@ interface MenuModuleResponse {
 const fromResponse = (item: MenuModuleResponse): MenuModules => ({
   id: item.id,
   parentId: item.parentId,
-  menuType: MENU_TYPE_FROM_BACK[item.menuType] ?? item.menuType,
-  order: String(item.order),
+  // Sin tipo = opción solo de permisos (no aparece en ningún menú).
+  menuType: item.menuType ? MENU_TYPE_FROM_BACK[item.menuType] ?? item.menuType : '',
+  // Formato heredado módulo.posición: 6.03 se muestra con 2 decimales.
+  order: Number.isInteger(item.order) ? String(item.order) : item.order.toFixed(2),
   menuOption: item.labelEs,
   menuOptionEn: item.labelEn ?? '',
   menuOptionPt: item.labelPt ?? '',
@@ -65,8 +67,8 @@ const toEditablePayload = (menu: MenuModules) => ({
   moduleId: menu.module?.id,
   systemId: menu.systemId || null,
   parentId: menu.parentId || null,
-  menuType: MENU_TYPE_TO_BACK[menu.menuType] ?? menu.menuType,
-  order: Number(menu.order) || 0,
+  menuType: menu.menuType ? MENU_TYPE_TO_BACK[menu.menuType] ?? menu.menuType : null,
+  order: Number(String(menu.order).replace(',', '.')) || 0,
   labelEs: menu.menuOption.trim(),
   labelEn: menu.menuOptionEn || undefined,
   labelPt: menu.menuOptionPt || undefined,
