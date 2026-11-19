@@ -67,7 +67,7 @@ const httpOpts: PouchDB.Configuration.RemoteDatabaseConfiguration = {
   skip_setup: true,
 };
 
-const remoteDb = <T extends Record<string, any>>(slug: string): PouchDB.Database<T> => {
+const remoteDb = <T extends object>(slug: string): PouchDB.Database<T> => {
   if (!remoteCouchDBUrl) {
     console.error(
       '[pouchdbService] VITE_COUCHDB_URL no está definido. Las llamadas a CouchDB van a fallar.',
@@ -93,9 +93,8 @@ export const dbContext = Object.freeze({
 // #region ÍNDICES MANGO
 const createIndexes = async () => {
   try {
-    await Promise.all([
-      dbContext.categories.createIndex({ index: { fields: ['idCategory'] } }),
-    ]);
+    // Categorías ya no usa PouchDB (migrada a fieldpartner-back); sin índices pendientes.
+    await Promise.all([]);
   } catch (err) {
     console.error('[pouchdbService] Error creando índices Mango:', err);
   }
@@ -120,7 +119,7 @@ const noopSyncHandler: SyncHandlerStub = {
 class SyncManagerStub {
   register(
     _name: string,
-    _local: PouchDB.Database<any>,
+    _local: PouchDB.Database,
     _remoteUrl: string,
     _opts: PouchDB.Replication.SyncOptions = {},
   ) {

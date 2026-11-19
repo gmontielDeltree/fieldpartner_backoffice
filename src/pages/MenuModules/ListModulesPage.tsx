@@ -77,11 +77,11 @@ export const ListModulesPage: React.FC<ListModulesPageProps> = ({ viewSwitcher }
     setOpen(true);
   };
 
-  const handleSave = async (payload: Modules | Omit<Modules, '_id' | '_rev'>) => {
-    if ('_id' in payload && payload._id) {
-      await updateModules(payload as Modules);
+  const handleSave = async (payload: Modules) => {
+    if (payload.id) {
+      await updateModules(payload);
     } else {
-      await createModules(payload as Omit<Modules, '_id' | '_rev'>);
+      await createModules(payload);
     }
     await getModules();
     setOpen(false);
@@ -143,9 +143,8 @@ export const ListModulesPage: React.FC<ListModulesPageProps> = ({ viewSwitcher }
   // };
 
   const handleDeleteModules = (item: Modules) => {
-    if (item._id && item._rev) {
-      removeModules(item._id, item._rev);
-      getModules();
+    if (item.id) {
+      removeModules(item.id);
       navigate('/menus-modules?view=modules', { replace: true });
     }
   };
@@ -202,7 +201,7 @@ export const ListModulesPage: React.FC<ListModulesPageProps> = ({ viewSwitcher }
           ) : (
             <DataTable key='datatable-modules' columns={columns} isLoading={isLoading}>
               {rows.map(row => (
-                <ItemRow key={row._id} hover>
+                <ItemRow key={row.id} hover>
                   {/* Ícono */}
                   <TableCellStyled align='center' sx={{ width: 56, py: '6px' }}>
                     {row.icon ? (

@@ -19,7 +19,6 @@ import { EnumLicenceType, Licences, System } from "../../types";
 import { removeLicencesActive } from "../../store/licences";
 
 const initialForm: Licences = {
-  id: "",
   description: "",
   licenceType: EnumLicenceType.L,
   maximumUnitAllowed: 0,
@@ -35,7 +34,6 @@ export const NewLicencesPage: React.FC = () => {
   const { system, getSystem } = useSystem();
 
   const {
-    id,
     description,
     licenceType,
     maximumUnitAllowed,
@@ -47,7 +45,7 @@ export const NewLicencesPage: React.FC = () => {
   } = useForm<Licences>(initialForm);
 
   const handleSystemChange = (_: React.ChangeEvent<object>, newValue: System | null) => {
-    setFormValues({ ...formValues, systemType: newValue ? newValue.system : "" });
+    setFormValues({ ...formValues, systemId: newValue?.id ?? null, systemType: newValue?.system ?? "" });
   };
 
   const handleLicenceTypeChange = (event: SelectChangeEvent<string>) => {
@@ -68,7 +66,7 @@ export const NewLicencesPage: React.FC = () => {
   };
 
   const handleUpdateLicences = () => {
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateLicences(formValues);
   };
 
@@ -92,7 +90,7 @@ export const NewLicencesPage: React.FC = () => {
     }
   }, [licencesActive, setFormValues]);
 
-  const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType) ?? null;
+  const systemSeleccionado = system.find((sys) => sys.id === formValues.systemId) ?? null;
   const licenceOptions = Object.values(EnumLicenceType);
   const isEditing = Boolean(licencesActive);
 
@@ -113,20 +111,8 @@ export const NewLicencesPage: React.FC = () => {
         />
         <FormCard title="Datos de la licencia" icon={<DisplaySettingsOutlined />}>
           <Grid container spacing={2}>
-            {/* Fila 1: ID + Descripción */}
-            <Grid item xs={12} sm={3}>
-              <TextField
-                label="ID"
-                variant="outlined"
-                type="text"
-                name="id"
-                value={id}
-                onChange={handleInputChange}
-                inputProps={{ maxLength: 30 }}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={9}>
+            {/* Fila 1: Descripción (el ID lo genera la base) */}
+            <Grid item xs={12}>
               <TextField
                 label="Descripción"
                 variant="outlined"

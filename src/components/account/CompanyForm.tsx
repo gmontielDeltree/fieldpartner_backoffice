@@ -34,7 +34,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
             const extensionPos = fileNameOriginal.lastIndexOf(".");
             const fileType = fileNameOriginal.substring(extensionPos, fileNameOriginal.length);
 
-            const newFileName = `company-logo-${formValues.accountReference}${fileType}`;
+            const newFileName = `company-logo-${formValues.denomination.replace(/\s+/g, '-').toLowerCase()}${fileType}`;
             const renamedFile = new File([file], newFileName, { type: file.type });
             const fileURL = URL.createObjectURL(renamedFile);
 
@@ -56,15 +56,6 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
                 <Grid
                     container
                     spacing={2}>
-                    <Grid item xs={12} sm={3} >
-                        <TextField
-                            variant="outlined"
-                            type='text'
-                            label="Cliente ID"
-                            disabled
-                            value={formValues.accountReference}
-                            fullWidth />
-                    </Grid>
                     <Grid item xs={12} sm={5} >
                         <TextField
                             variant="outlined"
@@ -162,6 +153,19 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
                             name="phone"
                             value={formValues.phone}
                             onChange={handleInputChange}
+                            fullWidth />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Email"
+                            variant="outlined"
+                            type='email'
+                            name="companyEmail"
+                            value={formValues.companyEmail}
+                            onChange={handleInputChange}
+                            placeholder="contacto@empresa.com"
+                            helperText="Email de contacto de la compañía"
+                            required
                             fullWidth />
                     </Grid>
                     <Grid item xs={12} sm={3}>

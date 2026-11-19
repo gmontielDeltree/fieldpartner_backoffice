@@ -47,15 +47,11 @@ export const EditAccountPage: React.FC = () => {
     const { accountActive } = useAppSelector((state) => state.account);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Estados para campos editables
     const [formValues, setFormValues] = useState({
         status: '',
-        startDateLicence: '',
-        endDateLicence: '',
         isLicenceMultipleCountry: false,
     });
 
-    // Estado para detectar cambios
     const [hasChanges, setHasChanges] = useState(false);
     const [initialValues, setInitialValues] = useState(formValues);
 
@@ -63,8 +59,6 @@ export const EditAccountPage: React.FC = () => {
         if (accountActive) {
             const values = {
                 status: accountActive.status,
-                startDateLicence: accountActive.startDateLicence,
-                endDateLicence: accountActive.endDateLicence,
                 isLicenceMultipleCountry: accountActive.isLicenceMultipleCountry,
             };
             setFormValues(values);
@@ -76,42 +70,26 @@ export const EditAccountPage: React.FC = () => {
     useEffect(() => {
         const changed =
             formValues.status !== initialValues.status ||
-            formValues.startDateLicence !== initialValues.startDateLicence ||
-            formValues.endDateLicence !== initialValues.endDateLicence ||
             formValues.isLicenceMultipleCountry !== initialValues.isLicenceMultipleCountry;
         setHasChanges(changed);
     }, [formValues, initialValues]);
 
     const handleChangeStatus = (value: string | null) => {
-        if (value) {
-            setFormValues((prev) => ({ ...prev, status: value }));
-        }
-    };
-
-    const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setFormValues((prev) => ({ ...prev, [name]: value }));
+        if (value) setFormValues((prev) => ({ ...prev, status: value }));
     };
 
     const handleChangeCheckbox = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setFormValues((prev) => ({ ...prev, isLicenceMultipleCountry: checked }));
     };
 
-    const canSave = () => {
-        return (
-            formValues.status !== '' &&
-            formValues.startDateLicence !== '' &&
-            formValues.endDateLicence !== '' &&
-            hasChanges
-        );
-    };
+    const canSave = () => formValues.status !== '' && hasChanges;
 
     const handleSave = async () => {
-        if (!accountActive?.accountId) return;
+        if (!accountActive?.id) return;
 
         setIsLoading(true);
         try {
-            const success = await updateAccount(accountActive.accountId, formValues);
+            const success = await updateAccount(accountActive.id, formValues);
             if (success) {
                 navigate('/accounts');
             }
@@ -149,7 +127,7 @@ export const EditAccountPage: React.FC = () => {
                     icon={<BadgeOutlined />}
                     eyebrow="Usuarios y cuentas · Cuentas"
                     title="Editar cuenta"
-                    description={<>{accountActive.denomination} ({accountActive.accountReference})</>}
+                    description={accountActive.denomination}
                     onBack={handleCancel}
                     actions={
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
@@ -173,11 +151,8 @@ export const EditAccountPage: React.FC = () => {
                 {/* Formulario Editable */}
                 <EditAccountForm
                     status={formValues.status}
-                    startDateLicence={formValues.startDateLicence}
-                    endDateLicence={formValues.endDateLicence}
                     isLicenceMultipleCountry={formValues.isLicenceMultipleCountry}
                     onChangeStatus={handleChangeStatus}
-                    onChangeDate={handleChangeDate}
                     onChangeCheckbox={handleChangeCheckbox}
                 />
 

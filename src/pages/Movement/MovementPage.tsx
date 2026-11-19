@@ -28,13 +28,13 @@ const FieldCaption: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 const initialForm: Movement = {
   name: "",
-  conceptoEN:"",
-  conceptoPT:"",
+  conceptES: "",
+  conceptPT: "",
+  conceptEN: "",
   description: "",
   manual: false,
-  sumaStock: "suma",
+  stockSum: "ADD",
   typeMovement: "manual",
-  concepto: ""
 };
 
 
@@ -47,11 +47,11 @@ export const MovementPage: React.FC = () => {
 
   const {
     name,
-    conceptoEN,
-    conceptoPT,
+    conceptEN,
+    conceptPT,
     description,
     manual,
-    sumaStock,
+    stockSum,
     formValues,
     setFormValues,
     handleInputChange,
@@ -69,7 +69,7 @@ export const MovementPage: React.FC = () => {
   };
 
   const handleUpdateMovement = () => {
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateMovement({
       ...formValues,
       manual,
@@ -125,8 +125,8 @@ export const MovementPage: React.FC = () => {
                 label="Concepto PT"
                 variant="outlined"
                 type="text"
-                name="conceptoPT"
-                value={conceptoPT}
+                name="conceptPT"
+                value={conceptPT}
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
@@ -138,8 +138,8 @@ export const MovementPage: React.FC = () => {
                 label="Concepto EN"
                 variant="outlined"
                 type="text"
-                name="conceptoEN"
-                value={conceptoEN}
+                name="conceptEN"
+                value={conceptEN}
                 onChange={handleInputChange}
                 error={conceptoError}
                 helperText={conceptoError ? "Este campo es obligatorio" : ""}
@@ -184,22 +184,22 @@ export const MovementPage: React.FC = () => {
                 <RadioGroup
                   row
                   aria-label="stockOperation"
-                  name="sumaStock"
-                  value={sumaStock}
+                  name="stockSum"
+                  value={stockSum}
                   onChange={handleInputChange}
                 >
                   <FormControlLabel
-                    value="Suma"
+                    value="ADD"
                     control={<Radio />}
                     label="Suma stock"
                   />
                   <FormControlLabel
-                    value="Descuenta"
+                    value="SUBTRACT"
                     control={<Radio />}
                     label="Descuenta stock"
                   />
                   <FormControlLabel
-                    value="Ambas"
+                    value="BOTH"
                     control={<Radio />}
                     label="Ambas"
                   />

@@ -67,7 +67,10 @@ export const NewTypeDevicesPage: React.FC = () => {
 
 
   const handleVerifyId = () => {
-    const idExists = typeDevices.some(type => type.model === model);
+    // Excluye el propio registro al editar: cambiar otros campos no debe acusar duplicado.
+    const idExists = typeDevices.some(
+      type => type.model === model && type.id !== typeDevicesActive?.id,
+    );
     if (idExists) {
       Swal.fire({
         icon: 'error',
@@ -93,7 +96,7 @@ export const NewTypeDevicesPage: React.FC = () => {
   };
 
   const handleUpdateTypeDevices = () => {
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateTypeDevices(formValues);
     dispatch(removeTypeDevicesActive());
     reset();

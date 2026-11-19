@@ -17,27 +17,74 @@ export interface UserDto extends Document {
   isAdmin?: boolean;
 }
 
+/** Shape returned by the back's GET /users (users grouped by account). */
+export interface AccountUsersResponse {
+  account: { id: string; denomination: string; category: string };
+  users: Array<{
+    id: string;
+    email: string;
+    username: string;
+    role: string | null;
+    state: string;
+  }>;
+}
+
+/** Payload for POST /users — alineado al CreateUserDto del back (sin campos extra). */
+export interface CreateUserPayload {
+  email: string;
+  username: string;
+  password: string;
+  language?: string;
+  accountId?: string;
+  role?: 'USER' | 'ADMIN' | 'GENERAL_ADMIN';
+}
+
+/** Flattened row for the system-wide users listing (one user + its account context). */
+export interface SystemUser {
+  id: string;
+  username: string;
+  email: string;
+  role: string | null;
+  state: string;
+  accountId: string;
+  accountDenomination: string;
+  accountCategory: string;
+}
+
 export interface Authenticate {
   accessToken: string;
   refreshToken: string;
-  expiration: number;
+  expiresIn: number;
 }
 
 export interface User {
   id: string;
   username: string;
+  email: string;
+  role: string;
+  language: string;
+  photoName?: string;
   accountId: string;
-  countryId: string;
-  isAdmin: boolean;
+  accountName: string;
+  countryCode: string;
+  currency: string;
 }
+
 export interface ResponseAuthLogin {
   user: User;
   auth: Authenticate;
 }
 
+export interface AuthChallenge {
+  challengeName: 'NEW_PASSWORD_REQUIRED';
+  session: string;
+  email: string;
+}
+
 export interface ResponseAuthRenew {
   accessToken: string;
   refreshToken: string;
+  expiresIn: number;
 }
 
 export interface UserRegister {
@@ -52,10 +99,11 @@ export interface UserLogin {
 }
 
 export interface Category extends Document {
-  idCategory: string;
-  description: string;
-  descriptionPt: string;
-  descriptionEn: string;
+  id?: string;
+  categoryType: string;
+  descriptionES: string;
+  descriptionPT: string;
+  descriptionEN: string;
 }
 
 export interface SupplieState {
@@ -63,24 +111,45 @@ export interface SupplieState {
   supplies: SupplyType[];
 }
 
+/** Valores del enum StockSumType del back. */
+export type StockSum = 'BOTH' | 'ADD' | 'SUBTRACT';
+
+export const StockSumLabels: Record<StockSum, string> = {
+  ADD: 'Suma',
+  SUBTRACT: 'Descuenta',
+  BOTH: 'Ambas',
+};
+
 export interface Movement extends Document {
-  manual: boolean;
-  sumaStock: 'both' | 'suma' | 'descuenta';
+  id?: string;
   name: string;
-  conceptoPT: string;
-  conceptoEN: string;
+  conceptES: string;
+  conceptPT: string;
+  conceptEN: string;
   description: string;
   typeMovement: string;
-  concepto: string;
+  manual: boolean;
+  stockSum: StockSum;
 }
 
+/** Valores del enum CropType del back, con su rótulo en ES para la UI. */
+export const CropTypeLabels: Record<string, string> = {
+  TUBER: 'Tubérculo',
+  GRAMINEAE: 'Gramínea',
+  TEXTILE: 'Textil',
+  LEGUME: 'Legumbres',
+  OILSEED: 'Oleaginosa',
+  INDUSTRIAL: 'Industrial',
+  CEREAL: 'Cereal',
+};
+
 export interface Crops extends Document {
-  crop: string;
+  id?: string;
   descriptionES: string;
   descriptionPT: string;
   descriptionEN: string;
   cropType: string;
-  cropVariety: string;
+  variety: string;
   prepared: boolean;
   sowing: boolean;
   application: boolean;
@@ -88,8 +157,10 @@ export interface Crops extends Document {
   harvest: boolean;
 }
 
-export interface System extends Document {
-  id: string;
+/** SystemDto del back (/systems): system = name, code = identificador elegido por el admin. */
+export interface System {
+  id?: string;
+  code: string;
   system: string;
   version: string;
   technicalDetails: string;
@@ -101,21 +172,29 @@ export interface System extends Document {
 // }
 
 export interface Licences extends Document {
-  id: string;
+  id?: string;
   description: string;
   licenceType: string;
+  /** FK a /systems; systemType es solo el nombre para mostrar. */
+  systemId?: string | null;
   systemType: string;
   maximumUnitAllowed: number;
   allowedUsersCount: number;
 }
 
-export interface MenuModules extends Document {
+/**
+ * MenuModuleDto del back (/menu-modules), con los nombres de campo históricos del BO.
+ * El id numérico lo elige el admin y no se puede cambiar (lo referencian los permisos).
+ */
+export interface MenuModules {
   id: number;
-  module: Modules; // <- antes: Modules[]
+  module: Modules;
   order: string;
   menuOption: string;
   menuOptionEn: string;
   menuOptionPt: string;
+  /** FK a /systems; systemType es solo el rótulo para mostrar/exportar. */
+  systemId?: string | null;
   systemType: string;
   menuType: string;
   details: string;
@@ -130,7 +209,9 @@ export interface MenuModules extends Document {
   parentId?: number | null;
 }
 
-export interface Modules extends Document {
+/** FeatureModuleDto del back (/modules), con los nombres de campo históricos del BO. */
+export interface Modules {
+  id?: string;
   moduleNameEs: string; // NOMBRE DEL MENU EN ESPAÑOL
   moduleNameEn: string; // NOMBRE DEL MENU EN INGLES
   moduleNamePt: string; // NOMBRE DEL MENU EN PORTUGUES
@@ -139,6 +220,7 @@ export interface Modules extends Document {
 }
 
 export interface TypeDevices extends Document {
+  id?: string;
   model: string;
   description: string;
   family: string;
@@ -146,10 +228,16 @@ export interface TypeDevices extends Document {
   available: DeviceStatus;
 }
 
+/** Valores del enum DeviceAvailability del back; rótulos ES en DeviceStatusLabels. */
 export enum DeviceStatus {
-  Activo = 'Activo',
-  Inactivo = 'Inactivo',
+  Activo = 'ACTIVE',
+  Inactivo = 'INACTIVE',
 }
+
+export const DeviceStatusLabels: Record<DeviceStatus, string> = {
+  [DeviceStatus.Activo]: 'Activo',
+  [DeviceStatus.Inactivo]: 'Inactivo',
+};
 
 export enum MenuOptionType {
   SideBar = 'SideBar',
@@ -158,6 +246,7 @@ export enum MenuOptionType {
 }
 
 export interface Country extends Document {
+  id?: string;
   code: string;
   descriptionES: string;
   descriptionPT: string;
@@ -247,28 +336,10 @@ export interface Document {
   _rev?: string;
 }
 
-export interface Authenticate {
+export interface ResponseAuthRenew {
   accessToken: string;
   refreshToken: string;
-  expiration: number;
-}
-
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  accountId: string;
-  isAdmin: boolean;
-}
-
-export interface ResponseAuthLogin {
-  user: User;
-  auth: Authenticate;
-}
-
-export interface ResponseAuthRenew {
-  AccessToken: string;
-  ExpiresIn: number;
+  expiresIn: number;
 }
 
 export interface UserRegister {
@@ -324,12 +395,13 @@ export interface SupplieState {
 }
 
 export interface SupplyType extends Document {
-  name: string;
-  description: string;
-  tipoPT: string;
-  tipoEN: string;
-  fitosanitario: boolean;
-  cultivo: boolean;
+  id?: number;
+  code: string;
+  descriptionES: string;
+  descriptionPT: string;
+  descriptionEN: string;
+  phytosanitary: boolean;
+  isCrop: boolean;
 }
 
 export const LaboresItems = ['Preparado', 'Siembra', 'Aplicacion', 'Arrancado', 'Cosecha'];
@@ -415,12 +487,6 @@ export interface ItemZipCode extends Document {
   state: string;
 }
 
-export interface Category extends Document {
-  idCategory: string;
-  description: string;
-  descriptionPt: string;
-  descriptionEn: string;
-}
 
 export interface StockMovement extends Document {
   accountId: string;
@@ -530,10 +596,11 @@ export enum EnumLicenceType {
 }
 
 export enum EnumStatusAccount {
-  Activa = 'Activa',
-  Inactiva = 'Inactiva',
-  Suspendida = 'Suspendida',
-  Cancelada = 'Cancelada',
+  Activa = 'ACTIVE',
+  Inactiva = 'INACTIVE',
+  Suspendida = 'SUSPENDED',
+  Pendiente = 'PENDING',
+  Cancelada = 'CANCELLED',
 }
 
 export enum EnumCategoryCod {

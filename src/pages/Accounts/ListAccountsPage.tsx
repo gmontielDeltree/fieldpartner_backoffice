@@ -24,7 +24,6 @@ import { useAccount, useForm } from '../../hooks';
 
 // Ojo: el texto de las columnas ordenables es la clave de columnToProperty en components/account/DataTable.
 const columns: ColumnProps[] = [
-  { text: 'Referencia ID', align: 'left' },
   { text: 'Estado', align: 'left' },
   { text: 'País', align: 'left' },
   { text: 'Denominación', align: 'left' },
@@ -72,10 +71,9 @@ export const ListAccountPage: React.FC = () => {
       return;
     }
     const filteredCustomers = allAccounts.filter(
-      ({ denomination, country, accountReference }) =>
+      ({ denomination, countryCode }) =>
         (denomination && denomination.toLowerCase().includes(debouncedFilterText.toLowerCase())) ||
-        (country && country.toLowerCase().includes(debouncedFilterText.toLowerCase())) ||
-        (accountReference && accountReference.toLowerCase().includes(debouncedFilterText.toLowerCase()))
+        (countryCode && countryCode.toLowerCase().includes(debouncedFilterText.toLowerCase()))
     );
     setAccounts(filteredCustomers);
     // eslint-disable-next-line react-hooks/exhaustive-deps

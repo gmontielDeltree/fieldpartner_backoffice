@@ -1,8 +1,29 @@
+import { HttpStatusCode } from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
-import { Movement } from "../types";
-import { dbContext} from "../services/pouchdbService";
+import { useState } from 'react';
+import { Movement } from '../types';
+import { backofficeApi } from '../config';
+
+/** El back devuelve concept PT/EN, description y typeMovement como null cuando no se cargaron. */
+const normalizeMovement = (movement: Movement): Movement => ({
+  ...movement,
+  conceptPT: movement.conceptPT ?? '',
+  conceptEN: movement.conceptEN ?? '',
+  description: movement.description ?? '',
+  typeMovement: movement.typeMovement ?? '',
+});
+
+const toPayload = (movement: Movement) => ({
+  name: movement.name,
+  conceptES: movement.conceptES || movement.name,
+  conceptPT: movement.conceptPT,
+  conceptEN: movement.conceptEN,
+  description: movement.description,
+  typeMovement: movement.typeMovement,
+  manual: movement.manual,
+  stockSum: movement.stockSum,
+});
 
 export const useMovements = () => {
   const navigate = useNavigate();
@@ -10,6 +31,21 @@ export const useMovements = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [movements, setMovements] = useState<Movement[]>([]);
   const [conceptoError, setConceptoError] = useState(false);
+
+  const getMovements = async () => {
+    setIsLoading(true);
+    try {
+      const response = await backofficeApi.get<Movement[]>('/movement-types');
+      setMovements(response.data.map(normalizeMovement));
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'No se encontraron movimientos.', 'error');
+      setMovements([]);
+      if (error) setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const createMovement = async (newMovement: Movement) => {
     setIsLoading(true);
@@ -21,129 +57,96 @@ export const useMovements = () => {
     }
 
     try {
-      const response = await dbContext.movementsType.post(newMovement);
-
-      setIsLoading(false);
-      if (response.ok)
+      const response = await backofficeApi.post('/movement-types', toPayload(newMovement));
+      if (response.status === HttpStatusCode.Created) {
         Swal.fire('Movimiento', 'Nuevo Movimiento agregado.', 'success');
-      else
-        Swal.fire('Movimiento', 'Verificar campos obligatorios.', 'error');
-
-      navigate('/type-movement');
+        navigate('/type-movement');
+      }
     } catch (error) {
-      console.log(error);
-      Swal.fire('Ups', 'Ocurrió un error inesperado', 'error');
-      setIsLoading(false);
+      console.error(error);
+      Swal.fire('Ups', 'Ocurrió un error inesperado.', 'error');
       if (error) setError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const getMovements = async () => {
-    setIsLoading(true);
-    try {
-      const response = await dbContext.movementsType.allDocs({ include_docs: true });
-
-      setIsLoading(false);
-
-      if (response.rows.length) {
-        const documents: Movement[] = response.rows.map(row => row.doc as Movement);
-        setMovements(documents);
-      }
-      else
-        setMovements([]);
-
-    } catch (error) {
-      console.log(error)
-      Swal.fire('Error', 'No se encontraron movimientos.', 'error');
-      setIsLoading(false);
-      if (error) setError(error);
-    }
-  }
-
-  const updateMovement = async (updateMovement: Movement) => {
+  const updateMovement = async (updatedMovement: Movement) => {
+    const id = updatedMovement.id;
+    if (!id) return;
     setIsLoading(true);
 
-    if (!updateMovement.name.trim()) {
+    if (!updatedMovement.name.trim()) {
       setConceptoError(true);
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await dbContext.movementsType.put(updateMovement);
-      setIsLoading(false);
-
-      if (response.ok)
+      const response = await backofficeApi.patch(`/movement-types/${id}`, toPayload(updatedMovement));
+      if (response.status === HttpStatusCode.Ok) {
         Swal.fire('Movimiento', 'Actualizado.', 'success');
-
-      navigate('/type-movement');
-    } catch (error) {
-      console.log(error);
-      Swal.fire('Error', 'No se encontraron movimientos.', 'error');
-      setIsLoading(false);
-      if (error) setError(error);
-    }
-  };
-
-  const removeMovement = async (movementId: string, revMovement: string) => {
-
-    try {
-      const response = await dbContext.movementsType.remove(movementId, revMovement);
-      setIsLoading(false);
-
-      if (response.ok)
-        Swal.fire('Movimiento', 'Eliminado.', 'success');
-
-      navigate('/type-movement');
-    } catch (error) {
-      console.log(error)
-      Swal.fire('Error', 'No se encontraron movimientos.', 'error');
-      setIsLoading(false);
-      if (error) setError(error);
-    }
-  }
-
-  const searchMovements = async (searchTerm: string) => {
-    setIsLoading(true);
-  
-    try {
-      const response = await dbContext.movementsType.query('concept-search-view', {
-        startkey: searchTerm,
-        endkey: searchTerm + '\uffff',
-        include_docs: true,
-      });
-  
-      setIsLoading(false);
-  
-      if (response.rows.length) {
-        const searchResults: Movement[] = response.rows.map(row => row.doc as Movement);
-        setMovements(searchResults);
-      } else {
-        setMovements([]);
+        navigate('/type-movement');
       }
     } catch (error) {
       console.error(error);
-      Swal.fire('Error', 'Ocurrió un error durante la búsqueda.', 'error');
-      setIsLoading(false);
+      Swal.fire('Error', 'No se pudo actualizar el movimiento.', 'error');
       if (error) setError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
-   
 
-    return {
-        //* Propiedades
-        error,
-        isLoading,
-        movements,
-        conceptoError, 
-
-        //* Métodos
-        createMovement, 
-        getMovements, 
-        setMovements,
-        updateMovement, 
-        removeMovement,
-        searchMovements,
+  const removeMovement = async (movementId: string) => {
+    setIsLoading(true);
+    try {
+      await backofficeApi.delete(`/movement-types/${movementId}`);
+      Swal.fire('Movimiento', 'Eliminado.', 'success');
+      getMovements();
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'No se pudo eliminar el movimiento.', 'error');
+      if (error) setError(error);
+    } finally {
+      setIsLoading(false);
     }
-}
+  };
 
+  /** Sin endpoint de búsqueda en el back: trae todo y filtra por nombre/conceptos. */
+  const searchMovements = async (searchTerm: string) => {
+    setIsLoading(true);
+    try {
+      const response = await backofficeApi.get<Movement[]>('/movement-types');
+      const term = searchTerm.toLowerCase();
+      const searchResults = response.data
+        .map(normalizeMovement)
+        .filter(movement =>
+          [movement.name, movement.conceptES, movement.conceptPT, movement.conceptEN, movement.description]
+            .some(field => (field ?? '').toLowerCase().includes(term)),
+        );
+      setMovements(searchResults);
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'Ocurrió un error durante la búsqueda.', 'error');
+      if (error) setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    //* Propiedades
+    error,
+    isLoading,
+    movements,
+    conceptoError,
+
+    //* Métodos
+    createMovement,
+    getMovements,
+    setMovements,
+    updateMovement,
+    removeMovement,
+    searchMovements,
+  };
+};
