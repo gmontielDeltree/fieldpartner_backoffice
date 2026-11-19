@@ -157,16 +157,12 @@ export const ListMenuModulesPage: React.FC = () => {
   };
 
   const onClickUpdateMenuModules = (item: MenuModules) => {
-    console.log('Item ID:', item._id);
     dispatch(setMenuModulesACtive(item));
-    navigate(`/menus-modules/${item._id}`);
+    navigate(`/menus-modules/${item.id}`);
   };
 
   const handleDeleteMenuModules = (item: MenuModules) => {
-    if (item._id && item._rev) {
-      removeMenuModules(item._id, item._rev);
-      getMenuModules();
-    }
+    removeMenuModules(item.id);
   };
 
   // Handler para exportar (respeta filtro de búsqueda)
@@ -318,7 +314,7 @@ export const ListMenuModulesPage: React.FC = () => {
                 onSort={handleSort}
               >
                 {rows.map(row => (
-                  <ItemRow key={row._id} hover>
+                  <ItemRow key={row.id} hover>
                     {/* Ícono */}
                     <TableCellStyled align='center' sx={{ width: 56, py: '6px' }}>
                       {row.icon && <IconCell iconName={row.icon} />}

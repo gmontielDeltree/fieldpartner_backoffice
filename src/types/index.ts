@@ -157,8 +157,10 @@ export interface Crops extends Document {
   harvest: boolean;
 }
 
-export interface System extends Document {
-  id: string;
+/** SystemDto del back (/systems): system = name, code = identificador elegido por el admin. */
+export interface System {
+  id?: string;
+  code: string;
   system: string;
   version: string;
   technicalDetails: string;
@@ -173,18 +175,26 @@ export interface Licences extends Document {
   id?: string;
   description: string;
   licenceType: string;
+  /** FK a /systems; systemType es solo el nombre para mostrar. */
+  systemId?: string | null;
   systemType: string;
   maximumUnitAllowed: number;
   allowedUsersCount: number;
 }
 
-export interface MenuModules extends Document {
+/**
+ * MenuModuleDto del back (/menu-modules), con los nombres de campo históricos del BO.
+ * El id numérico lo elige el admin y no se puede cambiar (lo referencian los permisos).
+ */
+export interface MenuModules {
   id: number;
-  module: Modules; // <- antes: Modules[]
+  module: Modules;
   order: string;
   menuOption: string;
   menuOptionEn: string;
   menuOptionPt: string;
+  /** FK a /systems; systemType es solo el rótulo para mostrar/exportar. */
+  systemId?: string | null;
   systemType: string;
   menuType: string;
   details: string;
@@ -199,7 +209,9 @@ export interface MenuModules extends Document {
   parentId?: number | null;
 }
 
-export interface Modules extends Document {
+/** FeatureModuleDto del back (/modules), con los nombres de campo históricos del BO. */
+export interface Modules {
+  id?: string;
   moduleNameEs: string; // NOMBRE DEL MENU EN ESPAÑOL
   moduleNameEn: string; // NOMBRE DEL MENU EN INGLES
   moduleNamePt: string; // NOMBRE DEL MENU EN PORTUGUES

@@ -22,7 +22,7 @@ import {
 import { ColumnProps, System } from "../../types";
 
 const columns: ColumnProps[] = [
-  { text: "ID", align: "left", field: "id", sortable: true },
+  { text: "Código", align: "left", field: "code", sortable: true },
   { text: "Sistema", align: "left", field: "system", sortable: true },
   { text: "Versión", align: "left", field: "version", sortable: true },
 ];
@@ -61,8 +61,8 @@ export const ListSystemPage: React.FC = () => {
       const primary = compareValues(a, b, sortField);
       const result = sortDirection === "asc" ? primary : -primary;
       // Desempate: dentro de un mismo valor, ordenar por ID
-      if (result === 0 && sortField !== "id") {
-        return compareValues(a, b, "id");
+      if (result === 0 && sortField !== "code") {
+        return compareValues(a, b, "code");
       }
       return result;
     });
@@ -75,7 +75,7 @@ export const ListSystemPage: React.FC = () => {
   const matchesFilter = (system: System, filter: string) => {
     const normalizedFilter = normalizeText(filter);
     const searchableFields = [
-      system.id,
+      system.code,
       system.version,
       system.system,
     ];
@@ -92,14 +92,11 @@ export const ListSystemPage: React.FC = () => {
 
   const onClickUpdateSystem = (item: System) => {
     dispatch(setSystemACtive(item));
-    navigate(`/system/${item._id}`);
+    navigate(`/system/${item.id}`);
   };
 
   const handleDeleteSystem = (item:  System) => {
-    if (item._id && item._rev) {
-      removeSystem(item._id, item._rev);
-      getSystem();
-    }
+    if (item.id) removeSystem(item.id);
   };
 
   useEffect(() => {
@@ -136,7 +133,7 @@ export const ListSystemPage: React.FC = () => {
             <SearchField
               value={filterText}
               onChange={handleInputChange}
-              placeholder="Buscar por ID, sistema o versión…"
+              placeholder="Buscar por código, sistema o versión…"
               onSubmit={() => onClickSearch()}
             />
           </ListToolbar>
@@ -156,8 +153,8 @@ export const ListSystemPage: React.FC = () => {
               onSort={handleSort}
             >
               {rows.map((row) => (
-                <ItemRow key={row._id} hover>
-                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.id}</TableCellStyled>
+                <ItemRow key={row.id} hover>
+                  <TableCellStyled align="left" sx={{ fontWeight: 500 }}>{row.code}</TableCellStyled>
                   <TableCellStyled align="left">{row.system}</TableCellStyled>
                   <TableCellStyled align="left">{row.version}</TableCellStyled>
                   <TableCellStyled align="right" sx={{ whiteSpace: "nowrap" }}>

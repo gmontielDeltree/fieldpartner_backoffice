@@ -45,7 +45,7 @@ export const NewLicencesPage: React.FC = () => {
   } = useForm<Licences>(initialForm);
 
   const handleSystemChange = (_: React.ChangeEvent<object>, newValue: System | null) => {
-    setFormValues({ ...formValues, systemType: newValue ? newValue.system : "" });
+    setFormValues({ ...formValues, systemId: newValue?.id ?? null, systemType: newValue?.system ?? "" });
   };
 
   const handleLicenceTypeChange = (event: SelectChangeEvent<string>) => {
@@ -90,7 +90,7 @@ export const NewLicencesPage: React.FC = () => {
     }
   }, [licencesActive, setFormValues]);
 
-  const systemSeleccionado = system.find((sys) => sys.system === formValues.systemType) ?? null;
+  const systemSeleccionado = system.find((sys) => sys.id === formValues.systemId) ?? null;
   const licenceOptions = Object.values(EnumLicenceType);
   const isEditing = Boolean(licencesActive);
 

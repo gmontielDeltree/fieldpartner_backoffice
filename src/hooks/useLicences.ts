@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Licences, EnumLicenceType } from '../types';
 import { backofficeApi } from '../config';
+import { SystemResponse } from './useSystem';
 
 /** label del back ('C'/'L'/'H') ↔ rótulo ES de la UI (Campo/Licencia/Hectárea). */
 const LABEL_TO_TYPE: Record<string, string> = {
@@ -21,7 +22,7 @@ interface LicenceTypeResponse {
   id: string;
   label: string;
   description: string | null;
-  systemType: string | null;
+  system: Omit<SystemResponse, 'technicalDetails'> | null;
   maximumUnitAllowed: number | null;
   allowedUsersCount: number | null;
 }
@@ -30,7 +31,8 @@ const fromResponse = (item: LicenceTypeResponse): Licences => ({
   id: item.id,
   description: item.description ?? '',
   licenceType: LABEL_TO_TYPE[item.label] ?? item.label,
-  systemType: item.systemType ?? '',
+  systemId: item.system?.id ?? null,
+  systemType: item.system?.name ?? '',
   maximumUnitAllowed: item.maximumUnitAllowed ?? 0,
   allowedUsersCount: item.allowedUsersCount ?? 0,
 });
@@ -38,7 +40,7 @@ const fromResponse = (item: LicenceTypeResponse): Licences => ({
 const toPayload = (licence: Licences) => ({
   label: TYPE_TO_LABEL[licence.licenceType] ?? licence.licenceType,
   description: licence.description,
-  systemType: licence.systemType,
+  systemId: licence.systemId || null,
   maximumUnitAllowed: licence.maximumUnitAllowed,
   allowedUsersCount: licence.allowedUsersCount,
 });

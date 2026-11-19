@@ -27,7 +27,7 @@ type Props = {
   open: boolean;
   initial?: Modules | null;
   onClose: () => void;
-  onSave: (payload: Omit<Modules, '_id' | '_rev'> | Modules) => Promise<void>;
+  onSave: (payload: Modules) => Promise<void>;
 };
 
 const blank: Modules = {
@@ -56,14 +56,14 @@ export const ModuleFormDialog: React.FC<Props> = ({ open, initial, onClose, onSa
       setSaving(true);
       // Asegurarse que 'orden' sea number al enviar
       const payload = { ...form, orden: Number(form.orden ?? 0) } as Modules;
-      await onSave(form._id ? payload : payload);
+      await onSave(payload);
       onClose();
     } finally {
       setSaving(false);
     }
   };
 
-  const title = form._id ? 'Editar módulo' : 'Nuevo módulo';
+  const title = form.id ? 'Editar módulo' : 'Nuevo módulo';
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>

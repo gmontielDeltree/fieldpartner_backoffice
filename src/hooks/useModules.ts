@@ -1,8 +1,9 @@
+import { HttpStatusCode } from 'axios';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
 import { useState, useMemo } from 'react';
 import { Modules } from '../types';
-import { dbContext } from '../services/pouchdbService';
+import { backofficeApi } from '../config';
+import { backendErrorMessage } from '../utils/backendError';
 
 export type ModuleOption = {
   id: string;
@@ -10,100 +11,117 @@ export type ModuleOption = {
   value: Modules;
 };
 
+/** Shape del FeatureModuleDto que devuelve el back en /modules. */
+interface ModuleResponse {
+  id: string;
+  nameEs: string;
+  nameEn: string | null;
+  namePt: string | null;
+  icon: string | null;
+  order: number;
+}
+
+const fromResponse = (item: ModuleResponse): Modules => ({
+  id: item.id,
+  moduleNameEs: item.nameEs,
+  moduleNameEn: item.nameEn ?? '',
+  moduleNamePt: item.namePt ?? '',
+  icon: item.icon ?? '',
+  orden: item.order,
+});
+
+const toPayload = (module: Modules) => ({
+  nameEs: module.moduleNameEs.trim(),
+  nameEn: module.moduleNameEn || undefined,
+  namePt: module.moduleNamePt || undefined,
+  icon: module.icon || undefined,
+  order: Number(module.orden) || 0,
+});
+
 export const useModules = () => {
-  const navigate = useNavigate();
-  const [error, setError] = useState({});
+  const [error, setError] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [modules, setModules] = useState<Modules[]>([]);
 
-  const createModules = async (newModules: Modules) => {
-    setIsLoading(true);
-    try {
-      const response = await dbContext.modules.post(newModules);
-
-      setIsLoading(false);
-      if (response.ok) Swal.fire(' Modulo', 'Nuevo  Modulo agregado.', 'success');
-      else Swal.fire('Cliente', 'Verificar campos obligatorios.', 'error');
-
-      navigate('/modules');
-    } catch (error) {
-      console.log(error);
-      Swal.fire('Ups', 'Ocurrio un error inesperado ', 'error');
-      setIsLoading(false);
-      if (error) setError(error);
-    }
-  };
-
+  // El back ya ordena por `order`; acá se reordena por nombre como hacía la versión PouchDB.
   const getModules = async () => {
     setIsLoading(true);
     try {
-      const response = await dbContext.modules.allDocs({ include_docs: true });
-
+      const response = await backofficeApi.get<ModuleResponse[]>('/modules');
       const normalize = (s?: string) =>
-        (s ?? '')
-          .toString()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase();
-
-      const documents: Modules[] = response.rows
-        .map(row => row.doc as Modules)
-        .filter(Boolean)
-        .sort((a, b) =>
-          normalize(a.moduleNameEs).localeCompare(normalize(b.moduleNameEs), 'es', {
-            sensitivity: 'base',
-          }),
-        );
-
-      setModules(documents);
+        (s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      setModules(
+        response.data
+          .map(fromResponse)
+          .sort((a, b) =>
+            normalize(a.moduleNameEs).localeCompare(normalize(b.moduleNameEs), 'es', {
+              sensitivity: 'base',
+            }),
+          ),
+      );
     } catch (error) {
       console.error(error);
       setModules([]);
+      setError(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateModules = async (updateModules: Modules) => {
+  const createModules = async (newModule: Modules) => {
     setIsLoading(true);
-
     try {
-      const response = await dbContext.modules.put(updateModules);
-      setIsLoading(false);
-
-      if (response.ok) Swal.fire('Modulo', 'Actualizado.', 'success');
-
-      navigate('/modules');
+      const response = await backofficeApi.post('/modules', toPayload(newModule));
+      if (response.status === HttpStatusCode.Created) {
+        Swal.fire('Módulo', 'Nuevo módulo agregado.', 'success');
+      }
     } catch (error) {
-      console.log(error);
-      Swal.fire('Error', 'No se encontraron Modulos.', 'error');
+      console.error(error);
+      Swal.fire('Error', backendErrorMessage(error, 'No se pudo crear el módulo.'), 'error');
+      setError(error);
+    } finally {
       setIsLoading(false);
-      if (error) setError(error);
     }
   };
 
-  const removeModules = async (moduleId: string, revModule: string) => {
+  const updateModules = async (updatedModule: Modules) => {
+    if (!updatedModule.id) return;
     setIsLoading(true);
-
     try {
-      const response = await dbContext.modules.remove(moduleId, revModule);
-      setIsLoading(false);
-
-      if (response.ok) Swal.fire('Modulo', 'Eliminado.', 'success');
-
-      navigate('/modules');
+      const response = await backofficeApi.patch(`/modules/${updatedModule.id}`, toPayload(updatedModule));
+      if (response.status === HttpStatusCode.Ok) Swal.fire('Módulo', 'Actualizado.', 'success');
     } catch (error) {
-      console.log(error);
-      Swal.fire('Error', 'No se encontraron Modulos.', 'error');
+      console.error(error);
+      Swal.fire('Error', backendErrorMessage(error, 'No se pudo actualizar el módulo.'), 'error');
+      setError(error);
+    } finally {
       setIsLoading(false);
-      if (error) setError(error);
+    }
+  };
+
+  const removeModules = async (moduleId: string) => {
+    setIsLoading(true);
+    try {
+      await backofficeApi.delete(`/modules/${moduleId}`);
+      Swal.fire('Módulo', 'Eliminado.', 'success');
+      await getModules();
+    } catch (error) {
+      console.error(error);
+      Swal.fire(
+        'Error',
+        backendErrorMessage(error, 'No se pudo eliminar: puede tener menús asociados.'),
+        'error',
+      );
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const options: ModuleOption[] = useMemo(
     () =>
       (modules ?? []).map(m => ({
-        id: m._id ?? m.moduleNameEs,
+        id: m.id ?? m.moduleNameEs,
         label: m.moduleNameEs,
         value: m,
       })),

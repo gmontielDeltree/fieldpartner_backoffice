@@ -36,7 +36,8 @@ import {
   useSystem,
   useModules,
 } from '../../hooks';
-import { MenuModules, MenuOptionType, Modules } from '../../types';
+import { MenuModules, MenuOptionType, Modules, System } from '../../types';
+import { systemLabel } from '../../hooks/useSystem';
 import { removeMenuModulesActive } from '../../store/menumodules/menuModulesSlice';
 import Swal from 'sweetalert2';
 import type { ModuleOption } from '../../hooks/useModules';
@@ -65,6 +66,7 @@ const initialForm: MenuModules = {
   icon: '',
   route: '',
   parentId: null,
+  systemId: null,
 };
 
 export const NewMenuModulesPage: React.FC = () => {
@@ -121,24 +123,18 @@ export const NewMenuModulesPage: React.FC = () => {
     }
   }, [menuModulesActive, setFormValues]);
 
-  const handleSystemChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    newValue: string | null,
-  ) => {
-    if (newValue) {
-      setFormValues(prevForm => ({
-        ...prevForm,
-        systemType: newValue,
-      }));
-    } else {
-      setFormValues(prevForm => ({
-        ...prevForm,
-        systemType: '',
-      }));
-    }
+  const handleSystemChange = (_event: React.SyntheticEvent<Element, Event>, newValue: System | null) => {
+    setFormValues(prevForm => ({
+      ...prevForm,
+      systemId: newValue?.id ?? null,
+      systemType: systemLabel(newValue),
+    }));
   };
+  const selectedSystem = system.find(sys => sys.id === formValues.systemId) ?? null;
 
+  // El id es inmutable: solo se valida al crear (al editar el campo está deshabilitado).
   const handleVerifyId = () => {
+    if (menuModulesActive) return false;
     const idExists = menuModules.some(module => module.id === id);
     if (idExists) {
       Swal.fire({
@@ -162,7 +158,6 @@ export const NewMenuModulesPage: React.FC = () => {
   };
 
   const handleUpdateMenuModules = () => {
-    if (!formValues._id) return;
     updateMenuModules(formValues);
     dispatch(removeMenuModulesActive());
     reset();
@@ -202,7 +197,7 @@ export const NewMenuModulesPage: React.FC = () => {
     .filter(m => Number(m.id) !== Number(formValues.id))
     .filter(m => {
       const mod = (Array.isArray(m.module) ? m.module[0] : m.module) as Modules | undefined;
-      return !selectedModule?._id || !mod?._id || mod._id === selectedModule._id;
+      return !selectedModule?.id || !mod?.id || mod.id === selectedModule.id;
     })
     .sort((a, b) => Number(a.order) - Number(b.order))
     .map(m => ({
@@ -248,6 +243,7 @@ export const NewMenuModulesPage: React.FC = () => {
                   }));
                 }}
                 onBlur={handleVerifyId}
+                disabled={Boolean(menuModulesActive)}
                 inputProps={{ maxLength: 30 }}
                 fullWidth
                 variant='outlined'
@@ -279,11 +275,13 @@ export const NewMenuModulesPage: React.FC = () => {
 
             <Grid item xs={12} sm={6} md={3}>
               <FormControl fullWidth variant='outlined'>
-                <Autocomplete
-                  options={system.map(sys => `${sys.system}: ${sys.version}`)}
+                <Autocomplete<System, false, false, false>
+                  options={system}
+                  getOptionLabel={sys => systemLabel(sys)}
+                  isOptionEqualToValue={(opt, val) => opt.id === val.id}
                   fullWidth
                   renderInput={params => <TextField {...params} label='Sistema *' />}
-                  value={formValues.systemType}
+                  value={selectedSystem}
                   onChange={handleSystemChange}
                 />
               </FormControl>
@@ -305,7 +303,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 loading={isLoadingModules}
                 noOptionsText={isLoadingModules ? 'Cargando...' : 'Sin módulos'}
                 value={
-                  options.find(o => o.value._id && o.value._id === selectedModule?._id) ??
+                  options.find(o => o.value.id && o.value.id === selectedModule?.id) ??
                   options.find(o => o.label === selectedModule?.moduleNameEs) ??
                   null
                 }
@@ -318,7 +316,7 @@ export const NewMenuModulesPage: React.FC = () => {
                 }}
                 isOptionEqualToValue={(opt, val) =>
                   (opt.id && val.id && opt.id === val.id) ||
-                  (opt.value._id && val.value._id && opt.value._id === val.value._id) ||
+                  (opt.value.id && val.value.id && opt.value.id === val.value.id) ||
                   opt.label === val.label
                 }
                 renderOption={(props, option) => (

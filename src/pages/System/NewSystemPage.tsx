@@ -9,7 +9,7 @@ import { removeSystemActive } from "../../store/system";
 
 
 const initialForm: System = {
-    id: "",
+    code: "",
     system: "",
     version: "",
     technicalDetails: "",
@@ -22,7 +22,7 @@ export const NewSystemPage: React.FC = () => {
   const { systemActive } = useAppSelector((state) => state.system); 
 
   const {
-    id,
+    code,
     system,
     version,
     technicalDetails,
@@ -38,7 +38,7 @@ export const NewSystemPage: React.FC = () => {
   };
 
   const handleUpdateSystem = () => {
-    if (!formValues._id) return;
+    if (!formValues.id) return;
     updateSystem(formValues);
   };
 
@@ -72,11 +72,11 @@ export const NewSystemPage: React.FC = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={3}>
               <TextField
-                label="ID"
+                label="Código"
                 variant="outlined"
                 type="text"
-                name="id"
-                value={id}
+                name="code"
+                value={code}
                 onChange={handleInputChange}
                 inputProps={{ maxLength: 30 }}
                 fullWidth
