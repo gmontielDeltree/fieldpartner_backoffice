@@ -133,34 +133,51 @@ export const NewMenuModulesPage: React.FC = () => {
   const selectedSystem = system.find(sys => sys.id === formValues.systemId) ?? null;
 
   // El id es inmutable: solo se valida al crear (al editar el campo está deshabilitado).
+  const nextFreeId = menuModules.reduce((max, m) => Math.max(max, Number(m.id) || 0), 0) + 1;
+
+  // Alta: sugerir el próximo id libre en cuanto se cargan los menús (si el usuario no puso uno).
+  useEffect(() => {
+    if (menuModulesActive || menuModules.length === 0) return;
+    setFormValues(prev => (Number(prev.id) ? prev : { ...prev, id: nextFreeId }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuModules, menuModulesActive]);
+
   const handleVerifyId = () => {
     if (menuModulesActive) return false;
-    const idExists = menuModules.some(module => module.id === id);
+    const idExists = menuModules.some(module => Number(module.id) === Number(id));
     if (idExists) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'El ID ya existe',
+        text: `El ID ${id} ya existe. El próximo libre es ${nextFreeId}.`,
       }).then(() => {
         setFormValues(prevForm => ({
           ...prevForm,
-          id: 0,
+          id: nextFreeId,
         }));
       });
     }
     return idExists;
   };
 
-  const handleAddMenuModules = () => {
-    createMenuModules(formValues);
-    dispatch(removeMenuModulesActive());
-    reset();
+  // El formulario solo se limpia si el back confirmó; si falla, queda cargado para corregir.
+  const handleAddMenuModules = async () => {
+    if (!Number(id) || Number(id) < 1) {
+      Swal.fire('Error', 'El ID tiene que ser un número mayor a 0.', 'error');
+      return;
+    }
+    if (handleVerifyId()) return;
+    if (await createMenuModules(formValues)) {
+      dispatch(removeMenuModulesActive());
+      reset();
+    }
   };
 
-  const handleUpdateMenuModules = () => {
-    updateMenuModules(formValues);
-    dispatch(removeMenuModulesActive());
-    reset();
+  const handleUpdateMenuModules = async () => {
+    if (await updateMenuModules(formValues)) {
+      dispatch(removeMenuModulesActive());
+      reset();
+    }
   };
 
   const onClickCancel = () => {

@@ -101,7 +101,8 @@ export const useMenuModules = () => {
     }
   };
 
-  const createMenuModules = async (newMenu: MenuModules) => {
+  /** Devuelve true si el back confirmó el alta (la página solo limpia el formulario en ese caso). */
+  const createMenuModules = async (newMenu: MenuModules): Promise<boolean> => {
     setIsLoading(true);
     try {
       const response = await backofficeApi.post('/menu-modules', {
@@ -111,17 +112,20 @@ export const useMenuModules = () => {
       if (response.status === HttpStatusCode.Created) {
         Swal.fire('Menú', 'Nuevo menú agregado.', 'success');
         navigate('/menus-modules');
+        return true;
       }
+      return false;
     } catch (error) {
       console.error(error);
       Swal.fire('Error', backendErrorMessage(error, 'No se pudo crear el menú.'), 'error');
       setError(error);
+      return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateMenuModules = async (updatedMenu: MenuModules) => {
+  const updateMenuModules = async (updatedMenu: MenuModules): Promise<boolean> => {
     setIsLoading(true);
     try {
       const response = await backofficeApi.patch(
@@ -131,11 +135,14 @@ export const useMenuModules = () => {
       if (response.status === HttpStatusCode.Ok) {
         Swal.fire('Menú', 'Actualizado.', 'success');
         navigate('/menus-modules');
+        return true;
       }
+      return false;
     } catch (error) {
       console.error(error);
       Swal.fire('Error', backendErrorMessage(error, 'No se pudo actualizar el menú.'), 'error');
       setError(error);
+      return false;
     } finally {
       setIsLoading(false);
     }
